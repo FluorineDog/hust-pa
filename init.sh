@@ -11,7 +11,7 @@ function init() {
   fi
 
   while [ ! -d $1 ]; do
-    git clone -b $version https://github.com/NJU-ProjectN/$1.git
+    proxychains4 -q git clone -b $version https://github.com/NJU-ProjectN/$1.git
   done
   log="$log$1 `cd $1 && git log --oneline --no-abbrev-commit -n1`"$'\n'
   rm -rf $1/.git
