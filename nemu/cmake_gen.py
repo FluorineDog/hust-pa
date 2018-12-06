@@ -25,6 +25,8 @@ def load_module(dir_path, name):
         for module in module_list:
             text += "add_subdirectory({0})\n".format(module)
         text += "target_link_libraries({0} {1} {1})\n".format(name, " ".join(module_list))
+    if name == "main":
+        text += "target_link_libraries(main readline)\n"
     print(text)
     with open(dir_path + "/CMakeLists.txt", "w") as file:
         file.write(text)
