@@ -19,7 +19,7 @@ include Makefile.git
 CC = gcc
 LD = gcc
 INCLUDES  = $(addprefix -I, $(INC_DIR))
-CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) -fomit-frame-pointer
+CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) -fomit-frame-pointer -Wno-restrict
 CFLAGS   += -DDIFF_TEST_QEMU
 
 # Files to be compiled
@@ -48,16 +48,19 @@ override ARGS += -d $(NEMU_HOME)/tools/qemu-diff/build/qemu-so
 NEMU_EXEC := $(BINARY) $(ARGS)
 
 $(BINARY): $(OBJS)
-	$(call git_commit, "compile")
+	#$(call git_commit, "compile")
 	@echo + LD $@
 	@$(LD) -O2 -rdynamic $(SO_LDLAGS) -o $@ $^ -lSDL2 -lreadline -ldl
 
+commit: 
+	$(call git_commit, "commit")
+
 run: $(BINARY)
-	$(call git_commit, "run")
+	#$(call git_commit, "run")
 	$(NEMU_EXEC)
 
 gdb: $(BINARY)
-	$(call git_commit, "gdb")
+	#$(call git_commit, "gdb")
 	gdb -s $(BINARY) --args $(NEMU_EXEC)
 
 clean: 
