@@ -25,9 +25,10 @@ enum {
 };
 
 #define XX(k) [concat(SDL_SCANCODE_, k)] = concat(_KEY_, k),
-static uint32_t keymap[256] = {
-  _KEYS(XX)
-};
+static uint32_t keymap[256] = {};
+// static uint32_t keymap[256] = {
+//   _KEYS(XX)
+// };
 
 #define KEY_QUEUE_LEN 1024
 static int key_queue[KEY_QUEUE_LEN];
@@ -58,6 +59,6 @@ static void i8042_data_io_handler(ioaddr_t addr, int len, bool is_write) {
 }
 
 void init_i8042() {
-  i8042_data_port_base = add_pio_map(I8042_DATA_PORT, 4, i8042_data_io_handler);
+  BITCAST(i8042_data_port_base,add_pio_map(I8042_DATA_PORT, 4, i8042_data_io_handler));
   i8042_data_port_base[0] = _KEY_NONE;
 }

@@ -24,5 +24,5 @@ void rtc_io_handler(ioaddr_t addr, int len, bool is_write) {
 }
 
 void init_timer() {
-  rtc_port_base = add_pio_map(RTC_PORT, 4, rtc_io_handler);
+  BITCAST(rtc_port_base,add_pio_map(RTC_PORT, 4, rtc_io_handler));
 }

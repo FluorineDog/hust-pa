@@ -26,19 +26,20 @@ void init_difftest(char *ref_so_file, long img_size) {
   handle = dlopen(ref_so_file, RTLD_LAZY | RTLD_DEEPBIND);
   assert(handle);
 
-  ref_difftest_memcpy_from_dut = dlsym(handle, "difftest_memcpy_from_dut");
+  BITCAST(ref_difftest_memcpy_from_dut,dlsym(handle, "difftest_memcpy_from_dut"));
   assert(ref_difftest_memcpy_from_dut);
 
-  ref_difftest_getregs = dlsym(handle, "difftest_getregs");
+  BITCAST(ref_difftest_getregs, dlsym(handle, "difftest_getregs"));
   assert(ref_difftest_getregs);
 
-  ref_difftest_setregs = dlsym(handle, "difftest_setregs");
+  BITCAST(ref_difftest_setregs, dlsym(handle, "difftest_setregs"));
   assert(ref_difftest_setregs);
 
-  ref_difftest_exec = dlsym(handle, "difftest_exec");
+  BITCAST(ref_difftest_exec, dlsym(handle, "difftest_exec"));
   assert(ref_difftest_exec);
 
-  void (*ref_difftest_init)(void) = dlsym(handle, "difftest_init");
+  void (*ref_difftest_init)(void);
+  BITCAST(ref_difftest_init, dlsym(handle, "difftest_init"));
   assert(ref_difftest_init);
 
   Log("Differential testing: \33[1;32m%s\33[0m", "ON");

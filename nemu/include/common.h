@@ -25,9 +25,10 @@ typedef uint32_t paddr_t;
 typedef uint32_t vaddr_t;
 
 typedef uint16_t ioaddr_t;
-
-#define false 0
-#define true 1
+template<typename To, typename From>
+inline void BITCAST(To& dst, const From& src){
+    dst = (To)src; 
+}
 
 #include "debug.h"
 #include "macro.h"

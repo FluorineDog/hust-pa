@@ -33,7 +33,7 @@ void init_vga() {
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
       SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
 
-  screensize_port_base = add_pio_map(SCREEN_PORT, 4, NULL);
+  BITCAST(screensize_port_base, add_pio_map(SCREEN_PORT, 4, NULL));
   *screensize_port_base = ((SCREEN_W) << 16) | (SCREEN_H);
   vmem = add_mmio_map(VMEM, 0x80000, NULL);
 }
