@@ -64,6 +64,8 @@ gdb: $(BINARY)
 	gdb -s $(BINARY) --args $(NEMU_EXEC)
 
 clean: 
+	git clean -fd
+	git clean -fdX
 	-rm -rf $(BUILD_DIR)
 	$(MAKE) -C tools/gen-expr clean
 	$(MAKE) -C tools/qemu-diff clean
