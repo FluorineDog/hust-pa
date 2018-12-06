@@ -16,7 +16,7 @@ def load_module(dir_path, name):
             module_list.add(item)
             m = load_module(path, item)
             delta_m = delta_m.union(m)
-        elif it.endswith(".c"):
+        elif it.endswith(".cpp"):
             file_list.add(item)
     # print(name, " with ", file_list," and ", module_list)
     text = ""

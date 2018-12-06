@@ -17,7 +17,7 @@
 #include <assert.h>
 #include <string.h>
 
-typedef uint8_t bool;
+// typedef uint8_t bool;
 
 typedef uint32_t rtlreg_t;
 

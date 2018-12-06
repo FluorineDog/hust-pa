@@ -11,7 +11,7 @@ typedef void (*EHelper) (vaddr_t *);
 static inline uint32_t instr_fetch(vaddr_t *eip, int len) {
   uint32_t instr = vaddr_read(*eip, len);
 #ifdef DEBUG
-  uint8_t *p_instr = (void *)&instr;
+  uint8_t *p_instr = (uint8_t *)&instr;
   int i;
   for (i = 0; i < len; i ++) {
     decoding.p += sprintf(decoding.p, "%02x ", p_instr[i]);
