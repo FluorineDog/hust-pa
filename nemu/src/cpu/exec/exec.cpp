@@ -13,11 +13,13 @@ typedef struct {
 #define EX(ex)             EXW(ex, 0)
 #define EMPTY              EX(inv)
 
+
+// DOG: set width according to opcode AND CPU_status(real 16bit/flat 32bit)
 static inline void set_width(int width) {
   if (width == 0) {
-    width = decoding.is_operand_size_16 ? 2 : 4;
+    width = g_decoding.is_operand_size_16 ? 2 : 4;
   }
-  decoding.src.width = decoding.dest.width = decoding.src2.width = width;
+  g_decoding.src.width = g_decoding.dest.width = g_decoding.src2.width = width;
 }
 
 /* Instruction Decode and EXecute */
@@ -36,7 +38,7 @@ static make_EHelper(2byte_esc);
     /* 0x04 */	item4, item5, item6, item7  \
   }; \
 static make_EHelper(name) { \
-  idex(eip, &concat(opcode_table_, name)[decoding.ext_opcode]); \
+  idex(eip, &concat(opcode_table_, name)[g_decoding.ext_opcode]); \
 }
 
 /* 0x80, 0x81, 0x83 */
@@ -207,42 +209,42 @@ opcode_entry opcode_table [512] = {
 
 static make_EHelper(2byte_esc) {
   uint32_t opcode = instr_fetch(eip, 1) | 0x100;
-  decoding.opcode = opcode;
+  g_decoding.opcode = opcode;
   set_width(opcode_table[opcode].width);
   idex(eip, &opcode_table[opcode]);
 }
-
+//   DOG: TODO: need to be careful
 make_EHelper(real) {
   uint32_t opcode = instr_fetch(eip, 1);
-  decoding.opcode = opcode;
+  g_decoding.opcode = opcode;
   set_width(opcode_table[opcode].width);
   idex(eip, &opcode_table[opcode]);
 }
 
 static inline void update_eip(void) {
-  if (decoding.is_jmp) { decoding.is_jmp = 0; }
-  else { cpu.eip = decoding.seq_eip; }
+  if (g_decoding.is_jmp) { g_decoding.is_jmp = 0; }
+  else { cpu.eip = g_decoding.seq_eip; }
 }
 
 void exec_wrapper(bool print_flag) {
   vaddr_t ori_eip = cpu.eip;
 
 #ifdef DEBUG
-  decoding.p = decoding.asm_buf;
-  decoding.p += sprintf(decoding.p, "%8x:   ", ori_eip);
+  g_decoding.p = g_decoding.asm_buf;
+  g_decoding.p += sprintf(g_decoding.p, "%8x:   ", ori_eip);
 #endif
 
-  decoding.seq_eip = ori_eip;
-  exec_real(&decoding.seq_eip);
+  g_decoding.seq_eip = ori_eip;
+  exec_real(&g_decoding.seq_eip);
 
 #ifdef DEBUG
-  int instr_len = decoding.seq_eip - ori_eip;
-  sprintf(decoding.p, "%*.s", 50 - (12 + 3 * instr_len), "");
-  // TO FUCK THE OVERLAP WARNING OFF
-  strcat(decoding.asm_buf, decoding.assembly);
-  Log_write("%s\n", decoding.asm_buf);
+  int instr_len = g_decoding.seq_eip - ori_eip;
+  sprintf(g_decoding.p, "%*.s", 50 - (12 + 3 * instr_len), "");
+  // TODO: FUCK THE OVERLAP WARNING OFF
+  strcat(g_decoding.asm_buf, g_decoding.assembly);
+  Log_write("%s\n", g_decoding.asm_buf);
   if (print_flag) {
-    puts(decoding.asm_buf);
+    puts(g_decoding.asm_buf);
   }
 #endif
 

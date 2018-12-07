@@ -7,14 +7,14 @@
 typedef void (*EHelper) (vaddr_t *);
 
 #include "cpu/decode.h"
-
+// DOG: fetch inst and forward eip, and no more than 4byte???
 static inline uint32_t instr_fetch(vaddr_t *eip, int len) {
   uint32_t instr = vaddr_read(*eip, len);
 #ifdef DEBUG
   uint8_t *p_instr = (uint8_t *)&instr;
   int i;
   for (i = 0; i < len; i ++) {
-    decoding.p += sprintf(decoding.p, "%02x ", p_instr[i]);
+    g_decoding.p += sprintf(g_decoding.p, "%02x ", p_instr[i]);
   }
 #endif
   (*eip) += len;
@@ -22,7 +22,7 @@ static inline uint32_t instr_fetch(vaddr_t *eip, int len) {
 }
 
 #ifdef DEBUG
-#define print_asm(...) Assert(snprintf(decoding.assembly, 80, __VA_ARGS__) < 80, "buffer overflow!")
+#define print_asm(...) Assert(snprintf(g_decoding.assembly, 80, __VA_ARGS__) < 80, "buffer overflow!")
 #else
 #define print_asm(...)
 #endif

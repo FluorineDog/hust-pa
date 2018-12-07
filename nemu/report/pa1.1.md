@@ -22,6 +22,10 @@ typedef union {
 } CPU_state;
 ```
 
+## RTFSC
+在CLion中调试跟踪源码, 理清了程序的执行流
+1. 首先, 
+
 ## Q&A
 > 假设你在Windows中使用Docker安装了一个GNU/Linux container, 
 > 然后在container中完成PA, 通过NEMU运行Hello World程序. 在这样的情况下, 尝试画出相应的层次图.
