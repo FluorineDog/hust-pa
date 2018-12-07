@@ -1,6 +1,7 @@
 #include "monitor/monitor.h"
 #include "monitor/expr.h"
 #include "monitor/watchpoint.h"
+#include "wheel/string_tools.h"
 #include "nemu.h"
 
 #include <stdlib.h>
@@ -37,6 +38,7 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_help(char *args);
+static int cmd_step_into(char *args);
 
 static struct {
   const char *name;
@@ -46,12 +48,26 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "step instruction", cmd_step_into },
 
   /* TODO: Add more commands */
 
 };
-
 constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
+
+static int cmd_step_into(char *args){
+  char *arg = strtok(NULL, " ");
+  int step_count;
+  if(arg == NULL){
+    step_count = 1;
+  } else {
+    step_count = atoi(arg);
+  }
+
+  cpu_exec(step_count);
+  return 0;
+}
+
 
 static int cmd_help(char *args) {
   /* extract the first argument */
