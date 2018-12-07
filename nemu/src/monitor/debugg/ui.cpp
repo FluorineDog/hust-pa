@@ -77,7 +77,7 @@ static void info_watchpoint() {
 static int cmd_info(char *args) {
     char *arg = strtok(NULL, " ");
     if (arg == NULL) {
-        printf("Expected 1 Arg(s) \n");
+        printf("ERROR: Expected 1 Arg(s) \n");
         return 0;
     }
     if (arg == string("r")) {
