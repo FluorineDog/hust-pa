@@ -39,8 +39,8 @@ static int cmd_q(char *args) {
 static int cmd_help(char *args);
 
 static struct {
-  char *name;
-  char *description;
+  const char *name;
+  const char *description;
   int (*handler) (char *);
 } cmd_table [] = {
   { "help", "Display informations about all supported commands", cmd_help },
@@ -51,7 +51,7 @@ static struct {
 
 };
 
-#define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
+constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
 
 static int cmd_help(char *args) {
   /* extract the first argument */

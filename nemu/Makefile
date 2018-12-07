@@ -16,18 +16,18 @@ include Makefile.git
 .DEFAULT_GOAL = app
 
 # Compilation flags
-CC = gcc
-LD = gcc
+CC = g++
+LD = g++
 INCLUDES  = $(addprefix -I, $(INC_DIR))
 CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) -fomit-frame-pointer -Wno-restrict
 CFLAGS   += -DDIFF_TEST_QEMU
 
 # Files to be compiled
-SRCS = $(shell find src/ -name "*.c")
-OBJS = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
+SRCS = $(shell find src/ -name "*.cpp")
+OBJS = $(SRCS:src/%.cpp=$(OBJ_DIR)/%.o)
 
 # Compilation patterns
-$(OBJ_DIR)/%.o: src/%.c
+$(OBJ_DIR)/%.o: src/%.cpp
 	@echo + CC $<
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(SO_CFLAGS) -c -o $@ $<
