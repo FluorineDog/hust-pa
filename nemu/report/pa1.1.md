@@ -48,7 +48,8 @@ typedef union {
     - 设置必要符号后, 切入exec_wrapper
       - decoding 为全局状态变量, 首先设置seq_eip 为 EIP
       - 切入exec_real中, 分析指令的第一个字节, 设置对应的位宽, opcode, 然后切入idex中
-        - 分别执行指令的decode 和execute 函数, 完成指令的解码执行
+        - 分别执行指令的decode 和execute 函数, 
+        完成指令的解码执行
       - 打印调试信息
       - 更新EIP
     - 用户程序指令计数器喜+1
@@ -56,6 +57,10 @@ typedef union {
     - 打印若干调试信息
     - 循环执行, 直到NEMU状态不再是RUNNING时退出
   - 命令行模式读取下一条指令, 或者在batch 模式下直接退出
+
+本模拟器的核心在与decode 和execute 函数, 
+他们根据指令的不同, 形态迥异. 目前仅有mov被实现了, 
+其具体细节暂时作为黑箱处理.
 
 
 ## Q&A
@@ -112,14 +117,15 @@ until the value is in the range of the new type.
 
 > opcode_table到底是个什么类型的数组? 
 
-它是以结构体opcode_entry 为元素的数组,  opcode_entry包含了解码函数, 执行函数, 指令位宽.
+它是以结构体opcode_entry 为元素的数组, 
+opcode_entry包含了解码函数, 执行函数, 指令位宽.
 
 > 但你是否怀疑过, 凭什么程序执行到main()函数的返回处就结束了?
 
 main函数的返回想当于调用exit函数, 会执行一下清理工作, 比如已经被atexit注册好的函数
 
 > 对于GNU/Linux上的一个程序, 怎么样才算开始? 怎么样才算是结束? 
-> 对于在NEMU中运行的程序, 问题的答案又是什么呢?
+> 对于在NEMU中运行的程序, 问题的答案又是什么呢?  
 > 与此相关的问题还有: NEMU中为什么要有nemu_trap? 为什么要有monitor?
 
 TODO: 二周目回答
