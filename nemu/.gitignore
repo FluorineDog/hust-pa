@@ -2,3 +2,4 @@
 *.txt
 !CMakeLists.txt
 **/build/**
+cmake-build*/*
