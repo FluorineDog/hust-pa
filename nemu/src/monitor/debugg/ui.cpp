@@ -39,6 +39,7 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 static int cmd_step_into(char *args);
+static int cmd_info(char *args);
 
 static struct {
   const char *name;
@@ -48,12 +49,38 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si", "step instruction", cmd_step_into },
+  { "si", "Step [N] instruction(s)", cmd_step_into },
+  { "info", "Provide information of (r)egister/(w)atchpoint", cmd_info },
 
   /* TODO: Add more commands */
 
 };
 constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
+
+static void info_register(){
+  const char* names[] =  {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "eip", };
+
+  for(int i = 0; i < 8; ++i){
+    auto value =cpu.gpr[i]._32;
+    printf("%-8s0x%08x%16d\n", names[i], value, value);
+  }
+}
+
+static int cmd_info(char *args) {
+  char *arg = strtok(NULL, " ");
+  if(arg == NULL){
+    printf("Expected 1 Arg(s) \n");
+    return 0;
+  }
+  if(arg == string("r")){
+    info_register();
+  } else if(arg == string("w")){
+    // TODO
+  } else {
+    printf("Unknown info of %s \n", arg);
+  }
+  return 0;
+}
 
 static int cmd_step_into(char *args){
   char *arg = strtok(NULL, " ");
