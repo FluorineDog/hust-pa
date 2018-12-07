@@ -1,2 +1,2 @@
-add_library("device" OBJECT "keyboard.cpp" "vga.cpp" "serial.cpp" "device.cpp" "timer.cpp")
+add_library("device" OBJECT "timer.cpp" "serial.cpp" "keyboard.cpp" "device.cpp" "vga.cpp")
 add_subdirectory("io")

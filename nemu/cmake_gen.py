@@ -32,7 +32,7 @@ def load_module(dir_path, name):
     if name == "main":
         module_list = module_list.union(delta_m)
         text += "target_link_libraries({0} {1})\n".format(name, " ".join(module_list))
-        text += "target_link_libraries(main readline)\n"
+        text += "target_link_libraries(main readline SDL2 dl)\n"
 
     print(text)
     with open(dir_path + "/CMakeLists.txt", "w") as file:

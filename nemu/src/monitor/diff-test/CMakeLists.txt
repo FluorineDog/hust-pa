@@ -1,1 +1,1 @@
-add_library("diff-test" OBJECT "ref.cpp" "diff-test.cpp")
+add_library("diff-test" OBJECT "diff-test.cpp" "ref.cpp")
