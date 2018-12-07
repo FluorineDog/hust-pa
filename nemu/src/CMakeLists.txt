@@ -1,0 +1,8 @@
+add_executable(main "main.cpp")
+add_subdirectory("memory")
+add_subdirectory("device")
+add_subdirectory("misc")
+add_subdirectory("cpu")
+add_subdirectory("monitor")
+target_link_libraries(main "memory" "device" "diff-test" "debugg" "exec" "decode" "misc" "cpu" "io" "monitor")
+target_link_libraries(main readline)
