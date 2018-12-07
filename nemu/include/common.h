@@ -25,8 +25,8 @@ typedef uint32_t paddr_t;
 typedef uint32_t vaddr_t;
 
 typedef uint16_t ioaddr_t;
-template<typename To, typename From>
-inline void BITCAST(To& dst, const From& src){
+template<typename To>
+inline void BITCAST(To& dst, const void* src){
     dst = (To)src; 
 }
 
