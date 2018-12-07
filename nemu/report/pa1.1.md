@@ -23,8 +23,40 @@ typedef union {
 ```
 
 ## RTFSC
+
 在CLion中调试跟踪源码, 理清了程序的执行流
-1. 首先, 
+- 程序调用init_monitor 进行初始化步骤
+  - parse_args 解析命令行参数
+  - init_log 打开log 文件作为调试输出
+  - reg_test 测试CPU_State 是否正确实现
+  - load_img 加载镜像, 如果命令行参数没有给出, 
+  加载一个只有mov和halt指令的小镜像到ENTRY_START处
+  - restart 将EIP 设置为ENTRY_START, 也就是默认的镜像入口点
+  - init_regex 初始化正则引擎
+  - init_wp_pool 初始化watchpoint 的链表
+  - init_device 暂时为空, 等待后期实现IO_Exception 
+  - init_difftest 等待后期实现diff测试
+- 接下来, 进入了ui_mainloop, 也就是NEMU 图形界面的主要消息循环
+  - 在batch_mode 下, 跳过交互代码, 直接执行cpu_exec, 不然进入NEMU命令行模式, 详解如下:
+    - 使用readline 读取NEMU 命令
+    - 在cmd_table 查找执行对应的handler
+        - help 打印帮助信息
+        - q 退出
+        - c 执行cpu_exec
+  - 上一步最终都要进入cpu_exec, 以下详述cpu_exec
+    - 判断nemu_state, 在ABORT/END 等状态终止执行
+    - 设置必要符号后, 切入exec_wrapper
+      - decoding 为全局状态变量, 首先设置seq_eip 为 EIP
+      - 切入exec_real中, 分析指令的第一个字节, 设置对应的位宽, opcode, 然后切入idex中
+        - 分别执行指令的decode 和execute 函数, 完成指令的解码执行
+      - 打印调试信息
+      - 更新EIP
+    - 用户程序指令计数器喜+1
+    - 检查watchpoint 
+    - 打印若干调试信息
+    - 循环执行, 直到NEMU状态不再是RUNNING时退出
+  - 命令行模式读取下一条指令, 或者在batch 模式下直接退出
+
 
 ## Q&A
 > 假设你在Windows中使用Docker安装了一个GNU/Linux container, 
