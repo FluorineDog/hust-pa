@@ -33,14 +33,15 @@ typedef enum {
     TK_REG,
     BARI_OP_BEG,
     TK_MUL_STAR,
-    TK_DIV,
+    TK_DIV_MOD,
     TK_PLUS,
     TK_PLUS_MINUS,
     TK_CMP_OP1,
     TK_CMP_OP2,
     TK_AND,
     TK_OR,
-    TK_BINARY,
+    TK_BINARY1,
+    TK_BINARY2,
     BARI_OP_END,
     TK_UNARY,
     TK_LEFT_PARAM,
@@ -59,10 +60,12 @@ static struct rule {
         {R"(\$\w+)",         TK_REG},
         {R"(&&)",            TK_AND},
         {R"(\|\|)",          TK_OR},
+        {R"((<<|>>))",        TK_BINARY2},
         {R"((<=|>=|==|!=))", TK_CMP_OP2},
         {R"(\*)",            TK_MUL_STAR},
-        {R"(/)",             TK_DIV},
+        {R"((/|%))",         TK_DIV_MOD},
         {R"((\+|-))",        TK_PLUS_MINUS},
+        {R"((\||\&))",        TK_BINARY1},
         {R"((<|>))",         TK_CMP_OP1},
         {R"((!|~))",         TK_UNARY},
         {R"(\()",            TK_LEFT_PARAM},
@@ -142,30 +145,58 @@ void init_handler() {
     handler_holder["!s"] = [](Tree *t) -> int { return !tree_eval(t->left); };
 
     handler_holder["||"] = [](Tree *t) -> int { return tree_eval(t->left) || tree_eval(t->right); };
+
     handler_holder["&&"] = [](Tree *t) -> int { return tree_eval(t->left) && tree_eval(t->right); };
+
+    handler_holder["|"] = [](Tree *t) -> int { return tree_eval(t->left) | tree_eval(t->right); };
+
+    handler_holder["&"] = [](Tree *t) -> int { return tree_eval(t->left) & tree_eval(t->right); };
+
+    handler_holder["=="] = [](Tree *t) -> int { return tree_eval(t->left) == tree_eval(t->right); };
+    handler_holder["!="] = [](Tree *t) -> int { return tree_eval(t->left) != tree_eval(t->right); };
+
+    handler_holder["<="] = [](Tree *t) -> int { return tree_eval(t->left) <= tree_eval(t->right); };
+    handler_holder[">="] = [](Tree *t) -> int { return tree_eval(t->left) >= tree_eval(t->right); };
+    handler_holder[">"] = [](Tree *t) -> int { return tree_eval(t->left) > tree_eval(t->right); };
+    handler_holder["<"] = [](Tree *t) -> int { return tree_eval(t->left) < tree_eval(t->right); };
+
+    handler_holder["<<"] = [](Tree *t) -> int { return tree_eval(t->left) << tree_eval(t->right); };
+    handler_holder[">>"] = [](Tree *t) -> int { return tree_eval(t->left) >> tree_eval(t->right); };
+
+
     handler_holder["+"] = [](Tree *t) -> int { return tree_eval(t->left) + tree_eval(t->right); };
     handler_holder["-"] = [](Tree *t) -> int { return tree_eval(t->left) - tree_eval(t->right); };
     handler_holder["*"] = [](Tree *t) -> int { return tree_eval(t->left) * tree_eval(t->right); };
     handler_holder["/"] = [](Tree *t) -> int { return tree_eval(t->left) / tree_eval(t->right); };
-    handler_holder["=="] = [](Tree *t) -> int { return tree_eval(t->left) == tree_eval(t->right); };
-    handler_holder["<="] = [](Tree *t) -> int { return tree_eval(t->left) <= tree_eval(t->right); };
-    handler_holder[">="] = [](Tree *t) -> int { return tree_eval(t->left) >= tree_eval(t->right); };
-    handler_holder["!="] = [](Tree *t) -> int { return tree_eval(t->left) != tree_eval(t->right); };
-    handler_holder[">"] = [](Tree *t) -> int { return tree_eval(t->left) > tree_eval(t->right); };
-    handler_holder["<"] = [](Tree *t) -> int { return tree_eval(t->left) < tree_eval(t->right); };
+    handler_holder["%"] = [](Tree *t) -> int { return tree_eval(t->left) % tree_eval(t->right); };
+
     pred["nope"] = {-1, -1,};
-    pred["||"] = {1, 0,};
-    pred["&&"] = {3, 2,};
-    pred["=="] = {5, 4,};
-    pred["<="] = {5, 4,};
-    pred[">="] = {5, 4,};
-    pred["!="] = {5, 4,};
-    pred[">"] = {5, 4,};
-    pred["<"] = {5, 4,};
-    pred["+"] = {7, 6,};
-    pred["-"] = {7, 6,};
-    pred["*"] = {9, 8,};
-    pred["/"] = {9, 8,};
+    pred["||"] = {2, 1,};
+
+    pred["&&"] = {4, 3,};
+
+    pred["|"] = {6, 5,};
+
+    pred["&"] = {8, 7,};
+
+    pred["=="] = {10, 9,};
+    pred["!="] = {10, 9,};
+
+    pred["<="] = {12, 11,};
+    pred[">="] = {12, 11,};
+    pred["!="] = {12, 11,};
+    pred[">"] =  {12, 11,};
+    pred["<"] =  {12, 11,};
+
+    pred["<<"] =  {14, 13,};
+    pred[">>"] =  {14, 13,};
+
+    pred["+"] = {16, 15,};
+    pred["-"] = {16, 15,};
+
+    pred["*"] = {18, 17,};
+    pred["/"] = {18, 17,};
+    pred["%"] = {18, 17,};
 }
 
 
@@ -258,6 +289,11 @@ static void test_regex() {
     "&& 3 + -1 == 2 && 6 / 2 * 3 == 9"
     "&& *0 == 0 && !0 == 1 && ~2 == -3"
     "&& -123 == 0 - 123 && ++44 == 44"
+    "&& 100 % 7 == 2"
+    "&& (65 | 33) == 97"
+    "&& (65 & 33) == 1"
+    "&& (1 << 31) == 0x80000000"
+    "&& (-1 >> 28) == -1"
     ;
     auto t = compile_expr(str);
     auto t2 = compile_expr(validate);
