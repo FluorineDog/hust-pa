@@ -135,20 +135,20 @@ void init_handler() {
     handler_holder["num"] = [](Tree *t) -> int { return t->value; };
 
     handler_holder["*s"] = [](Tree *t) -> int { return 0; /* TODO*/ };
-    handler_holder["-s"] = [](Tree *t) -> int { return -get_value(t->left); };
+    handler_holder["-s"] = [](Tree *t) -> int { return -tree_eval(t->left); };
 
-    handler_holder["||"] = [](Tree *t) -> int { return get_value(t->left) || get_value(t->right); };
-    handler_holder["&&"] = [](Tree *t) -> int {return get_value(t->left) && get_value(t->right);};
-    handler_holder["+"] = [](Tree *t) -> int { return get_value(t->left) + get_value(t->right); };
-    handler_holder["-"] = [](Tree *t) -> int { return get_value(t->left) - get_value(t->right); };
-    handler_holder["*"] = [](Tree *t) -> int { return get_value(t->left) * get_value(t->right); };
-    handler_holder["/"] = [](Tree *t) -> int { return get_value(t->left) / get_value(t->right); };
-    handler_holder["=="] = [](Tree *t) -> int { return get_value(t->left) == get_value(t->right); };
-    handler_holder["<="] = [](Tree *t) -> int { return get_value(t->left) <= get_value(t->right); };
-    handler_holder[">="] = [](Tree *t) -> int { return get_value(t->left) >= get_value(t->right); };
-    handler_holder["!="] = [](Tree *t) -> int { return get_value(t->left) != get_value(t->right); };
-    handler_holder[">"] = [](Tree *t) -> int { return get_value(t->left) > get_value(t->right); };
-    handler_holder["<"] = [](Tree *t) -> int { return get_value(t->left) < get_value(t->right); };
+    handler_holder["||"] = [](Tree *t) -> int { return tree_eval(t->left) || tree_eval(t->right); };
+    handler_holder["&&"] = [](Tree *t) -> int {return tree_eval(t->left) && tree_eval(t->right);};
+    handler_holder["+"] = [](Tree *t) -> int { return tree_eval(t->left) + tree_eval(t->right); };
+    handler_holder["-"] = [](Tree *t) -> int { return tree_eval(t->left) - tree_eval(t->right); };
+    handler_holder["*"] = [](Tree *t) -> int { return tree_eval(t->left) * tree_eval(t->right); };
+    handler_holder["/"] = [](Tree *t) -> int { return tree_eval(t->left) / tree_eval(t->right); };
+    handler_holder["=="] = [](Tree *t) -> int { return tree_eval(t->left) == tree_eval(t->right); };
+    handler_holder["<="] = [](Tree *t) -> int { return tree_eval(t->left) <= tree_eval(t->right); };
+    handler_holder[">="] = [](Tree *t) -> int { return tree_eval(t->left) >= tree_eval(t->right); };
+    handler_holder["!="] = [](Tree *t) -> int { return tree_eval(t->left) != tree_eval(t->right); };
+    handler_holder[">"] = [](Tree *t) -> int { return tree_eval(t->left) > tree_eval(t->right); };
+    handler_holder["<"] = [](Tree *t) -> int { return tree_eval(t->left) < tree_eval(t->right); };
     pred["nope"] = {-1, -1,};
     pred["||"] = {1, 0,};
     pred["&&"] = {3, 2,};
@@ -250,7 +250,7 @@ private:
 static void test_regex() {
     auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip >= 0x12ab";
     auto t = compile_expr(str);
-    cout << get_value(t) << endl;
+    cout << tree_eval(t) << endl;
     t = nullptr;
 }
 

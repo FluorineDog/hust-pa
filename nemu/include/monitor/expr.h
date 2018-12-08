@@ -14,8 +14,10 @@ struct Tree {
     Tree(int v, Handler fn) : fn(fn), value(v) {}
 
 };
-inline int get_value(std::unique_ptr<Tree> &t) {
+
+inline int tree_eval(std::unique_ptr<Tree> &t) {
     return t->fn(t.get());
 }
+
 std::unique_ptr<Tree> compile_expr(const std::string& str);
 
