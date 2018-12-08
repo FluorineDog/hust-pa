@@ -36,7 +36,8 @@ typedef enum {
     TK_DIV,
     TK_PLUS,
     TK_MINUS,
-    TK_CMP_OP,
+    TK_CMP_OP1,
+    TK_CMP_OP2,
     TK_AND,
     TK_OR,
     BARI_OP_END,
@@ -49,20 +50,21 @@ static struct rule {
     const char *regex;
     TOKEN_ID token_type;
 } rules[] = {
-        {R"($)",                 TK_END},
-        {R"( +)",                TK_NOTYPE},
-        {R"(0x\d+)",             TK_HEX_NUM},
-        {R"(\d+)",               TK_DEC_NUM},
-        {R"(\$\w+)",             TK_REG},
-        {R"(\*)",                TK_MUL_STAR},
-        {R"(/)",                 TK_DIV},
-        {R"(\+)",                TK_PLUS},
-        {R"(-)",                 TK_MINUS},
-        {R"((<=|>=|<|>|==|!=))", TK_CMP_OP},
-        {R"(&&)",                TK_AND},
-        {R"(\|\|)",              TK_OR},
-        {R"(\()",                TK_LEFT_PARAM},
-        {R"(\))",                TK_RIGHT_PARAM},
+        {R"($)",             TK_END},
+        {R"( +)",            TK_NOTYPE},
+        {R"(0x\d+)",         TK_HEX_NUM},
+        {R"(\d+)",           TK_DEC_NUM},
+        {R"(\$\w+)",         TK_REG},
+        {R"(\*)",            TK_MUL_STAR},
+        {R"(/)",             TK_DIV},
+        {R"(\+)",            TK_PLUS},
+        {R"(-)",             TK_MINUS},
+        {R"((<=|>=|==|!=))", TK_CMP_OP2},
+        {R"((<|>))",         TK_CMP_OP1},
+        {R"(&&)",            TK_AND},
+        {R"(\|\|)",          TK_OR},
+        {R"(\()",            TK_LEFT_PARAM},
+        {R"(\))",            TK_RIGHT_PARAM},
 };
 static vector<pair<std::regex, TOKEN_ID>> engine_holder;
 
@@ -105,9 +107,6 @@ static vector<Token> tokenize(const string &raw) {
 }
 
 
-
-
-
 static bool is_operator(const Token &a) {
     return BARI_OP_BEG <= a.first && a.first < BARI_OP_END;
 }
@@ -138,7 +137,7 @@ void init_handler() {
     handler_holder["-s"] = [](Tree *t) -> int { return -tree_eval(t->left); };
 
     handler_holder["||"] = [](Tree *t) -> int { return tree_eval(t->left) || tree_eval(t->right); };
-    handler_holder["&&"] = [](Tree *t) -> int {return tree_eval(t->left) && tree_eval(t->right);};
+    handler_holder["&&"] = [](Tree *t) -> int { return tree_eval(t->left) && tree_eval(t->right); };
     handler_holder["+"] = [](Tree *t) -> int { return tree_eval(t->left) + tree_eval(t->right); };
     handler_holder["-"] = [](Tree *t) -> int { return tree_eval(t->left) - tree_eval(t->right); };
     handler_holder["*"] = [](Tree *t) -> int { return tree_eval(t->left) * tree_eval(t->right); };
@@ -165,14 +164,13 @@ void init_handler() {
 }
 
 
-
 class TreeGen {
 public:
     unique_ptr<Tree> operator()(const string &expr) {
         auto vec = tokenize(expr);
         this->iter = vec.begin();
         Token init{BARI_OP_BEG, "nope"};
-        for(auto& x: vec){
+        for (auto &x: vec) {
             cout << x.first << " " << x.second << std::endl;
         }
         auto tree = parse_expr(init);
@@ -244,6 +242,7 @@ private:
                 return nullptr;
         }
     }
+
     VEC::const_iterator iter;
 };
 
@@ -254,7 +253,7 @@ static void test_regex() {
     t = nullptr;
 }
 
-unique_ptr<Tree> compile_expr(const string& str){
+unique_ptr<Tree> compile_expr(const string &str) {
     return TreeGen()(str);
 }
 
