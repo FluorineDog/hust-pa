@@ -58,7 +58,7 @@ static struct rule {
         {R"(/)",                 TK_DIV},
         {R"(\+)",                TK_PLUS},
         {R"(-)",                 TK_MINUS},
-        {R"((<=|<|==|>|>=|!=))", TK_CMP_OP},
+        {R"((<=|>=|<|>|==|!=))", TK_CMP_OP},
         {R"(&&)",                TK_AND},
         {R"(\|\|)",              TK_OR},
         {R"(\()",                TK_LEFT_PARAM},
@@ -172,6 +172,9 @@ public:
         auto vec = tokenize(expr);
         this->iter = vec.begin();
         Token init{BARI_OP_BEG, "nope"};
+        for(auto& x: vec){
+            cout << x.first << " " << x.second << std::endl;
+        }
         auto tree = parse_expr(init);
         assert(iter->first == TK_END);
         return tree;
@@ -245,7 +248,7 @@ private:
 };
 
 static void test_regex() {
-    auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip <= 0x12ab ";
+    auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip >= 0x12ab";
     auto t = compile_expr(str);
     cout << get_value(t) << endl;
     t = nullptr;
