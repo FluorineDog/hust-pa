@@ -53,13 +53,13 @@ static struct rule {
         {R"(0x\d+)",             TK_HEX_NUM},
         {R"(\d+)",               TK_DEC_NUM},
         {R"(\$\w+)",             TK_REG},
-        {R"(\*)",                TK_MUL_STAR}, // 0 1
-        {R"(/)",                 TK_DIV}, // 0 1
-        {R"(\+)",                TK_PLUS}, // 2 3
-        {R"(-)",                 TK_MINUS}, // 2 3
-        {R"((<=|<|==|>|>=|!=))", TK_CMP_OP}, // 4 5
-        {R"(&&)",                TK_AND}, // 6 7
-        {R"(\|\|)",              TK_OR},  // 8 9
+        {R"(\*)",                TK_MUL_STAR},
+        {R"(/)",                 TK_DIV},
+        {R"(\+)",                TK_PLUS},
+        {R"(-)",                 TK_MINUS},
+        {R"((<=|<|==|>|>=|!=))", TK_CMP_OP},
+        {R"(&&)",                TK_AND},
+        {R"(\|\|)",              TK_OR},
         {R"(\()",                TK_LEFT_PARAM},
         {R"(\))",                TK_RIGHT_PARAM},
 };
