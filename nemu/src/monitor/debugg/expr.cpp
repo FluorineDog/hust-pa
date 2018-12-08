@@ -35,7 +35,7 @@ typedef enum {
     TK_MUL_STAR,
     TK_DIV,
     TK_PLUS,
-    TK_MINUS,
+    TK_PLUS_MINUS,
     TK_CMP_OP1,
     TK_CMP_OP2,
     TK_AND,
@@ -55,14 +55,13 @@ static struct rule {
         {R"(0x\d+)",         TK_HEX_NUM},
         {R"(\d+)",           TK_DEC_NUM},
         {R"(\$\w+)",         TK_REG},
-        {R"(\*)",            TK_MUL_STAR},
-        {R"(/)",             TK_DIV},
-        {R"(\+)",            TK_PLUS},
-        {R"(-)",             TK_MINUS},
-        {R"((<=|>=|==|!=))", TK_CMP_OP2},
-        {R"((<|>))",         TK_CMP_OP1},
         {R"(&&)",            TK_AND},
         {R"(\|\|)",          TK_OR},
+        {R"((<=|>=|==|!=))", TK_CMP_OP2},
+        {R"(\*)",            TK_MUL_STAR},
+        {R"(/)",             TK_DIV},
+        {R"((\+|-))",        TK_PLUS_MINUS},
+        {R"((<|>))",         TK_CMP_OP1},
         {R"(\()",            TK_LEFT_PARAM},
         {R"(\))",            TK_RIGHT_PARAM},
 };
@@ -135,6 +134,7 @@ void init_handler() {
 
     handler_holder["*s"] = [](Tree *t) -> int { return 0; /* TODO*/ };
     handler_holder["-s"] = [](Tree *t) -> int { return -tree_eval(t->left); };
+    handler_holder["+s"] = [](Tree *t) -> int { return +tree_eval(t->left); };
 
     handler_holder["||"] = [](Tree *t) -> int { return tree_eval(t->left) || tree_eval(t->right); };
     handler_holder["&&"] = [](Tree *t) -> int { return tree_eval(t->left) && tree_eval(t->right); };
@@ -204,7 +204,7 @@ private:
         auto token = *iter;
         switch (token.first) {
             case TK_MUL_STAR:
-            case TK_MINUS: {
+            case TK_PLUS_MINUS: {
                 ++iter;
                 auto fn = get_op_handler(token, true);
                 auto t = parse_elem();
@@ -247,9 +247,14 @@ private:
 };
 
 static void test_regex() {
-    auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip >= 0x12ab";
+    auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip <= 0x12ab";
+    auto validate = 
+    "3 + -1 == 2 && 6 / 2 * 3 == 9"
+    ;
     auto t = compile_expr(str);
+    auto t2 = compile_expr(validate);
     cout << tree_eval(t) << endl;
+    cout << tree_eval(t2) << endl;
     t = nullptr;
 }
 
