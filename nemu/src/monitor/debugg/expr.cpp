@@ -40,7 +40,9 @@ typedef enum {
     TK_CMP_OP2,
     TK_AND,
     TK_OR,
+    TK_BINARY,
     BARI_OP_END,
+    TK_UNARY,
     TK_LEFT_PARAM,
     TK_RIGHT_PARAM,
     /* TODO: Add more token types */
@@ -62,6 +64,7 @@ static struct rule {
         {R"(/)",             TK_DIV},
         {R"((\+|-))",        TK_PLUS_MINUS},
         {R"((<|>))",         TK_CMP_OP1},
+        {R"((!|~))",         TK_UNARY},
         {R"(\()",            TK_LEFT_PARAM},
         {R"(\))",            TK_RIGHT_PARAM},
 };
@@ -135,6 +138,8 @@ void init_handler() {
     handler_holder["*s"] = [](Tree *t) -> int { return 0; /* TODO*/ };
     handler_holder["-s"] = [](Tree *t) -> int { return -tree_eval(t->left); };
     handler_holder["+s"] = [](Tree *t) -> int { return +tree_eval(t->left); };
+    handler_holder["~s"] = [](Tree *t) -> int { return ~tree_eval(t->left); };
+    handler_holder["!s"] = [](Tree *t) -> int { return !tree_eval(t->left); };
 
     handler_holder["||"] = [](Tree *t) -> int { return tree_eval(t->left) || tree_eval(t->right); };
     handler_holder["&&"] = [](Tree *t) -> int { return tree_eval(t->left) && tree_eval(t->right); };
@@ -204,6 +209,7 @@ private:
         auto token = *iter;
         switch (token.first) {
             case TK_MUL_STAR:
+            case TK_UNARY:
             case TK_PLUS_MINUS: {
                 ++iter;
                 auto fn = get_op_handler(token, true);
@@ -248,8 +254,10 @@ private:
 
 static void test_regex() {
     auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip <= 0x12ab";
-    auto validate = 
-    "3 + -1 == 2 && 6 / 2 * 3 == 9"
+    auto validate = "1"
+    "&& 3 + -1 == 2 && 6 / 2 * 3 == 9"
+    "&& *0 == 0 && !0 == 1 && ~2 == -3"
+    "&& -123 == 0 - 123 && ++44 == 44"
     ;
     auto t = compile_expr(str);
     auto t2 = compile_expr(validate);
