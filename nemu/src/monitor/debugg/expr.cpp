@@ -5,6 +5,7 @@
 #include <iostream>
 #include <functional>
 #include <memory>
+#include "monitor/expr.h"
 
 using std::cout;
 using std::unique_ptr;
@@ -65,17 +66,16 @@ static struct rule {
 };
 static vector<pair<std::regex, TOKEN_ID>> engine_holder;
 
-using Handler = int (*)(struct Tree *);
 static std::map<string, Handler> handler_holder;
 static std::map<string, std::pair<int, int>> pred;
 
-void test_regex();
+static void test_regex();
 
 
 using Token = std::pair<TOKEN_ID, string>;
 using VEC = vector<Token>;
 
-vector<Token> tokenize(const string &raw) {
+static vector<Token> tokenize(const string &raw) {
     vector<std::pair<TOKEN_ID, string>> result;
     auto iter = raw.cbegin();
     while (true) {
@@ -104,28 +104,15 @@ vector<Token> tokenize(const string &raw) {
     return result;
 }
 
-struct Tree {
-    Handler fn;
-    unique_ptr<Tree> left;
-    unique_ptr<Tree> right;
-    int value;
 
-    Tree(Handler fn, unique_ptr<Tree> l, unique_ptr<Tree> r = nullptr) : fn(std::move(fn)), left(std::move(l)),
-                                                                         right(std::move(r)) {}
 
-    Tree(int v, Handler fn) : fn(fn), value(v) {}
 
-};
 
-int get_value(unique_ptr<Tree> &t) {
-    return t->fn(t.get());
-}
-
-bool is_operator(const Token &a) {
+static bool is_operator(const Token &a) {
     return BARI_OP_BEG <= a.first && a.first < BARI_OP_END;
 }
 
-bool pred_cmp_less(const Token &a, const Token &b) {
+static bool pred_cmp_less(const Token &a, const Token &b) {
     assert(is_operator(a));
     assert(is_operator(b));
     return pred[a.second].first < pred[b.second].second;
@@ -177,14 +164,7 @@ void init_handler() {
     pred["/"] = {9, 8,};
 }
 
-void init_regex() {
-    auto prefix = std::string("^");
-    for (auto[rule_str, token] : rules) {
-        engine_holder.emplace_back(std::regex(prefix + rule_str), token);
-    }
-    init_handler();
-    test_regex();
-}
+
 
 class TreeGen {
 public:
@@ -261,14 +241,25 @@ private:
                 return nullptr;
         }
     }
-
     VEC::const_iterator iter;
 };
 
-void test_regex() {
-    auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip <= 0x12ab";
-//    auto str = "1+2";
-    auto t = TreeGen()(str);
+static void test_regex() {
+    auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip <= 0x12ab ";
+    auto t = compile_expr(str);
     cout << get_value(t) << endl;
     t = nullptr;
+}
+
+unique_ptr<Tree> compile_expr(const string& str){
+    return TreeGen()(str);
+}
+
+void init_regex() {
+    auto prefix = std::string("^");
+    for (auto[rule_str, token] : rules) {
+        engine_holder.emplace_back(std::regex(prefix + rule_str), token);
+    }
+    init_handler();
+    test_regex();
 }
