@@ -83,11 +83,11 @@ static void test_regex();
 using Token = std::pair<TOKEN_ID, string>;
 using VEC = vector<Token>;
 
-static vector<Token> tokenize(const string &raw) {
+static vector<Token> tokenize(std::string_view raw) {
     vector<std::pair<TOKEN_ID, string>> result;
     auto iter = raw.cbegin();
     while (true) {
-        std::smatch m;
+        std::cmatch m;
         TOKEN_ID tk = TK_INVALID;
         for (auto&[eng, eng_tok] : engine_holder) {
             auto suc = std::regex_search(iter, raw.cend(), m, eng);
@@ -216,7 +216,7 @@ void init_handler() {
 
 class TreeGen {
 public:
-    unique_ptr<Tree> operator()(const string &expr) {
+    unique_ptr<Tree> operator()(std::string_view expr) {
         auto vec = tokenize(expr);
         if (vec.size() == 0) {
             return nullptr;
@@ -327,7 +327,7 @@ static void test_regex() {
     assert(t->eval() == 1);
 }
 
-unique_ptr<Tree> compile_expr(const string &str) {
+unique_ptr<Tree> compile_expr(std::string_view str) {
     return TreeGen()(str);
 }
 

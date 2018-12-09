@@ -49,6 +49,10 @@ static int cmd_scan_memory(char *args);
 
 static int cmd_scan_memory_n(char *args);
 
+static int cmd_add_watch(char *args);
+
+static int cmd_delete_watch(char *args);
+
 static struct {
     const char *name;
     const char *description;
@@ -63,8 +67,40 @@ static struct {
         {"p",    "Eval expression",                                   cmd_eval},
         {"xx",   "Scan memory",                                       cmd_scan_memory},
         {"x",    "Scan multiple memory",                              cmd_scan_memory_n},
+        {"w",    "add_watchpoint",                                    cmd_add_watch},
         /* TODO: Add more commands */
 };
+
+static int cmd_delete_watch(char *args){
+    if (args == nullptr) {
+        printf("please specify expr!\n");
+        return 0;
+    }
+     
+    g_watch_point_pool.erase()
+}
+
+static int cmd_add_watch(char *args) {
+    if (args == nullptr) {
+        printf("please specify expr!\n");
+        return 0;
+    }
+    auto t = compile_expr(args);
+    if (t == nullptr) {
+        printf("Invalid EXPR");
+        return 0;
+    }
+    int id = g_watch_count++;
+    g_watch_point_pool.try_emplace(id, args, std::move(t));
+    return 0;
+}
+
+static void info_watchpoint() {
+    printf("%-8s%-16s%-s\n", "id", "value", "expr");
+    for (auto&[id, wp]: g_watch_point_pool) {
+        printf("%-8d%-16d%-s\n", id, wp.get_value(), wp.get_expr_str().c_str());
+    }
+}
 
 static int cmd_eval(char *args) {
     if (args == 0) {
@@ -82,17 +118,18 @@ static int cmd_eval(char *args) {
 }
 
 constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
-static void scan_memory_kernel(char *args, int n){
+
+static void scan_memory_kernel(char *args, int n) {
     auto expr = compile_expr(args);
     int addr_v = expr->eval();
     uint32_t addr_base [[maybe_unused]] = addr_v & ~3U;
-    for(int i = 0; i < n; ++i){
+    for (int i = 0; i < n; ++i) {
         auto addr = addr_base + 4 * i;
-        if(i % 4 == 0){
+        if (i % 4 == 0) {
             printf("0x%08x: ", addr);
         }
         printf("0x%08x    ", vaddr_read(addr, 4));
-        if(i % 4 == 3){
+        if (i % 4 == 3) {
             printf("\n");
         }
     }
@@ -103,7 +140,7 @@ static int cmd_scan_memory(char *args) {
     return 0;
 }
 
-static int cmd_scan_memory_n(char *args){
+static int cmd_scan_memory_n(char *args) {
     char *arg = strtok(nullptr, " ");
     int N = atoi(arg);
     args = arg + strlen(arg) + 1;
@@ -113,17 +150,11 @@ static int cmd_scan_memory_n(char *args){
 
 
 static void info_register() {
-    const char *names[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "eip",};
-
     for (int i = 0; i < 8; ++i) {
         auto value = cpu.gpr[i]._32;
-        printf("%-8s0x%08x%16d\n", names[i], value, value);
+        printf("%-8s0x%08x%16d\n", regsl[i], value, value);
     }
     printf("%-8s0x%08x%16d\n", "eip", cpu.eip, cpu.eip);
-}
-
-static void info_watchpoint() {
-    // TODO
 }
 
 static int cmd_info(char *args) {

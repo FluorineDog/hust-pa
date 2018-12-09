@@ -24,5 +24,5 @@ public:
 //    return t->fn(t.get());
 //}
 
-std::unique_ptr<Tree> compile_expr(const std::string& str);
+std::unique_ptr<Tree> compile_expr(std::string_view str);
 
