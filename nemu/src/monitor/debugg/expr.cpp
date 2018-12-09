@@ -139,36 +139,36 @@ void init_handler() {
     handler_holder["num"] = [](Tree *t) -> int { return t->value; };
 
     handler_holder["*s"] = [](Tree *t) -> int { return 0; /* TODO*/ };
-    handler_holder["-s"] = [](Tree *t) -> int { return -tree_eval(t->left); };
-    handler_holder["+s"] = [](Tree *t) -> int { return +tree_eval(t->left); };
-    handler_holder["~s"] = [](Tree *t) -> int { return ~tree_eval(t->left); };
-    handler_holder["!s"] = [](Tree *t) -> int { return !tree_eval(t->left); };
+    handler_holder["-s"] = [](Tree *t) -> int { return -t->left->eval(); };
+    handler_holder["+s"] = [](Tree *t) -> int { return +t->left->eval(); };
+    handler_holder["~s"] = [](Tree *t) -> int { return ~t->left->eval(); };
+    handler_holder["!s"] = [](Tree *t) -> int { return !t->left->eval(); };
 
-    handler_holder["||"] = [](Tree *t) -> int { return tree_eval(t->left) || tree_eval(t->right); };
+    handler_holder["||"] = [](Tree *t) -> int { return t->left->eval() || t->right->eval(); };
 
-    handler_holder["&&"] = [](Tree *t) -> int { return tree_eval(t->left) && tree_eval(t->right); };
+    handler_holder["&&"] = [](Tree *t) -> int { return t->left->eval() && t->right->eval(); };
 
-    handler_holder["|"] = [](Tree *t) -> int { return tree_eval(t->left) | tree_eval(t->right); };
+    handler_holder["|"] = [](Tree *t) -> int { return t->left->eval() | t->right->eval(); };
 
-    handler_holder["&"] = [](Tree *t) -> int { return tree_eval(t->left) & tree_eval(t->right); };
+    handler_holder["&"] = [](Tree *t) -> int { return t->left->eval() & t->right->eval(); };
 
-    handler_holder["=="] = [](Tree *t) -> int { return tree_eval(t->left) == tree_eval(t->right); };
-    handler_holder["!="] = [](Tree *t) -> int { return tree_eval(t->left) != tree_eval(t->right); };
+    handler_holder["=="] = [](Tree *t) -> int { return t->left->eval() == t->right->eval(); };
+    handler_holder["!="] = [](Tree *t) -> int { return t->left->eval() != t->right->eval(); };
 
-    handler_holder["<="] = [](Tree *t) -> int { return tree_eval(t->left) <= tree_eval(t->right); };
-    handler_holder[">="] = [](Tree *t) -> int { return tree_eval(t->left) >= tree_eval(t->right); };
-    handler_holder[">"] = [](Tree *t) -> int { return tree_eval(t->left) > tree_eval(t->right); };
-    handler_holder["<"] = [](Tree *t) -> int { return tree_eval(t->left) < tree_eval(t->right); };
+    handler_holder["<="] = [](Tree *t) -> int { return t->left->eval() <= t->right->eval(); };
+    handler_holder[">="] = [](Tree *t) -> int { return t->left->eval() >= t->right->eval(); };
+    handler_holder[">"] = [](Tree *t) -> int { return t->left->eval() > t->right->eval(); };
+    handler_holder["<"] = [](Tree *t) -> int { return t->left->eval() < t->right->eval(); };
 
-    handler_holder["<<"] = [](Tree *t) -> int { return tree_eval(t->left) << tree_eval(t->right); };
-    handler_holder[">>"] = [](Tree *t) -> int { return tree_eval(t->left) >> tree_eval(t->right); };
+    handler_holder["<<"] = [](Tree *t) -> int { return t->left->eval() << t->right->eval(); };
+    handler_holder[">>"] = [](Tree *t) -> int { return t->left->eval() >> t->right->eval(); };
 
 
-    handler_holder["+"] = [](Tree *t) -> int { return tree_eval(t->left) + tree_eval(t->right); };
-    handler_holder["-"] = [](Tree *t) -> int { return tree_eval(t->left) - tree_eval(t->right); };
-    handler_holder["*"] = [](Tree *t) -> int { return tree_eval(t->left) * tree_eval(t->right); };
-    handler_holder["/"] = [](Tree *t) -> int { return tree_eval(t->left) / tree_eval(t->right); };
-    handler_holder["%"] = [](Tree *t) -> int { return tree_eval(t->left) % tree_eval(t->right); };
+    handler_holder["+"] = [](Tree *t) -> int { return t->left->eval() + t->right->eval(); };
+    handler_holder["-"] = [](Tree *t) -> int { return t->left->eval() - t->right->eval(); };
+    handler_holder["*"] = [](Tree *t) -> int { return t->left->eval() * t->right->eval(); };
+    handler_holder["/"] = [](Tree *t) -> int { return t->left->eval() / t->right->eval(); };
+    handler_holder["%"] = [](Tree *t) -> int { return t->left->eval() % t->right->eval(); };
 
     pred["nope"] = {-1, -1,};
     pred["||"] = {2, 1,};
@@ -303,8 +303,8 @@ static void test_regex() {
             "&& (1 || 0 && 0)";
     auto t = compile_expr(str);
     auto t2 = compile_expr(validate);
-    cout << tree_eval(t) << endl;
-    cout << tree_eval(t2) << endl;
+    cout << t->eval() << endl;
+    cout << t2->eval() << endl;
     t = nullptr;
 }
 
