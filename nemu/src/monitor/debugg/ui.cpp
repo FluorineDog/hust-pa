@@ -78,7 +78,12 @@ static int cmd_delete_watch(char *args) {
         return 0;
     }
     int id = atoi(args);
-    g_watch_point_pool.erase(id);
+    int count = g_watch_point_pool.erase(id);
+    if(count){
+        printf("Watchpoint %d deleted\n", id);
+    } else {
+        printf("Watchpoint %d not exists\n", id);
+    }
     return 0;
 }
 
@@ -94,6 +99,7 @@ static int cmd_add_watch(char *args) {
     }
     int id = g_watch_count++;
     g_watch_point_pool.try_emplace(id, args, std::move(t));
+    printf("Added to watchpoint %d\n", id);
     return 0;
 }
 
