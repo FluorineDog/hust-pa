@@ -152,7 +152,8 @@ void init_handler() {
 
     // Node
     handler_holder["*s"] = [](Tree *t) -> int { 
-        return vaddr_read((uint32_t)t->eval(), 4);
+        uint32_t addr = (uint32_t)t->left->eval();
+        return vaddr_read(addr, 4);
     };
     handler_holder["-s"] = [](Tree *t) -> int { return -t->left->eval(); };
     handler_holder["+s"] = [](Tree *t) -> int { return +t->left->eval(); };
