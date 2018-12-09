@@ -32,5 +32,10 @@ inline void BITCAST(To& dst, const void* src){
 
 #include "debug.h"
 #include "macro.h"
+#include <string>
+#include <optional>
+#include <string_view>
+#include <algorithm>
+#include <tuple>
 
 #endif

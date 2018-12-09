@@ -3,6 +3,7 @@
 
 #include "common.h"
 
+
 enum { R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI };
 enum { R_AX, R_CX, R_DX, R_BX, R_SP, R_BP, R_SI, R_DI };
 enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
@@ -46,6 +47,23 @@ static inline int check_reg_index(int index) {
 extern const char* regsl[];
 extern const char* regsw[];
 extern const char* regsb[];
+
+// bit-width, gpr_id
+inline std::optional<std::tuple<std::string, size_t>> parse_cpuname(std::string_view str) {
+    auto checker = [](std::string_view str, const char *regname[]) {
+        auto iter = std::find(regname, regname + 8, str.substr(1, 10));
+        auto loc = iter - regname;
+        return loc;
+    };
+    size_t ret;
+    ret = checker(str, regsl);
+    if (ret != 8) return std::forward_as_tuple("regl", ret);
+    ret = checker(str, regsw);
+    if (ret != 8) return std::forward_as_tuple("regw", ret);
+    ret = checker(str, regsb);
+    if (ret != 8) return std::forward_as_tuple("regb", ret);
+    return std::nullopt;
+}
 
 static inline const char* reg_name(int index, int width) {
   assert(index >= 0 && index < 8);

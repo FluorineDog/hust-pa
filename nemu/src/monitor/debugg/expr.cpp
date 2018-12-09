@@ -21,6 +21,7 @@ using std::make_unique;
  */
 #include <regex.h>
 #include <sys/types.h>
+#include <nemu.h>
 
 #define FORWARD(t) do{ if(t == nullptr)return nullptr; }while(0)
 
@@ -135,7 +136,17 @@ Handler get_op_handler(const Token &tok, bool special = false) {
 }
 
 void init_handler() {
-    handler_holder["reg"] = [](Tree *t) -> int { return 0; /* TODO*/ };
+    handler_holder["regl"] = [](Tree *t) -> int {
+        return reg_l(t->value); /* TODO*/
+    };
+
+    handler_holder["regw"] = [](Tree *t) -> int {
+        return reg_w(t->value); /* TODO*/
+    };
+    handler_holder["regb"] = [](Tree *t) -> int {
+        return reg_b(t->value); /* TODO*/
+    };
+
     handler_holder["num"] = [](Tree *t) -> int { return t->value; };
 
     handler_holder["*s"] = [](Tree *t) -> int { return 0; /* TODO*/ };
@@ -262,9 +273,13 @@ private:
             case TK_REG: {
                 // TODO
                 ++iter;
-                int value = 0;
-                auto fn = get_leaf_handler("reg");
-                return make_unique<Tree>(value, fn);
+                if(auto t = parse_cpuname(token.second)){
+                    auto [name, value] = t.value();
+                    auto fn = get_leaf_handler(name);
+                    return make_unique<Tree>(value, fn);
+                } else {
+                    return nullptr;
+                }
             }
             case TK_LEFT_PARAM: {
                 ++iter;
