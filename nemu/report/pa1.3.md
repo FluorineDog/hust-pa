@@ -9,11 +9,12 @@
 |si [N]|单步执行N条指令|x
 |info r|打印寄存器状态|x
 |info w|打印watchpoint状态|
-|p EXPR|计算表达式|_
-|x N EXPR|扫描内存|
+|p EXPR|计算表达式| x
+|x N EXPR|扫描内存| _
 |w EXPR|设置watchpoint|
 |d N| 删除N号watchpoint|
 前5个功能已经在以前的阶段中实现, 我们只需要其他功能即可
 ## 计算表达式
 从最简单的入手, 计算表达式实际上只需要对表达式引擎生成的结果进行一次求值即可.
-## 
+
+## 内存

@@ -146,9 +146,14 @@ void init_handler() {
         return reg_b(t->value); /* TODO*/
     };
 
+    handler_holder["eip"] = [](Tree *t) -> int {
+        return cpu.eip;
+    };
+
+
     handler_holder["num"] = [](Tree *t) -> int { return t->value; };
 
-    handler_holder["*s"] = [](Tree *t) -> int { return 0; /* TODO*/ };
+    handler_holder["*s"] = [](Tree *t) -> int { return vaddr_read((uint32_t)t->value, 4);};
     handler_holder["-s"] = [](Tree *t) -> int { return -t->left->eval(); };
     handler_holder["+s"] = [](Tree *t) -> int { return +t->left->eval(); };
     handler_holder["~s"] = [](Tree *t) -> int { return ~t->left->eval(); };
@@ -309,7 +314,7 @@ static void test_regex() {
             "&& 1 << 3 <= 18 >> 1"
             "&& 2 + 3 << 2 == 20"
             "&& 3 + -1 == 2 && 6 / 2 * 3 == 9"
-            "&& *0 == 0 && !0 == 1 && ~2 == -3"
+            "&& !0 == 1 && ~2 == -3"
             "&& -123 == 0 - 123 && ++44 == 44"
             "&& 100 % 7 == 2"
             "&& (65 | 33) == 97"
