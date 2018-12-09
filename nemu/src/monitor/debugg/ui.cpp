@@ -45,6 +45,10 @@ static int cmd_info(char *args);
 
 static int cmd_eval(char *args);
 
+static int cmd_scan_memory(char *args);
+
+static int cmd_scan_memory_n(char *args);
+
 static struct {
     const char *name;
     const char *description;
@@ -57,17 +61,18 @@ static struct {
         {"si",   "Step [N] instruction(s)",                           cmd_step_into},
         {"info", "Provide information of (r)egister/(w)atchpoint",    cmd_info},
         {"p",    "Eval expression",                                   cmd_eval},
+        {"xx",   "Scan memory",                                       cmd_scan_memory},
+        {"x",    "Scan multiple memory",                              cmd_scan_memory_n},
         /* TODO: Add more commands */
-
 };
 
-static int cmd_eval(char *args){
-    if(args == 0){
+static int cmd_eval(char *args) {
+    if (args == 0) {
         printf("please specify expr!\n");
         return 0;
     }
     auto t = compile_expr(args);
-    if(!t){
+    if (!t) {
         printf("invalid expr\n");
         return 0;
     }
@@ -77,8 +82,34 @@ static int cmd_eval(char *args){
 }
 
 constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
+static void scan_memory_kernel(char *args, int n){
+    auto expr = compile_expr(args);
+    int addr_v = expr->eval();
+    uint32_t addr_base [[maybe_unused]] = addr_v & ~3U;
+    for(int i = 0; i < n; ++i){
+        auto addr = addr_base + 4 * i;
+        if(i % 4 == 0){
+            printf("0x%08x: ", addr);
+        }
+        printf("0x%08x    ", vaddr_read(addr, 4));
+        if(i % 4 == 3){
+            printf("\n");
+        }
+    }
+}
 
+static int cmd_scan_memory(char *args) {
+    scan_memory_kernel(args, 1);
+    return 0;
+}
 
+static int cmd_scan_memory_n(char *args){
+    char *arg = strtok(nullptr, " ");
+    int N = atoi(arg);
+    args = arg + strlen(arg) + 1;
+    scan_memory_kernel(args, N);
+    return 0;
+}
 
 
 static void info_register() {
