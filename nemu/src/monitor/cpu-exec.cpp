@@ -57,7 +57,6 @@ void cpu_exec(uint64_t n) {
             }
         }
 #ifdef DEBUG
-        /* TODO: check watchpoints here. */
         for (auto&[id, wp]: g_watch_point_pool) {
             int old = wp.get_value();
             bool changed = wp.update();
@@ -68,7 +67,7 @@ void cpu_exec(uint64_t n) {
                     id, wp.get_expr_str().c_str());
                 printf("Old value = %d [0x%08x]\n", old, old);
                 printf("New value = %d [0x%08x]\n", new_v, new_v);
-                pritnf("\n");
+                printf("\n");
                 return;
             }
         }

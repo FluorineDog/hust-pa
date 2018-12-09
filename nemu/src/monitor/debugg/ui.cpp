@@ -115,7 +115,7 @@ static int cmd_eval(char *args) {
         return 0;
     }
     auto res = t->eval();
-    printf("%d\n", res);
+    printf("%d[0x%08x]\n", res, res);
     return 0;
 }
 

@@ -135,25 +135,25 @@ Handler get_op_handler(const Token &tok, bool special = false) {
 }
 
 void init_handler() {
+    // Leaf
     handler_holder["regl"] = [](Tree *t) -> int {
         return reg_l(t->value); /* TODO*/
     };
-
     handler_holder["regw"] = [](Tree *t) -> int {
         return reg_w(t->value); /* TODO*/
     };
     handler_holder["regb"] = [](Tree *t) -> int {
         return reg_b(t->value); /* TODO*/
     };
-
     handler_holder["eip"] = [](Tree *t) -> int {
         return cpu.eip;
     };
-
-
     handler_holder["num"] = [](Tree *t) -> int { return t->value; };
 
-    handler_holder["*s"] = [](Tree *t) -> int { return vaddr_read((uint32_t)t->value, 4);};
+    // Node
+    handler_holder["*s"] = [](Tree *t) -> int { 
+        return vaddr_read((uint32_t)t->eval(), 4);
+    };
     handler_holder["-s"] = [](Tree *t) -> int { return -t->left->eval(); };
     handler_holder["+s"] = [](Tree *t) -> int { return +t->left->eval(); };
     handler_holder["~s"] = [](Tree *t) -> int { return ~t->left->eval(); };
