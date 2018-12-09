@@ -205,9 +205,9 @@ public:
         auto vec = tokenize(expr);
         this->iter = vec.begin();
         Token init{BARI_OP_BEG, "nope"};
-        for (auto &x: vec) {
-            cout << x.first << " " << x.second << std::endl;
-        }
+//        for (auto &x: vec) {
+//            cout << x.first << " " << x.second << std::endl;
+//        }
         auto tree = parse_expr(init);
         assert(iter->first == TK_END);
         return tree;

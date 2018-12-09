@@ -43,6 +43,8 @@ static int cmd_step_into(char *args);
 
 static int cmd_info(char *args);
 
+static int cmd_eval(char *args);
+
 static struct {
     const char *name;
     const char *description;
@@ -54,12 +56,22 @@ static struct {
         {"q",    "Exit NEMU",                                         cmd_q},
         {"si",   "Step [N] instruction(s)",                           cmd_step_into},
         {"info", "Provide information of (r)egister/(w)atchpoint",    cmd_info},
-
+        {"p",    "Eval expression",                                   cmd_eval},
         /* TODO: Add more commands */
 
 };
 
+static int cmd_eval(char *args){
+    auto t = compile_expr(args);
+    auto res = t->eval();
+    printf("%d\n", res);
+    return 0;
+}
+
 constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
+
+
+
 
 static void info_register() {
     const char *names[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "eip",};
