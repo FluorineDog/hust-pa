@@ -283,7 +283,6 @@ private:
 };
 
 static void test_regex() {
-    auto str = "1 + 8 * 3 / 2 - 5*-(*( $abc * 4)  - 1) == 8 && $rip <= 0x12ab";
     auto validate =
             "1"
             "&& ( 0x10101010 | 0x11001100 & 0x11110000) == 0x11101010"
@@ -301,11 +300,8 @@ static void test_regex() {
             "&& (1 << 31) == 0x80000000"
             "&& (-1 >> 28) == -1"
             "&& (1 || 0 && 0)";
-    auto t = compile_expr(str);
-    auto t2 = compile_expr(validate);
-    cout << t->eval() << endl;
-    cout << t2->eval() << endl;
-    t = nullptr;
+    auto t = compile_expr(validate);
+    assert(t->eval() == 1);
 }
 
 unique_ptr<Tree> compile_expr(const string &str) {
