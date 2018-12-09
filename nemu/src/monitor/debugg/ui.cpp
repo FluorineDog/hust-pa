@@ -12,11 +12,11 @@ void cpu_exec(uint64_t);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char *rl_gets() {
-    static char *line_read = NULL;
+    static char *line_read = nullptr;
 
     if (line_read) {
         free(line_read);
-        line_read = NULL;
+        line_read = nullptr;
     }
 
     line_read = readline("(nemu) ");
@@ -96,8 +96,8 @@ static void info_watchpoint() {
 }
 
 static int cmd_info(char *args) {
-    char *arg = strtok(NULL, " ");
-    if (arg == NULL) {
+    char *arg = strtok(nullptr, " ");
+    if (arg == nullptr) {
         printf("ERROR: Expected 1 Arg(s) \n");
         return 0;
     }
@@ -112,9 +112,9 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_step_into(char *args) {
-    char *arg = strtok(NULL, " ");
+    char *arg = strtok(nullptr, " ");
     int step_count;
-    if (arg == NULL) {
+    if (arg == nullptr) {
         step_count = 1;
     } else {
         step_count = atoi(arg);
@@ -127,10 +127,10 @@ static int cmd_step_into(char *args) {
 
 static int cmd_help(char *args) {
     /* extract the first argument */
-    char *arg = strtok(NULL, " ");
+    char *arg = strtok(nullptr, " ");
     int i;
 
-    if (arg == NULL) {
+    if (arg == nullptr) {
         /* no argument given */
         for (i = 0; i < NR_CMD; i++) {
             printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
@@ -149,23 +149,23 @@ static int cmd_help(char *args) {
 
 void ui_mainloop(int is_batch_mode) {
     if (is_batch_mode) {
-        cmd_c(NULL);
+        cmd_c(nullptr);
         return;
     }
 
-    for (char *str; (str = rl_gets()) != NULL;) {
+    for (char *str; (str = rl_gets()) != nullptr;) {
         char *str_end = str + strlen(str);
 
         /* extract the first token as the command */
         char *cmd = strtok(str, " ");
-        if (cmd == NULL) { continue; }
+        if (cmd == nullptr) { continue; }
 
         /* treat the remaining string as the arguments,
          * which may need further parsing
          */
         char *args = cmd + strlen(cmd) + 1;
         if (args >= str_end) {
-            args = NULL;
+            args = nullptr;
         }
 
 #ifdef HAS_IOE
