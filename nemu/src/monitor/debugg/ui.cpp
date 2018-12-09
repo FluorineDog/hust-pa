@@ -63,7 +63,8 @@ static struct {
 
 static int cmd_eval(char *args){
     if(args == 0){
-        printf("please specify expr");
+        printf("please specify expr!\n");
+        return 0;
     }
     auto t = compile_expr(args);
     if(!t){
@@ -87,6 +88,7 @@ static void info_register() {
         auto value = cpu.gpr[i]._32;
         printf("%-8s0x%08x%16d\n", names[i], value, value);
     }
+    printf("%-8s0x%08x%16d\n", "eip", cpu.eip, cpu.eip);
 }
 
 static void info_watchpoint() {
