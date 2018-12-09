@@ -89,7 +89,7 @@ static int cmd_add_watch(char *args) {
     }
     auto t = compile_expr(args);
     if (t == nullptr) {
-        printf("Invalid EXPR");
+        printf("Invalid EXPR\n");
         return 0;
     }
     int id = g_watch_count++;

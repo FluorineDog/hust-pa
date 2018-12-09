@@ -1,5 +1,6 @@
 #include "nemu.h"
 #include "monitor/monitor.h"
+#include "monitor/watchpoint.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -38,9 +39,6 @@ void cpu_exec(uint64_t n) {
         exec_wrapper(print_flag);
         nr_guest_instr_add(1);
 
-#ifdef DEBUG
-        /* TODO: check watchpoints here. */
-#endif
 
 #ifdef HAS_IOE
         extern void device_update();
@@ -58,6 +56,23 @@ void cpu_exec(uint64_t n) {
                 return;
             }
         }
+#ifdef DEBUG
+        /* TODO: check watchpoints here. */
+        for (auto&[id, wp]: g_watch_point_pool) {
+            int old = wp.get_value();
+            bool changed = wp.update();
+            if (changed) {
+                int new_v =  wp.get_value();
+                nemu_state = NEMU_STOP;
+                printf("Software watchpoint %d: %s\n", 
+                    id, wp.get_expr_str().c_str());
+                printf("Old value = %d [0x%08x]\n", old, old);
+                printf("New value = %d [0x%08x]\n", new_v, new_v);
+                pritnf("\n");
+                return;
+            }
+        }
+#endif
     }
 
     if (nemu_state == NEMU_RUNNING) { nemu_state = NEMU_STOP; }
