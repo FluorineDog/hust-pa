@@ -6,26 +6,26 @@
 
 struct WatchPoint {
 private:
-    int value;
-    std::string expr_str;
-    std::unique_ptr<Tree> tree;
+    int value_;
+    std::string expr_str_;
+    std::unique_ptr<Tree> tree_;
 public:
     WatchPoint(std::string_view expr_str, std::unique_ptr<Tree>&& tree)
-            : expr_str(expr_str), tree(std::move(tree)) {
-        value = tree->eval();
+            : expr_str_(expr_str), tree_(std::move(tree)) {
+        value_ = this->tree_->eval();
     }
     std::string get_expr_str() {
-        return expr_str;
+        return expr_str_;
     }
 
     int get_value() {
-        return value;
+        return value_;
     }
 
     bool update() {
-        int new_value = tree->eval();
-        if (new_value != this->value) {
-            this->value = new_value;
+        int new_value = tree_->eval();
+        if (new_value != this->value_) {
+            this->value_ = new_value;
             return true;
         } else {
             return false;
