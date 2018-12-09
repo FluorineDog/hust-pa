@@ -57,17 +57,23 @@ void cpu_exec(uint64_t n) {
             }
         }
 #ifdef DEBUG
-        for (auto&[id, wp]: g_watch_point_pool) {
-            int old = wp.get_value();
-            bool changed = wp.update();
+        {
+
+            bool changed = false;
+            for (auto&[id, wp]: g_watch_point_pool) {
+                int old = wp.get_value();
+                if (wp.update()) {
+                    int new_v = wp.get_value();
+                    changed = true;
+                    printf("Software watchpoint %d: %s\n",
+                           id, wp.get_expr_str().c_str());
+                    printf("Old value = %d [0x%08x]\n", old, old);
+                    printf("New value = %d [0x%08x]\n", new_v, new_v);
+                    printf("\n");
+                }
+            }
             if (changed) {
-                int new_v =  wp.get_value();
                 nemu_state = NEMU_STOP;
-                printf("Software watchpoint %d: %s\n", 
-                    id, wp.get_expr_str().c_str());
-                printf("Old value = %d [0x%08x]\n", old, old);
-                printf("New value = %d [0x%08x]\n", new_v, new_v);
-                printf("\n");
                 return;
             }
         }
