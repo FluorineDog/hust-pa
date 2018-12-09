@@ -62,7 +62,14 @@ static struct {
 };
 
 static int cmd_eval(char *args){
+    if(args == 0){
+        printf("please specify expr");
+    }
     auto t = compile_expr(args);
+    if(!t){
+        printf("invalid expr\n");
+        return 0;
+    }
     auto res = t->eval();
     printf("%d\n", res);
     return 0;

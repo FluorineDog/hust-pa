@@ -27,8 +27,8 @@ using std::make_unique;
 
 typedef enum {
     TK_END = 0,
-    TK_ = 1,
     TK_NOTYPE = 256,
+    TK_INVALID,
     TK_DEC_NUM,
     TK_HEX_NUM,
     TK_REG,
@@ -56,7 +56,7 @@ static struct rule {
 } rules[] = {
         {R"($)",             TK_END},
         {R"( +)",            TK_NOTYPE},
-        {R"(0x\d+)",         TK_HEX_NUM},
+        {R"(0x[0-9a-fA-F]+)",   TK_HEX_NUM},
         {R"(\d+)",           TK_DEC_NUM},
         {R"(\$\w+)",         TK_REG},
         {R"(&&)",            TK_AND},
@@ -88,7 +88,7 @@ static vector<Token> tokenize(const string &raw) {
     auto iter = raw.cbegin();
     while (true) {
         std::smatch m;
-        TOKEN_ID tk = TK_END;
+        TOKEN_ID tk = TK_INVALID;
         for (auto&[eng, eng_tok] : engine_holder) {
             auto suc = std::regex_search(iter, raw.cend(), m, eng);
             if (suc) {
@@ -96,8 +96,7 @@ static vector<Token> tokenize(const string &raw) {
                 break;
             }
         }
-        if (!m.ready()) {
-            panic("invalid args");
+        if (tk == TK_INVALID) {
             return {};
         }
         if (tk != TK_NOTYPE) {
@@ -214,6 +213,9 @@ class TreeGen {
 public:
     unique_ptr<Tree> operator()(const string &expr) {
         auto vec = tokenize(expr);
+        if (vec.size() == 0) {
+            return nullptr;
+        }
         this->iter = vec.begin();
         Token init{BARI_OP_BEG, "nope"};
 //        for (auto &x: vec) {
@@ -273,8 +275,8 @@ private:
             case TK_REG: {
                 // TODO
                 ++iter;
-                if(auto t = parse_cpuname(token.second)){
-                    auto [name, value] = t.value();
+                if (auto t = parse_cpuname(token.second)) {
+                    auto[name, value] = t.value();
                     auto fn = get_leaf_handler(name);
                     return make_unique<Tree>(value, fn);
                 } else {
@@ -314,6 +316,7 @@ static void test_regex() {
             "&& (65 & 33) == 1"
             "&& (1 << 31) == 0x80000000"
             "&& (-1 >> 28) == -1"
+            "&& 0xFF == 255"
             "&& (1 || 0 && 0)";
     auto t = compile_expr(validate);
     assert(t->eval() == 1);

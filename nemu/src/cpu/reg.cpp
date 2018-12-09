@@ -50,3 +50,18 @@ void reg_test() {
 
     assert(eip_sample == cpu.eip);
 }
+std::optional<std::tuple<const char*, size_t>> parse_cpuname(std::string_view str) {
+    auto checker = [](std::string_view str, const char *regname[]) {
+        auto iter = std::find(regname, regname + 8, str.substr(1, 10));
+        auto loc = iter - regname;
+        return loc;
+    };
+    size_t ret;
+    ret = checker(str, regsl);
+    if (ret != 8) return std::forward_as_tuple("regl", ret);
+    ret = checker(str, regsw);
+    if (ret != 8) return std::forward_as_tuple("regw", ret);
+    ret = checker(str, regsb);
+    if (ret != 8) return std::forward_as_tuple("regb", ret);
+    return std::nullopt;
+}
