@@ -4,7 +4,6 @@
 
 void init_difftest(char *ref_so_file, long img_size);
 void init_regex();
-void init_wp_pool();
 void init_device();
 
 void reg_test();
@@ -127,7 +126,7 @@ int init_monitor(int argc, char *argv[]) {
   init_regex();
 
   /* Initialize the watchpoint pool. */
-  init_wp_pool();
+  // init_wp_pool();
 
   /* Initialize devices. */
   init_device();

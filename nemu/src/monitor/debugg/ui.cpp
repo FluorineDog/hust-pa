@@ -68,16 +68,18 @@ static struct {
         {"xx",   "Scan memory",                                       cmd_scan_memory},
         {"x",    "Scan multiple memory",                              cmd_scan_memory_n},
         {"w",    "add_watchpoint",                                    cmd_add_watch},
+        {"d",    "delete_watchpoint",                                 cmd_delete_watch},
         /* TODO: Add more commands */
 };
 
-static int cmd_delete_watch(char *args){
+static int cmd_delete_watch(char *args) {
     if (args == nullptr) {
         printf("please specify expr!\n");
         return 0;
     }
-     
-    g_watch_point_pool.erase()
+    int id = atoi(args);
+    g_watch_point_pool.erase(id);
+    return 0;
 }
 
 static int cmd_add_watch(char *args) {
