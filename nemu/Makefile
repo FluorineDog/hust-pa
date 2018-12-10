@@ -4,7 +4,7 @@ BUILD_DIR ?= ./build
 
 ifeq ($(SHARE), 1)
 SO = -so
-SO_CFLAGS = -fPIC -D_SHARE=1
+SO_CFLAGS = -fPIC -D_SHARE=1 -std=c++17
 SO_LDLAGS = -shared -fPIC
 endif
 
@@ -19,7 +19,7 @@ include Makefile.git
 CC = g++
 LD = g++
 INCLUDES  = $(addprefix -I, $(INC_DIR))
-CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) -fomit-frame-pointer -Wno-restrict
+CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) -fomit-frame-pointer -Wno-restrict -std=c++17
 CFLAGS   += -DDIFF_TEST_QEMU
 
 # Files to be compiled
