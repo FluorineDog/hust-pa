@@ -45,7 +45,7 @@ union EFlags {
     XX(_plac_hldr5, 16, 16) \
 //
 
-#define XX_(name, loc, bit) constexpr int EFLAGS_OFF_ ## name = loc;
+#define XX_(name, loc, bit) constexpr int EFLAGS_OFFSET_ ## name = loc;
 #define XX(name, loc, bit) XX_(name, loc, bit)
 eflags_accept_(XX)
 #undef XX_
