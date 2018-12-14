@@ -5,8 +5,9 @@
 #include "util/c_op.h"
 #include "cpu/relop.h"
 #include "cpu/rtl-wrapper.h"
+#include "eflags.h"
 
-extern rtlreg_t t0, t1, t2, t3, at;
+extern rtlreg_t t0, t1, t2, t3;
 
 void decoding_set_jmp(bool is_jmp);
 bool interpret_relop(uint32_t relop, const rtlreg_t src1, const rtlreg_t src2);
@@ -192,9 +193,10 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- src1[width * 8 - 1]
 //   int offset = width * 8;
 //   rtl_shri(dest, src1, )
-  int offset = (4 - width) * 8;
-  rtl_shli(&at, src1, offset);
-  rtl_sari(dest, &at, offset);
+  int offset = (width * 8 - 1);
+  rtl_shri(dest, src1, offset);
+  rtl_andi(dest, src1, 0x1);
+// TODO();
 }
 
 #define make_rtl_setget_eflags(f) \
@@ -212,14 +214,18 @@ make_rtl_setget_eflags(SF)
 
 static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
-  TODO();
-  rtl_setrelopi(RELOP_EQ, &at, result, imm);
-  
+  rtlreg_t res_at;
+  rtl_setrelopi(RELOP_EQ, &res_at, result, 0);
+  rtl_set_ZF(&res_at);
+//  TODO();
 }
 
 static inline void rtl_update_SF(const rtlreg_t* result, int width) {
   // eflags.SF <- is_sign(result[width * 8 - 1 .. 0])
-  TODO();
+  rtlreg_t res_at;
+  rtl_setrelopi(RELOP_LT, &res_at, result, 0);
+  rtl_set_SF(&res_at);
+//  TODO();
 }
 
 static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
