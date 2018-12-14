@@ -28,8 +28,9 @@ static inline void interpret_rtl_mv(rtlreg_t* dest, const rtlreg_t *src1) {
   /* Actually those of imm version are pseudo rtl instructions,
    * but we define them here in the same macro */ \
   static inline void concat(rtl_, name ## i) (rtlreg_t* dest, const rtlreg_t* src1, int imm) { \
-    rtl_li(&at, imm); \
-    rtl_ ## name (dest, src1, &at); \
+    rtlreg_t imm_at; \
+    rtl_li(&imm_at, imm); \
+    rtl_ ## name (dest, src1, &imm_at); \
   }
 
 make_rtl_arith_logic(add)
@@ -150,35 +151,50 @@ static inline void rtl_sr(int r, const rtlreg_t* src1, int width) {
 
 static inline void rtl_not(rtlreg_t *dest, const rtlreg_t* src1) {
   // dest <- ~src1
-  TODO();
+  rtl_li(dest, -1);
+  rtl_sub(dest, dest, src1);
+  // TODO();
 }
 
 static inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- signext(src1[(width * 8 - 1) .. 0])
-  TODO();
+  int offset = (4 - width) * 8;
+  rtl_shli(dest, src1, offset);
+  rtl_sari(dest, dest, offset);
+  // TODO();
 }
 
 static inline void rtl_push(const rtlreg_t* src1) {
   // esp <- esp - 4
   // M[esp] <- src1
-  TODO();
+  rtl_subi(&cpu.esp, &cpu.esp, 4);
+  rtl_sm(reinterpret_cast<rtlreg_t*>(cpu.esp), src1, 4);
+//   TODO();
 }
 
 static inline void rtl_pop(rtlreg_t* dest) {
   // dest <- M[esp]
   // esp <- esp + 4
-  TODO();
+  rtl_lm(dest, reinterpret_cast<rtlreg_t*>(cpu.esp),4);
+//   TODO();
 }
 
 static inline void rtl_setrelopi(uint32_t relop, rtlreg_t *dest,
     const rtlreg_t *src1, int imm) {
   // dest <- (src1 relop imm ? 1 : 0)
-  TODO();
+  rtlreg_t imm_at;
+  rtl_li(&imm_at, imm);
+  rtl_setrelop(relop, dest, src1, &imm_at);
+//   TODO();
 }
 
 static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- src1[width * 8 - 1]
-  TODO();
+//   int offset = width * 8;
+//   rtl_shri(dest, src1, )
+  int offset = (4 - width) * 8;
+  rtl_shli(&at, src1, offset);
+  rtl_sari(dest, &at, offset);
 }
 
 #define make_rtl_setget_eflags(f) \
@@ -197,6 +213,8 @@ make_rtl_setget_eflags(SF)
 static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
   TODO();
+  rtl_setrelopi(RELOP_EQ, &at, result, imm);
+  
 }
 
 static inline void rtl_update_SF(const rtlreg_t* result, int width) {
