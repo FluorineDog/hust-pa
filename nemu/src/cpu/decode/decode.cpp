@@ -18,6 +18,7 @@ static inline make_DopHelper(I) {
   /* eip here is pointing to the immediate */
   op->type = OP_TYPE_IMM;
   op->imm = instr_fetch(eip, op->width);
+  assert(op->width == 4);
   rtl_li(&op->val, op->imm);
 
 #ifdef DEBUG
@@ -31,8 +32,7 @@ static inline make_DopHelper(I) {
  */
 /* sign immediate */
 static inline make_DopHelper(SI) {
-  assert(op->width == 1 || op->width == 4);
-
+  // assert(op->width == 1 || op->width == 4);
   op->type = OP_TYPE_IMM;
 
   /* TODO: Use instr_fetch() to read `op->width' bytes of memory
@@ -41,9 +41,12 @@ static inline make_DopHelper(SI) {
    *
    op->simm = ???
    */
-  TODO();
-
-  rtl_li(&op->val, op->simm);
+//  TODO(): untested
+  int fuck = instr_fetch(eip, op->width);
+  fuck <<= (4 - op->width) * 8;
+  fuck >>= (4 - op->width) * 8;
+  op->simm = fuck;
+  rtl_li(&op->val, (uint32_t)op->simm);
 
 #ifdef DEBUG
   snprintf(op->str, OP_STR_SIZE, "$0x%x", op->simm);
