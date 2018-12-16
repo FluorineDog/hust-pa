@@ -64,3 +64,12 @@ eflags_accept_(XX)
 #undef XX_
 #undef XX
 
+
+#define XX_(name, loc, bit) inline uint32_t EFLAGS_get_ ## name (uint32_t eflags) { return (EFLAGS_LOWMASK_ ## name & (eflags >> EFLAGS_OFFSET_ ## name));}
+#define XX(name, loc, bit) XX_(name, loc, bit)
+eflags_accept_(XX)
+#undef XX_
+#undef XX
+
+
+
