@@ -9,3 +9,5 @@ make_EHelper(nemu_trap);
 
 // TODO: untested
 make_EHelper(call);
+
+make_EHelper(push);

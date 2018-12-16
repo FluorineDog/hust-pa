@@ -14,17 +14,7 @@ void decoding_set_jmp(bool is_jmp) {
 /* Refer to Appendix A in i386 manual for the explanations of these abbreviations */
 
 /* Ib, Iv */
-static inline make_DopHelper(I) {
-  /* eip here is pointing to the immediate */
-  op->type = OP_TYPE_IMM;
-  op->imm = instr_fetch(eip, op->width);
-  assert(op->width == 4);
-  rtl_li(&op->val, op->imm);
 
-#ifdef DEBUG
-  snprintf(op->str, OP_STR_SIZE, "$0x%x", op->imm);
-#endif
-}
 
 /* I386 manual does not contain this abbreviation, but it is different from
  * the one above from the view of implementation. So we use another helper
@@ -51,6 +41,19 @@ static inline make_DopHelper(SI) {
 #ifdef DEBUG
   snprintf(op->str, OP_STR_SIZE, "$0x%x", op->simm);
 #endif
+}
+
+static inline make_DopHelper(I) {
+	decode_op_SI(eip, op, load_val);
+//  /* eip here is pointing to the immediate */
+//  op->type = OP_TYPE_IMM;
+//  op->imm = instr_fetch(eip, op->width);
+//  assert(op->width == 4);
+//  rtl_li(&op->val, op->imm);
+//
+//#ifdef DEBUG
+//  snprintf(op->str, OP_STR_SIZE, "$0x%x", op->imm);
+//#endif
 }
 
 /* I386 manual does not contain this abbreviation.

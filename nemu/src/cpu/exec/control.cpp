@@ -29,6 +29,9 @@ make_EHelper(call) {
   rtlreg_t seqEIP;
   rtl_li(&seqEIP, g_decoding.seq_eip);
   rtl_push(&seqEIP);
+  if(g_decoding.is_operand_size_16){
+  	g_decoding.jmp_eip &= 0xFFFF;
+  }
   rtl_j(g_decoding.jmp_eip);
 //  TODO();
   print_asm("call %x", g_decoding.jmp_eip);
