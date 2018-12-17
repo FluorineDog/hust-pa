@@ -9,7 +9,7 @@ make_EHelper(add) {
 make_EHelper(sub) {
 //    TODO();
     rtlreg_t temp, CF, OF, ord, sign;
-    rtl_add(&temp, &id_dest->val, &id_src->val);
+    rtl_sub(&temp, &id_dest->val, &id_src->val);
     rtl_update_ZFSF(&temp, id_dest->width);
 
     rtl_setrelop(RELOP_LTU, &CF, &id_dest->val, &id_src->val);

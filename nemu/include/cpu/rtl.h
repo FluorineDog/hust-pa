@@ -211,7 +211,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
     rtlreg_t bitmask; \
     rtl_setrelopi(RELOP_NE, &bitmask, src, 0);\
     rtl_shli(&bitmask, &bitmask, OFFSET);\
-    rtl_andi(&cpu.eflags, src, CL_MASK);\
+    rtl_andi(&cpu.eflags, &cpu.eflags, CL_MASK);\
     rtl_or(&cpu.eflags, &cpu.eflags, &bitmask); \
     /*TODO();*/ \
   } \
