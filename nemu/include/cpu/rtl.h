@@ -204,7 +204,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 
 
 #define make_rtl_setget_eflags(f) \
-  static inline void concat(rtl_set_, f) (const rtlreg_t* src) { \
+  static inline void concat(rtl_update_, f) (const rtlreg_t* src) { \
     using namespace EFLAGS;  \
     auto OFFSET = OFFSET_ ## f;\
     auto CL_MASK = ~(MASK_ ## f); \
@@ -222,7 +222,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
     rtl_shri(dest, &cpu.eflags, OFFSET); \
     rtl_andi(dest, dest, LOWMASK); \
     /*TODO();*/ \
-  }
+  } 
   
 
 make_rtl_setget_eflags(CF)
@@ -234,7 +234,7 @@ static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
   rtlreg_t res_at;
   rtl_setrelopi(RELOP_EQ, &res_at, result, 0);
-  rtl_set_ZF(&res_at);
+  rtl_update_ZF(&res_at);
 //  TODO();
 }
 
@@ -242,7 +242,7 @@ static inline void rtl_update_SF(const rtlreg_t* result, int width) {
   // eflags.SF <- is_sign(result[width * 8 - 1 .. 0])
   rtlreg_t res_at;
   rtl_setrelopi(RELOP_LT, &res_at, result, 0);
-  rtl_set_SF(&res_at);
+  rtl_update_SF(&res_at);
 //  TODO();
 }
 

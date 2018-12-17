@@ -22,8 +22,8 @@ make_EHelper(xor) {
   rtl_li(&TRUE, 1);
   rtl_xor(&res, &id_dest->val, &id_src->val);
   rtl_update_ZFSF(&res, id_dest->width);
-  rtl_set_OF(&FALSE);
-  rtl_set_CF(&FALSE);
+  rtl_update_OF(&FALSE);
+  rtl_update_CF(&FALSE);
   
   operand_write(id_dest, &res);
   print_asm_template2(xor);
