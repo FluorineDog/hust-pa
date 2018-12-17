@@ -29,6 +29,19 @@
   - 实现对应的执行函数, 并在all-intr.h 中声明它
   - 在exec.cpp 文件里的optable_table 上注册相应的函数
 
+## EFLAGS
+我们需要优雅地添加对EFLAGS 的支持. 目前, 我们只需要支持
+- IF
+- SF
+- ZF
+- OF
+- CF
+为了减少代码的冗余度, 我们采用了宏模板的黑魔法, 在eflags.h中定义了EFlags中的所有位段, 并添加了: 
+- mask 某个flag 的相应位掩码
+- offset: 某个flag 的在eflags中的偏
+- lowmask: mask右移offset到最低位的值, 配合offset使用可以提取相应的位. 
+
+
 ## dummy
 dummy需要实现指令不多, 只需要实现
 - call imm
