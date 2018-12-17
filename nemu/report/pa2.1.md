@@ -30,11 +30,12 @@
   - 在exec.cpp 文件里的optable_table 上注册相应的函数
 
 ## dummy
-dummy需要实现的指令不多, 只需要实现
+dummy需要实现指令不多, 只需要实现
 - call imm
 - sub r/m imm8
 - xor r r/m
 - ret
+
 这些指令实现成功后, 可以得到正确输出
 ```
 (nemu) si 9
