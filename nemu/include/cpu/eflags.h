@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <cstdint>
 union EFlags {
 	struct {
 		unsigned int CF:1; // 0
@@ -45,31 +46,34 @@ union EFlags {
     XX(_plac_hldr5, 16, 16) \
 //
 
-#define XX_(name, loc, bit) constexpr int EFLAGS_OFFSET_ ## name = loc;
+
+namespace EFLAGS{
+
+
+#define XX_(name, loc, bit) constexpr int OFFSET_ ## name = loc;
 #define XX(name, loc, bit) XX_(name, loc, bit)
 eflags_accept_(XX)
 #undef XX_
 #undef XX
 
-#define XX_(name, loc, bit) constexpr uint32_t EFLAGS_LOWMASK_ ## name = (1U << bit) - 1;
-#define XX(name, loc, bit) XX_(name, loc, bit)
-eflags_accept_(XX)
-#undef XX_
-#undef XX
-
-
-#define XX_(name, loc, bit) constexpr uint32_t EFLAGS_MASK_ ## name = (EFLAGS_LOWMASK_ ## name) << loc;
-#define XX(name, loc, bit) XX_(name, loc, bit)
-eflags_accept_(XX)
-#undef XX_
-#undef XX
-
-
-#define XX_(name, loc, bit) inline uint32_t EFLAGS_get_ ## name (uint32_t eflags) { return (EFLAGS_LOWMASK_ ## name & (eflags >> EFLAGS_OFFSET_ ## name));}
+#define XX_(name, loc, bit) constexpr uint32_t LOWMASK_ ## name = (1U << bit) - 1;
 #define XX(name, loc, bit) XX_(name, loc, bit)
 eflags_accept_(XX)
 #undef XX_
 #undef XX
 
 
+#define XX_(name, loc, bit) constexpr uint32_t MASK_ ## name = (LOWMASK_ ## name) << loc;
+#define XX(name, loc, bit) XX_(name, loc, bit)
+eflags_accept_(XX)
+#undef XX_
+#undef XX
 
+
+#define XX_(name, loc, bit) inline uint32_t get_ ## name (uint32_t eflags) { return (LOWMASK_ ## name & (eflags >> OFFSET_ ## name));}
+#define XX(name, loc, bit) XX_(name, loc, bit)
+eflags_accept_(XX)
+#undef XX_
+#undef XX
+
+}

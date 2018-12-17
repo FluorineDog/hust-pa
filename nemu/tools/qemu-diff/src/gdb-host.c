@@ -77,7 +77,7 @@ bool gdb_setregs(union gdb_regs *r) {
   for (i = 0; i < len; i ++) {
     p += sprintf(buf + p, "%c%c", hex_encode(((uint8_t *)src)[i] >> 4), hex_encode(((uint8_t *)src)[i] & 0xf));
   }
-
+  printf("BUF IS %s", buf);
   gdb_send(conn, (const uint8_t *)buf, strlen(buf));
   free(buf);
 

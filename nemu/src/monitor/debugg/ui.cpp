@@ -164,8 +164,8 @@ static void info_register() {
         printf("%-8s0x%08x%16d\n", regsl[i], value, value);
     }
     printf("%-8s0x%08x%16d\n", "eip", cpu.eip, cpu.eip);
-    
-    printf("ZF=%d, SF=%d, CF=%d, OF=%d\n", EFLAGS_get_ZF(cpu.eflags), EFLAGS_get_SF(cpu.eflags), EFLAGS_get_CF(cpu.eflags), EFLAGS_get_OF(cpu.eflags));
+    using namespace EFLAGS;    
+    printf("ZF=%d, SF=%d, CF=%d, OF=%d\n", get_ZF(cpu.eflags), get_SF(cpu.eflags), get_CF(cpu.eflags), get_OF(cpu.eflags));
 }
 
 static int cmd_info(char *args) {

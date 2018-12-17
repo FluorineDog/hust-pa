@@ -205,8 +205,9 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 
 #define make_rtl_setget_eflags(f) \
   static inline void concat(rtl_set_, f) (const rtlreg_t* src) { \
-    auto OFFSET = EFLAGS_OFFSET_ ## f;\
-    auto CL_MASK = ~(EFLAGS_MASK_ ## f); \
+    using namespace EFLAGS;  \
+    auto OFFSET = OFFSET_ ## f;\
+    auto CL_MASK = ~(MASK_ ## f); \
     rtlreg_t bitmask; \
     rtl_setrelopi(RELOP_NE, &bitmask, src, 0);\
     rtl_shli(&bitmask, &bitmask, OFFSET);\
@@ -215,8 +216,9 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
     /*TODO();*/ \
   } \
   static inline void concat(rtl_get_, f) (rtlreg_t* dest) { \
-    auto OFFSET = EFLAGS_OFFSET_ ## f;\
-    auto LOWMASK = EFLAGS_LOWMASK_ ## f;\
+    using namespace EFLAGS;  \
+    auto OFFSET = OFFSET_ ## f;\
+    auto LOWMASK = LOWMASK_ ## f;\
     rtl_shri(dest, &cpu.eflags, OFFSET); \
     rtl_andi(dest, dest, LOWMASK); \
     /*TODO();*/ \
