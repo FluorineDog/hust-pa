@@ -223,6 +223,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
     rtl_andi(dest, dest, LOWMASK); \
     /*TODO();*/ \
   }
+  
 
 make_rtl_setget_eflags(CF)
 make_rtl_setget_eflags(OF)

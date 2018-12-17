@@ -71,6 +71,7 @@ make_EHelper(movzx) {
 }
 
 make_EHelper(lea) {
+  assert(id_src->type == OP_TYPE_MEM);
   operand_write(id_dest, &id_src->addr);
   print_asm_template2(lea);
 }
