@@ -1,6 +1,12 @@
 #include "cpu/exec.h"
 #include "cpu/cc.h"
 
+void logical_update_XF(const rtlreg_t* res) {
+  rtl_update_ZFSF(res, id_dest->width);
+  rtl_clear_OF();
+  rtl_clear_CF();
+}
+
 make_EHelper(test) {
   TODO();
 
@@ -8,25 +14,28 @@ make_EHelper(test) {
 }
 
 make_EHelper(and) {
-  TODO();
-
+  rtlreg_t res;
+  rtl_and(&res, &id_dest->val, &id_src->val);
+  logical_update_XF(&res);
+  operand_write(id_dest, &res);
+  
   print_asm_template2(and);
 }
 
 make_EHelper(xor) {
-//   TODO();
   rtlreg_t res;
   rtl_xor(&res, &id_dest->val, &id_src->val);
-  rtl_update_ZFSF(&res, id_dest->width);
-  rtl_clear_OF();
-  rtl_clear_CF();
-  
+  logical_update_XF(&res);
   operand_write(id_dest, &res);
+  
   print_asm_template2(xor);
 }
 
 make_EHelper(or) {
-  TODO();
+  rtlreg_t res;
+  rtl_or(&res, &id_dest->val, &id_src->val);
+  logical_update_XF(&res);
+  operand_write(id_dest, &res);
 
   print_asm_template2(or);
 }
