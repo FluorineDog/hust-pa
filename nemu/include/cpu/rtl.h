@@ -222,7 +222,17 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
     rtl_shri(dest, &cpu.eflags, OFFSET); \
     rtl_andi(dest, dest, LOWMASK); \
     /*TODO();*/ \
-  } 
+  } \
+  static inline void concat(rtl_set_, f) () { \
+    using namespace EFLAGS;  \
+    rtl_ori(&cpu.eflags, &cpu.eflags, MASK_ ## f); \
+    /*TODO();*/ \
+  }  \
+  static inline void concat(rtl_clear_, f) () { \
+    using namespace EFLAGS;  \
+    rtl_andi(&cpu.eflags, &cpu.eflags, ~ MASK_ ## f); \
+    /*TODO();*/ \
+  }
   
 
 make_rtl_setget_eflags(CF)
