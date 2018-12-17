@@ -2,16 +2,18 @@
 #include "monitor/monitor.h"
 #include <unistd.h>
 
-void init_difftest(char *ref_so_file, long img_size);
+const char* g_so_file = "/home/mike/workspace/x86/ics-pa/nemu/tools/qemu-diff/build/qemu-so";
+
+void init_difftest(const char *ref_so_file, long img_size);
 void init_regex();
 void init_device();
 
 void reg_test();
 
 FILE *log_fp = NULL;
-static char *log_file = NULL;
-static char *diff_so_file = NULL;
-static char *img_file = NULL;
+static const char *log_file = NULL;
+static const char *diff_so_file = NULL;
+static const char *img_file = NULL;
 static int is_batch_mode = false;
 
 static inline void init_log() {
@@ -89,6 +91,7 @@ static inline void restart() {
 
 static inline void parse_args(int argc, char *argv[]) {
   int o;
+  diff_so_file = g_so_file;
   while ( (o = getopt(argc, argv, "-bl:d:")) != -1) {
     switch (o) {
       case 'b': is_batch_mode = true; break;
