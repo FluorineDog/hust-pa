@@ -1,36 +1,62 @@
 #include "cpu/exec.h"
 
 make_EHelper(add) {
-    TODO();
+    rtlreg_t res, CF, OF, t_xor1, t_xor2, t_and;
+    rtl_add(&res, &id_dest->val, &id_src->val);
+    rtl_update_ZFSF(&res, id_dest->width);
 
+    rtl_setrelop(RELOP_LTU, &CF, &res, &id_src->val);
+    rtl_update_CF(&CF);
+    
+    rtl_xor(&t_xor1, &res, &id_dest->val);
+    rtl_xor(&t_xor2, &res, &id_src->val);
+    rtl_and(&t_and, &t_xor1, &t_xor2);
+    rtl_msb(&OF, &t_and, id_dest->width);
+    rtl_update_OF(&OF);
+    
+    operand_write(id_dest, &res);
+    
     print_asm_template2(add);
 }
 
-make_EHelper(sub) {
-//    TODO();
-    rtlreg_t temp, CF, OF, ord, sign;
-    rtl_sub(&temp, &id_dest->val, &id_src->val);
-    rtl_update_ZFSF(&temp, id_dest->width);
+static inline void sub_cmp_common_ref(rtlreg_t& res){
+    rtlreg_t CF, OF, ord, sign;
+    rtl_sub(&res, &id_dest->val, &id_src->val);
+    rtl_update_ZFSF(&res, id_dest->width);
 
     rtl_setrelop(RELOP_LTU, &CF, &id_dest->val, &id_src->val);
-    rtl_update_CF(&CF); 
+    rtl_update_CF(&CF);
+    
     rtl_setrelop(RELOP_LT, &ord, &id_dest->val, &id_src->val);
     rtl_msb(&sign, &id_dest->val, id_dest->width);
     rtl_xor(&OF, &ord, &sign);
     rtl_update_OF(&OF);
-    operand_write(id_dest, &temp);
+}
+
+make_EHelper(sub) {
+    rtlreg_t res;
+    sub_cmp_common_ref(res);
+    operand_write(id_dest, &res);
     print_asm_template2(sub);
 }
 
 make_EHelper(cmp) {
-    TODO();
-
+    rtlreg_t res;
+    sub_cmp_common_ref(res);
     print_asm_template2(cmp);
 }
 
 make_EHelper(inc) {
-    TODO();
-
+//    TODO();
+    rtlreg_t res;
+    rtlreg_t OF;
+    rtl_addi(&res, &id_dest->val, 1);
+    rtl_update_ZFSF(&res, id_dest->width);
+    // and?
+    rtl_setrelopi(RELOP_EQ, &OF, &res, 0x80000000);
+    rtl_update_OF(&OF);
+    // keep CF
+    operand_write(id_dest, &res);
     print_asm_template1(inc);
 }
 

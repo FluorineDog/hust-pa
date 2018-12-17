@@ -11,8 +11,14 @@ make_EHelper(nemu_trap);
 make_EHelper(call);
 
 make_EHelper(push);
+make_EHelper(pop);
 
 make_EHelper(sub);
+make_EHelper(add);
+make_EHelper(adc);
+make_EHelper(sbb);
+make_EHelper(cmp);
+
 
 make_EHelper(xor);
 
@@ -21,3 +27,7 @@ make_EHelper(ret);
 make_EHelper(lea);
 make_EHelper(and);
 make_EHelper(or);
+
+make_EHelper(inc);
+make_EHelper(dec);
+
