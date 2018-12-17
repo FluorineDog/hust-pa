@@ -56,7 +56,7 @@ static struct rule {
 } rules[] = {
         {R"($)",             TK_END},
         {R"( +)",            TK_NOTYPE},
-        {R"(0x[0-9a-fA-F]+)",   TK_HEX_NUM},
+        {R"(0[xX][0-9a-fA-F]+)",   TK_HEX_NUM},
         {R"(\d+)",           TK_DEC_NUM},
         {R"(\$\w+)",         TK_REG},
         {R"(&&)",            TK_AND},
