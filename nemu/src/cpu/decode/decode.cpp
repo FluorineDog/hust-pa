@@ -118,26 +118,26 @@ static inline make_DopHelper(O) {
 /* Eb <- Gb
  * Ev <- Gv
  */
-make_DHelper(G2E) {
+make_DHelper(R2E) {
   decode_op_rm(eip, id_dest, true, id_src, true);
 }
 
-make_DHelper(mov_G2E) {
+make_DHelper(mov_R2E) {
   decode_op_rm(eip, id_dest, false, id_src, true);
 }
 
 /* Gb <- Eb
  * Gv <- Ev
  */
-make_DHelper(E2G) {
+make_DHelper(E2R) {
   decode_op_rm(eip, id_src, true, id_dest, true);
 }
 
-make_DHelper(mov_E2G) {
+make_DHelper(mov_E2R) {
   decode_op_rm(eip, id_src, true, id_dest, false);
 }
 
-make_DHelper(lea_M2G) {
+make_DHelper(lea_M2R) {
   decode_op_rm(eip, id_src, false, id_dest, false);
 }
 
@@ -152,7 +152,7 @@ make_DHelper(I2a) {
 /* Gv <- EvIb
  * Gv <- EvIv
  * use for imul */
-make_DHelper(I_E2G) {
+make_DHelper(I_E2R) {
   decode_op_rm(eip, id_src2, true, id_dest, false);
   decode_op_I(eip, id_src, true);
 }
@@ -219,7 +219,7 @@ make_DHelper(SI2E) {
   }
 }
 
-make_DHelper(SI_E2G) {
+make_DHelper(SI_E2R) {
   assert(id_dest->width == 2 || id_dest->width == 4);
   decode_op_rm(eip, id_src2, true, id_dest, false);
   id_src->width = 1;
@@ -257,7 +257,7 @@ make_DHelper(gp2_Ib2E) {
 
 /* Ev <- GvIb
  * use for shld/shrd */
-make_DHelper(Ib_G2E) {
+make_DHelper(Ib_R2E) {
   decode_op_rm(eip, id_dest, true, id_src2, true);
   id_src->width = 1;
   decode_op_I(eip, id_src, true);
@@ -265,7 +265,7 @@ make_DHelper(Ib_G2E) {
 
 /* Ev <- GvCL
  * use for shld/shrd */
-make_DHelper(cl_G2E) {
+make_DHelper(cl_R2E) {
   decode_op_rm(eip, id_dest, true, id_src2, true);
   id_src->type = OP_TYPE_REG;
   id_src->reg = R_CL;
