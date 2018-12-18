@@ -1,6 +1,4 @@
-#ifndef __REG_H__
-#define __REG_H__
-
+#pragma once
 #include "common.h"
 
 
@@ -63,4 +61,3 @@ static inline const char* reg_name(int index, int width) {
   }
 }
 
-#endif

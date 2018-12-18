@@ -1,6 +1,4 @@
-#ifndef __CPU_RTL_H__
-#define __CPU_RTL_H__
-
+#pragma once
 #include "nemu.h"
 #include "util/c_op.h"
 #include "cpu/relop.h"
@@ -261,4 +259,3 @@ static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
   rtl_update_SF(result, width);
 }
 
-#endif

@@ -1,6 +1,4 @@
-#ifndef __RELOP_H__
-#define __RELOP_H__
-
+#pragma once
 // relation operation
 enum {
   //            +-- unsign
@@ -24,4 +22,3 @@ enum {
   RELOP_GEU   = 8 | 0 | 0 | 1,
 };
 
-#endif

@@ -1,6 +1,4 @@
-#ifndef __MACRO_H__
-#define __MACRO_H__
-
+#pragma once
 #define str_temp(x) #x
 #define str(x) str_temp(x)
 
@@ -10,4 +8,3 @@
 #define concat4(x, y, z, w) concat3(concat(x, y), z, w)
 #define concat5(x, y, z, v, w) concat4(concat(x, y), z, v, w)
 
-#endif

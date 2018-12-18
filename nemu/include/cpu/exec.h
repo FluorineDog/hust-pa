@@ -1,5 +1,4 @@
-#ifndef __CPU_EXEC_H__
-#define __CPU_EXEC_H__
+#pragma once
 
 #include "nemu.h"
 
@@ -38,4 +37,3 @@ static inline uint32_t instr_fetch(vaddr_t *eip, int len) {
 #define print_asm_template3(instr) \
   print_asm(str(instr) "%c %s,%s,%s", suffix_char(id_dest->width), id_src->str, id_src2->str, id_dest->str)
 
-#endif

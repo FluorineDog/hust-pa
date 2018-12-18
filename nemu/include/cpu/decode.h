@@ -1,6 +1,4 @@
-#ifndef __CPU_DECODE_H__
-#define __CPU_DECODE_H__
-
+#pragma once
 #include "common.h"
 
 #include "rtl.h"
@@ -113,4 +111,3 @@ make_DHelper(in_dx2a);
 make_DHelper(out_a2I);
 make_DHelper(out_a2dx);
 
-#endif

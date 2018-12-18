@@ -1,6 +1,4 @@
-#ifndef __RTL_WRAPPER_H__
-#define __RTL_WRAPPER_H__
-
+#pragma once
 #include "macro.h"
 
 #define RTL_PREFIX interpret
@@ -37,4 +35,3 @@
 #define rtl_jrelop    concat(RTL_PREFIX, _rtl_jrelop  )
 #define rtl_exit      concat(RTL_PREFIX, _rtl_exit    )
 
-#endif
