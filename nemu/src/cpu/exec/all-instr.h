@@ -35,3 +35,4 @@ make_EHelper(dec);
 make_EHelper(jcc);
 make_EHelper(jmp);
 
+make_EHelper(setcc);
