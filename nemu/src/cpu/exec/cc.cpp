@@ -38,19 +38,22 @@ void rtl_setcc(rtlreg_t *dest, uint8_t subcode) {
 		case CC_S:
 			// SF = 1
 			rtl_mv(dest, &SF);
+			break;
 		case CC_L:
 			// SF != OF
 			rtl_xor(dest, &SF, &OF);
+			break;
 		case CC_LE:{
 			// SF != OF, or ZF = 1
 			rtlreg_t tmp;
 			rtl_xor(&tmp, &SF, &OF);
 			rtl_or(dest, &tmp, &ZF);
+			break;
 		}
-		default:
-			panic("should not reach here");
 		case CC_P:
 			panic("n86 does not have PF");
+		default:
+			panic("should not reach here");
 	}
 	
 	if (invert) {
