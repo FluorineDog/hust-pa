@@ -52,7 +52,6 @@ make_EHelper(inc) {
     rtlreg_t OF;
     rtl_addi(&res, &id_dest->val, 1);
     rtl_update_ZFSF(&res, id_dest->width);
-    // and?
     rtl_setrelopi(RELOP_EQ, &OF, &res, 0x80000000);
     rtl_update_OF(&OF);
     // keep CF
@@ -61,14 +60,26 @@ make_EHelper(inc) {
 }
 
 make_EHelper(dec) {
-    TODO();
-
+    rtlreg_t res;
+    rtlreg_t OF;
+    rtl_subi(&res, &id_dest->val, 1);
+    rtl_update_ZFSF(&res, id_dest->width);
+    rtl_setrelopi(RELOP_EQ, &OF, &res, 0x7FFFFFFF);
+    rtl_update_OF(&OF);
+    // keep CF
+    operand_write(id_dest, &res);
     print_asm_template1(dec);
 }
 
 make_EHelper(neg) {
-    TODO();
-
+    rtlreg_t res;
+    rtlreg_t ZERO;
+    rtl_li(&ZERO, 0);
+    rtl_sub(&res, &ZERO, &id_dest->val);
+    rtl_update_ZFSF(&res, id_dest->width);
+    rtl_update_CF(&id_dest->val);
+    
+    
     print_asm_template1(neg);
 }
 
