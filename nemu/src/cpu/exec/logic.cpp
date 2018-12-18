@@ -7,16 +7,21 @@ void logical_update_XF(const rtlreg_t* res) {
   rtl_clear_CF();
 }
 
-make_EHelper(test) {
-  TODO();
+static inline void test_and_common_ref(rtlreg_t& res){
+  rtl_and(&res, &id_dest->val, &id_src->val);
+  logical_update_XF(&res);
+}
 
+make_EHelper(test) {
+	rtlreg_t res;
+  test_and_common_ref(res);
   print_asm_template2(test);
 }
 
+
 make_EHelper(and) {
   rtlreg_t res;
-  rtl_and(&res, &id_dest->val, &id_src->val);
-  logical_update_XF(&res);
+  test_and_common_ref(res);
   operand_write(id_dest, &res);
   
   print_asm_template2(and);

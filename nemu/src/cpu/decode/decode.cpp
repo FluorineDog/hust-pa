@@ -289,6 +289,8 @@ make_DHelper(J) {
   decode_op_SI(eip, id_dest, false);
   // the target address can be computed in the decode stage
   g_decoding.jmp_eip = id_dest->simm + *eip;
+  // DOG FUCK IT
+  id_dest->val = g_decoding.jmp_eip;
 }
 
 make_DHelper(push_SI) {
