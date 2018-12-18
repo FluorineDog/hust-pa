@@ -1,32 +1,8 @@
 #pragma once
 #include <cstddef>
 #include <cstdint>
-union EFlags {
-	struct {
-		unsigned int CF:1; // 0
-		unsigned int   :1;
-		unsigned int PF:1;
-		unsigned int   :1;
-		
-		unsigned int AF:1; // 4
-		unsigned int   :1;
-		unsigned int ZF:1;
-		unsigned int SF:1;
-		
-		unsigned int TF:1; // 8
-		unsigned int IF:1;
-		unsigned int DF:1;
-		unsigned int OF:1;
-		
-		unsigned int IOPL:2; // 12
-		unsigned int NT:1;
-		unsigned int :1;
-		
-		unsigned int :16;
-	};
-	unsigned value;
-};
 
+extern uint32_t g_ignore_eflags;
 #define eflags_accept_(XX) \
     XX(CF, 0, 1) \
     XX(_plac_hldr1, 1, 1) \
