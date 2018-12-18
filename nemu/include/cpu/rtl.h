@@ -197,7 +197,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 //   rtl_shri(dest, src1, )
   int offset = (width * 8 - 1);
   rtl_shri(dest, src1, offset);
-  rtl_andi(dest, src1, 0x1);
+  rtl_andi(dest, dest, 0x1);
 // TODO();
 }
 

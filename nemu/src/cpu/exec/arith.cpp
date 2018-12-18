@@ -28,7 +28,7 @@ static inline void sub_cmp_common_ref(rtlreg_t& res){
     rtl_update_CF(&CF);
     
     rtl_setrelop(RELOP_LT, &ord, &id_dest->val, &id_src->val);
-    rtl_msb(&sign, &id_dest->val, id_dest->width);
+    rtl_msb(&sign, &res, id_dest->width);
     rtl_xor(&OF, &ord, &sign);
     rtl_update_OF(&OF);
 }
