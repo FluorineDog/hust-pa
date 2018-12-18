@@ -73,7 +73,7 @@ void cpu_exec(uint64_t n) {
                     printf("\n");
                 }
             }
-            if (changed) {
+            if (changed && nemu_state == NEMU_RUNNING) {
                 nemu_state = NEMU_STOP;
                 return;
             }

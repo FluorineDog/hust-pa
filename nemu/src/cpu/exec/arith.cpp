@@ -84,24 +84,26 @@ make_EHelper(neg) {
 }
 
 make_EHelper(adc) {
-    rtl_add(&t2, &id_dest->val, &id_src->val);
-    rtl_setrelop(RELOP_LTU, &t3, &t2, &id_dest->val);
-    rtl_get_CF(&t1);
-    rtl_add(&t2, &t2, &t1);
-    operand_write(id_dest, &t2);
+    rtlreg_t res, CF, OF, t_xor1, t_xor2, t_and, oldCF, isZero, ord;
+    rtl_add(&res, &id_dest->val, &id_src->val);
+    rtl_get_CF(&oldCF); 
+    rtl_add(&res, &res, &oldCF);
+    rtl_update_ZFSF(&res, id_dest->width);
 
-    rtl_update_ZFSF(&t2, id_dest->width);
-
-    rtl_setrelop(RELOP_LTU, &t0, &t2, &id_dest->val);
-    rtl_or(&t0, &t3, &t0);
-    rtl_update_CF(&t0);
-
-    rtl_xor(&t0, &id_dest->val, &id_src->val);
-    rtl_not(&t0, &t0);
-    rtl_xor(&t1, &id_dest->val, &t2);
-    rtl_and(&t0, &t0, &t1);
-    rtl_msb(&t0, &t0, id_dest->width);
-    rtl_update_OF(&t0);
+    rtl_setrelop(RELOP_LEU, &ord, &res, &id_src->val);
+    rtl_setrelopi(RELOP_NE, &isZero, &id_dest->val, 0);
+    rtl_or(&isZero, &isZero, &oldCF);
+    rtl_and(&CF, &ord, &isZero);
+    rtl_update_CF(&CF);
+    
+    rtl_xor(&t_xor1, &res, &id_dest->val);
+    rtl_xor(&t_xor2, &res, &id_src->val);
+    rtl_and(&t_and, &t_xor1, &t_xor2);
+    rtl_msb(&OF, &t_and, id_dest->width);
+    rtl_update_OF(&OF);
+    
+    operand_write(id_dest, &res);
+ 
 
     print_asm_template2(adc);
 }
