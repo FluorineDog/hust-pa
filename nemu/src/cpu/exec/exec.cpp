@@ -131,14 +131,17 @@ opcode_entry opcode_table[512] = {
 		/* 0x84 */    IDEXW(R2E, test, 1), IDEX(R2E, test), EMPTY, EMPTY,
 		/* 0x88 */    IDEXW(mov_R2E, mov, 1), IDEX(mov_R2E, mov), IDEXW(mov_E2R, mov, 1), IDEX(mov_E2R, mov),
 		/* 0x8c */    EMPTY, IDEX(lea_M2R, lea), EMPTY, EMPTY,
-		/* 0x90 */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
+		/* 0x90 */    EX(nop), EMPTY, EMPTY, EMPTY,
 		/* 0x94 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x98 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x9c */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0xa0 */    IDEXW(O2a, mov, 1), IDEX(O2a, mov), IDEXW(a2O, mov, 1), IDEX(a2O, mov),
 		/* 0xa4 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xa8 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xac */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0xb0 */    IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1),
 		/* 0xb4 */    IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1),
 		/* 0xb8 */    IDEX(mov_I2r, mov), IDEX(mov_I2r, mov), IDEX(mov_I2r, mov), IDEX(mov_I2r, mov),
@@ -149,8 +152,9 @@ opcode_entry opcode_table[512] = {
 		/* xxxx *///  C      D      E      F
 		/* 0xc0 */    IDEXW(gp2_Ib2E, gp2, 1), IDEX(gp2_Ib2E, gp2), EMPTY, EX(ret),
 		/* 0xc4 */    EMPTY, EMPTY, IDEXW(mov_I2E, mov, 1), IDEX(mov_I2E, mov),
-		/* 0xc8 */    EMPTY, EMPTY, EMPTY, EMPTY,
+		/* 0xc8 */    EMPTY, EX(leave), EMPTY, EMPTY,
 		/* 0xcc */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0xd0 */    IDEXW(gp2_1_E, gp2, 1), IDEX(gp2_1_E, gp2), IDEXW(gp2_cl2E, gp2, 1), IDEX(gp2_cl2E, gp2),
 		/* 0xd4 */    EMPTY, EMPTY, EX(nemu_trap), EMPTY,
 		/* 0xd8 */    EMPTY, EMPTY, EMPTY, EMPTY,
@@ -215,10 +219,16 @@ opcode_entry opcode_table[512] = {
 		/* 0xa4 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xa8 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xac */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0xb0 */    EMPTY, EMPTY, EMPTY, EMPTY,
-		/* 0xb4 */    EMPTY, EMPTY, EMPTY, EMPTY,
+		/* 0xb4 */    EMPTY, EMPTY, IDEXW(mov_E2R, movzx, 1), IDEXW(mov_E2R, movzx, 2),
 		/* 0xb8 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xbc */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
+		/* xxxx *///  0      1      2      3
+		/* xxxx *///  4      5      6      7
+		/* xxxx *///  8      9      A      B
+		/* xxxx *///  C      D      E      F
 		/* 0xc0 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xc4 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xc8 */    EMPTY, EMPTY, EMPTY, EMPTY,

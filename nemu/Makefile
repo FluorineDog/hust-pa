@@ -11,7 +11,7 @@ endif
 OBJ_DIR ?= $(BUILD_DIR)/obj$(SO)
 BINARY ?= $(BUILD_DIR)/$(NAME)$(SO)
 
-include Makefile.git
+#include Makefile.git
 
 .DEFAULT_GOAL = app
 
@@ -53,7 +53,7 @@ $(BINARY): $(OBJS)
 	@$(LD) -O2 -rdynamic $(SO_LDLAGS) -o $@ $^ -lSDL2 -lreadline -ldl
 
 commit: 
-	$(call git_commit, "commit")
+	#$(call git_commit, "commit")
 
 run: $(BINARY)
 	#$(call git_commit, "run")
