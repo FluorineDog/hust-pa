@@ -84,10 +84,10 @@ make_EHelper(neg) {
 }
 
 void rtl_flag_set(const rtlreg_t &res, const rtlreg_t &src1, const rtlreg_t &src2, const rtlreg_t &carry) {
-	rtlreg_t CF, OF, t_xor1, t_xor2, t_and, oldCF, isZero, ord;
+	rtlreg_t CF, OF, t_xor1, t_xor2, t_and, isZero, ord;
 	rtl_setrelop(RELOP_LEU, &ord, &res, &id_src->val);
 	rtl_setrelopi(RELOP_NE, &isZero, &id_dest->val, 0);
-	rtl_or(&isZero, &isZero, &oldCF);
+	rtl_or(&isZero, &isZero, &carry);
 	rtl_and(&CF, &ord, &isZero);
 	rtl_update_CF(&CF);
 	
