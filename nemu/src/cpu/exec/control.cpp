@@ -33,7 +33,6 @@ make_EHelper(call) {
   	g_decoding.jmp_eip &= 0xFFFF;
   }
   rtl_j(g_decoding.jmp_eip);
-//  TODO();
   print_asm("call %x", g_decoding.jmp_eip);
 }
 
@@ -46,7 +45,15 @@ make_EHelper(ret) {
 }
 
 make_EHelper(call_rm) {
-  TODO();
-
+  rtlreg_t seqEIP;
+  rtl_li(&seqEIP, g_decoding.seq_eip);
+  rtl_push(&seqEIP);
+  rtlreg_t jmp_addr;
+  rtl_mv(&jmp_addr, &id_dest->val);
+//  g_decoding.jmp_eip = jmp_addr;
+//  if(g_decoding.is_operand_size_16){
+//  	g_decoding.jmp_eip &= 0xFFFF;
+//  }
+  rtl_jr(&jmp_addr);
   print_asm("call *%s", id_dest->str);
 }

@@ -12,7 +12,7 @@ typedef struct {
 #define EXW(ex, w)         {NULL, concat(exec_, ex), w}
 #define EX(ex)             EXW(ex, 0)
 #define EMPTY              EX(inv)
-int& rtl_width = id_dest->width;
+int &rtl_width = id_dest->width;
 
 // DOG: set width according to opcode AND CPU_status(real 16bit/flat 32bit)
 static inline void set_width(int width) {
@@ -63,7 +63,7 @@ make_group(gp4,
 
 /* 0xff */
 make_group(gp5,
-		EX(inc), EX(dec), EMPTY, EMPTY,
+		EX(inc), EX(dec), EX(call_rm), EMPTY,
 		EX(jmp), EMPTY, EX(push), EMPTY)
 
 /* 0x0f 0x01*/
@@ -135,7 +135,7 @@ opcode_entry opcode_table[512] = {
 		
 		/* 0x90 */    EX(nop), EMPTY, EMPTY, EMPTY,
 		/* 0x94 */    EMPTY, EMPTY, EMPTY, EMPTY,
-		/* 0x98 */    EX(cbw_cwde), EX(cwd_cdq),  EMPTY, EMPTY,
+		/* 0x98 */    EX(cbw_cwde), EX(cwd_cdq), EMPTY, EMPTY,
 		/* 0x9c */    EMPTY, EMPTY, EMPTY, EMPTY,
 		
 		/* 0xa0 */    IDEXW(O2a, mov, 1), IDEX(O2a, mov), IDEXW(a2O, mov, 1), IDEX(a2O, mov),
@@ -213,10 +213,14 @@ opcode_entry opcode_table[512] = {
 		/* 0x8c */    IDEX(J, jcc), IDEX(J, jcc), IDEX(J, jcc), IDEX(J, jcc),
 		
 		
-		/* 0x90 */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
-		/* 0x94 */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
-		/* 0x98 */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
-		/* 0x9c */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
+		/* 0x90 */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
+		              IDEXW(setcc_E, setcc, 1),
+		/* 0x94 */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
+		              IDEXW(setcc_E, setcc, 1),
+		/* 0x98 */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
+		              IDEXW(setcc_E, setcc, 1),
+		/* 0x9c */   IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1), IDEXW(setcc_E, setcc, 1),
+		              IDEXW(setcc_E, setcc, 1),
 		
 		/* 0xa0 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xa4 */    EMPTY, EMPTY, EMPTY, EMPTY,
