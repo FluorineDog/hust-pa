@@ -127,6 +127,8 @@ make_EHelper(sbb) {
 }
 
 make_EHelper(mul) {
+	using namespace EFLAGS;
+	g_ignore_eflags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
 	rtl_lr(&t0, R_EAX, id_dest->width);
 	rtl_mul_lo(&t1, &id_dest->val, &t0);
 	
@@ -153,6 +155,8 @@ make_EHelper(mul) {
 
 // imul with one operand
 make_EHelper(imul1) {
+	using namespace EFLAGS;
+	g_ignore_eflags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
 	rtl_lr(&t0, R_EAX, id_dest->width);
 	rtl_imul_lo(&t1, &id_dest->val, &t0);
 	
@@ -179,6 +183,8 @@ make_EHelper(imul1) {
 
 // imul with two operands
 make_EHelper(imul2) {
+	using namespace EFLAGS;
+	g_ignore_eflags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
 	rtl_sext(&t0, &id_src->val, id_src->width);
 	rtl_sext(&t1, &id_dest->val, id_dest->width);
 	
@@ -190,6 +196,8 @@ make_EHelper(imul2) {
 
 // imul with three operands
 make_EHelper(imul3) {
+	using namespace EFLAGS;
+	g_ignore_eflags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
 	rtl_sext(&t0, &id_src->val, id_src->width);
 	rtl_sext(&t1, &id_src2->val, id_src->width);
 	rtl_sext(&id_dest->val, &id_dest->val, id_dest->width);
@@ -201,6 +209,8 @@ make_EHelper(imul3) {
 }
 
 make_EHelper(div) {
+	using namespace EFLAGS;
+	g_ignore_eflags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
 	switch (id_dest->width) {
 		case 1:
 			rtl_lr(&t0, R_AX, 2);
@@ -233,6 +243,8 @@ make_EHelper(div) {
 }
 
 make_EHelper(idiv) {
+	using namespace EFLAGS;
+	g_ignore_eflags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
 	switch (id_dest->width) {
 		case 1:
 			rtl_lr(&t0, R_AX, 2);
