@@ -2,6 +2,7 @@
 
 make_EHelper(mov);
 make_EHelper(movzx);
+make_EHelper(movsx);
 
 make_EHelper(operand_size);
 
@@ -40,3 +41,10 @@ make_EHelper(jcc);
 make_EHelper(jmp);
 
 make_EHelper(setcc);
+
+make_EHelper(imul1);
+make_EHelper(imul2);
+make_EHelper(imul3);
+
+
+
