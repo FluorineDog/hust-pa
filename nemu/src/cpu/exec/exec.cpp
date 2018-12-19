@@ -114,9 +114,10 @@ opcode_entry opcode_table[512] = {
 		/* 0x54 */    IDEX(r, push), IDEX(r, push), IDEX(r, push), IDEX(r, push),
 		/* 0x58 */    IDEX(r, pop), IDEX(r, pop), IDEX(r, pop), IDEX(r, pop),
 		/* 0x5c */    IDEX(r, pop), IDEX(r, pop), IDEX(r, pop), IDEX(r, pop),
+		
 		/* 0x60 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x64 */    EMPTY, EMPTY, EX(operand_size), EMPTY,
-		/* 0x68 */    EMPTY, EMPTY, EMPTY, EMPTY,
+		/* 0x68 */    IDEX(I, push), EMPTY, IDEXW(I, push, 1), EMPTY,
 		/* 0x6c */    EMPTY, EMPTY, EMPTY, EMPTY,
 		
 		/* 0x70 */    IDEXW(J, jcc, 1), IDEXW(J, jcc, 1), IDEXW(J, jcc, 1), IDEXW(J, jcc, 1),
@@ -134,7 +135,7 @@ opcode_entry opcode_table[512] = {
 		
 		/* 0x90 */    EX(nop), EMPTY, EMPTY, EMPTY,
 		/* 0x94 */    EMPTY, EMPTY, EMPTY, EMPTY,
-		/* 0x98 */    EMPTY, EMPTY, EMPTY, EMPTY,
+		/* 0x98 */    EX(cbw_cwde), EX(cwd_cdq),  EMPTY, EMPTY,
 		/* 0x9c */    EMPTY, EMPTY, EMPTY, EMPTY,
 		
 		/* 0xa0 */    IDEXW(O2a, mov, 1), IDEX(O2a, mov), IDEXW(a2O, mov, 1), IDEX(a2O, mov),

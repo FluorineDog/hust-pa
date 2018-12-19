@@ -33,28 +33,41 @@ make_EHelper(popa) {
 
 make_EHelper(leave) {
 //   TODO();
-	rtl_mv(&cpu.esp,  &cpu.ebp);
+	rtl_mv(&cpu.esp, &cpu.ebp);
 	rtl_pop(&cpu.ebp);
 	print_asm("leave");
 }
 
-make_EHelper(cltd) {
-	if (g_decoding.is_operand_size_16) {
-		TODO();
-	} else {
-		TODO();
-	}
+make_EHelper(cbw_cwde) {
+	int width = g_decoding.is_operand_size_16 ? 1 : 2;
+	// sign extend AL -> AX
+	rtlreg_t bit;
+	rtl_msb(&bit, &cpu.eax, width);
+	rtl_andi(&cpu.eax, &cpu.eax, ~(((1U << 8 * width) - 1) << 8 * width) );
+	
+	rtl_shli(&bit, &bit, width * 8);
+	rtl_sub(&cpu.eax, &cpu.eax, &bit);
+	
+	rtl_shli(&bit, &bit, width * 8);
+	rtl_sub(&cpu.eax, &cpu.eax, &bit);
 	
 	print_asm(g_decoding.is_operand_size_16 ? "cwtl" : "cltd");
 }
 
-make_EHelper(cwtl) {
-	if (g_decoding.is_operand_size_16) {
-		TODO();
+make_EHelper(cwd_cdq) {
+	rtlreg_t bit;
+	if(g_decoding.is_operand_size_16) {
+		rtl_msb(&bit, &cpu.eax, 2);
+		rtl_andi(&cpu.edx, &cpu.edx, 0xFFFF);
+		rtl_sub(&cpu.edx, &cpu.edx, &bit);
+		rtl_shli(&bit, &bit, 16);
+		rtl_sub(&cpu.edx, &cpu.edx, &bit);
+		
 	} else {
-		TODO();
+		rtl_msb(&bit, &cpu.eax, 4);
+		rtl_andi(&cpu.edx, &cpu.edx, 0);
+		rtl_sub(&cpu.edx, &cpu.edx, &bit);
 	}
-	
 	print_asm(g_decoding.is_operand_size_16 ? "cbtw" : "cwtl");
 }
 
