@@ -205,6 +205,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 #define make_rtl_setget_eflags(f) \
   static inline void concat(rtl_update_bit_, f) (const rtlreg_t* src_bit) { \
     using namespace EFLAGS;  \
+    g_ignore_eflags &=~MASK_ ## f; \
     rtlreg_t bitmask; \
     auto OFFSET = OFFSET_ ## f;\
     auto CL_MASK = ~(MASK_ ## f); \
@@ -223,6 +224,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   } \
   static inline void concat(rtl_set_, f) () { \
     using namespace EFLAGS;  \
+    g_ignore_eflags &=~MASK_ ## f; \
     rtl_ori(&cpu.eflags, &cpu.eflags, MASK_ ## f); \
     /*TODO();*/ \
   }  \

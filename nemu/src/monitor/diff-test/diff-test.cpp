@@ -95,13 +95,12 @@ void difftest_step(uint32_t eip) {
 	}
 	failed = failed || cpu.eip != ref_cpu.eip;
 	using namespace EFLAGS;
-	uint32_t test_flags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
+    constexpr auto main_checker = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
+	uint32_t test_flags = main_checker;
 	test_flags &= ~g_ignore_eflags;
 	failed = failed || ((cpu.eflags ^ ref_cpu.eflags) & test_flags) != 0;
-	if(!failed && g_ignore_eflags){
-		cpu.eflags = ref_cpu.eflags;
-	}
-	g_ignore_eflags = 0;
+    // if not the same, continue to ignore
+    g_ignore_eflags &= (cpu.eflags ^ ref_cpu.eflags);
 	
 	auto debug_print = [&](const char *name, uint32_t value, uint32_t ref) {
 		printf("%-8s0x%08x%16d [0x%08x%16d] %s\n", name, value, value, ref, ref, value != ref ? "*" : "");
