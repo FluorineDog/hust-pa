@@ -34,7 +34,7 @@ make_EHelper(xor) {
   operand_write(id_dest, &res);
   
   print_asm_template2(xor);
-}
+};
 
 make_EHelper(or) {
   rtlreg_t res;
@@ -45,23 +45,46 @@ make_EHelper(or) {
   print_asm_template2(or);
 }
 
-make_EHelper(sar) {
-  TODO();
+inline void shift_issue(const rtlreg_t& res){
   // unnecessary to update CF and OF in NEMU
+  using namespace EFLAGS;
+  g_ignore_eflags = MASK_CF | MASK_OF;
+  rtlreg_t updater;
+  rtlreg_t SF, ZF, fake;
+  rtl_get_SF(&SF);
+  rtl_get_ZF(&ZF);
+  rtl_shli(&fake, &SF, rtl_width * 8 - 1);
+  rtl_xor(&fake, &fake, &ZF);
+  rtl_xori(&fake, &fake, 1);
+  // if 0, no update
+  rtl_cond(&updater, &id_src->val, &res, &fake);
+  rtl_update_ZFSF(&updater);
+}
+
+make_EHelper(sar) {
+  rtlreg_t res;
+  rtl_sar(&res, &id_dest->val, &id_src->val);
+  shift_issue(res);
+  operand_write(id_dest, &res);
 
   print_asm_template2(sar);
 }
 
 make_EHelper(shl) {
-  TODO();
-  // unnecessary to update CF and OF in NEMU
+  rtlreg_t res;
+  rtl_shl(&res, &id_dest->val, &id_src->val);
+  shift_issue(res);
+  operand_write(id_dest, &res);
 
   print_asm_template2(shl);
 }
 
 make_EHelper(shr) {
-  TODO();
-  // unnecessary to update CF and OF in NEMU
+  rtlreg_t res;
+  rtl_shr(&res, &id_dest->val, &id_src->val);
+  shift_issue(res);
+  operand_write(id_dest, &res);
+
 
   print_asm_template2(shr);
 }
