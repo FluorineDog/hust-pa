@@ -1,7 +1,6 @@
 #!/bin/bash
 
 nemu=build/nemu
-
 echo "compiling NEMU..."
 if make &> /dev/null; then
   echo "NEMU compile OK"
@@ -17,6 +16,10 @@ else
   echo "testcases compile error... exit..."
   exit
 fi
+
+echo "deleting log files..."
+rm *-log.txt
+echo "delete log OK..."
 
 files=`ls $AM_HOME/tests/cputest/build/*-x86-nemu.bin`
 ori_log="build/nemu-log.txt"
