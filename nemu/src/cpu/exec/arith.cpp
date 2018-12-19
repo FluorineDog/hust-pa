@@ -1,5 +1,10 @@
 #include "cpu/exec.h"
 
+static uint32_t get_min(int width){
+	uint32_t min = 0x80000000;
+	return min >> (8 * (4 - width));
+}
+
 make_EHelper(add) {
 	rtlreg_t res, CF, OF, t_xor1, t_xor2, t_and;
 	rtl_add(&res, &id_dest->val, &id_src->val);
@@ -52,7 +57,7 @@ make_EHelper(inc) {
 	rtlreg_t OF;
 	rtl_addi(&res, &id_dest->val, 1);
 	rtl_update_ZFSF(&res);
-	rtl_setrelopi(RELOP_EQ, &OF, &res, 0x80000000);
+	rtl_setrelopi(RELOP_EQ, &OF, &res, get_min(rtl_width));
 	rtl_update_bit_OF(&OF);
 	// keep CF
 	operand_write(id_dest, &res);
@@ -64,7 +69,7 @@ make_EHelper(dec) {
 	rtlreg_t OF;
 	rtl_subi(&res, &id_dest->val, 1);
 	rtl_update_ZFSF(&res);
-	rtl_setrelopi(RELOP_EQ, &OF, &res, 0x7FFFFFFF);
+	rtl_setrelopi(RELOP_EQ, &OF, &id_dest->val, get_min(rtl_width));
 	rtl_update_bit_OF(&OF);
 	// keep CF
 	operand_write(id_dest, &res);
