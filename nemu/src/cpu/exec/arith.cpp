@@ -1,6 +1,6 @@
 #include "cpu/exec.h"
 
-static uint32_t get_min(int width){
+static uint32_t get_min(int width) {
 	uint32_t min = 0x80000000;
 	return min >> (8 * (4 - width));
 }
@@ -77,8 +77,20 @@ make_EHelper(dec) {
 }
 
 make_EHelper(neg) {
-    TODO();
+	rtlreg_t CF, OF, res;
+	rtlreg_t ZERO;
+	rtl_li(&ZERO, 0);
+	rtl_sub(&res, &ZERO, &id_dest->val);
 	
+	rtl_update_ZFSF(&res);
+	
+	rtl_setrelopi(RELOP_NE, &CF, &id_dest->val, 0);
+	rtl_update_bit_CF(&CF);
+	
+	rtl_setrelopi(RELOP_EQ, &OF, &id_dest->val, get_min(rtl_width));
+	rtl_update_bit_OF(&OF);
+	
+	operand_write(id_dest, &res);
 	print_asm_template1(neg);
 }
 
@@ -101,7 +113,7 @@ make_EHelper(adc) {
 	rtlreg_t res, oldCF;
 	rtl_add(&res, &id_dest->val, &id_src->val);
 	rtl_get_CF(&oldCF);
-
+	
 	rtl_add(&res, &res, &oldCF);
 	rtl_update_ZFSF(&res);
 	rtl_flag_set(res, id_dest->val, id_src->val, oldCF);
@@ -120,9 +132,9 @@ make_EHelper(sbb) {
 	rtl_sub(&res, &res, &oldCF);
 	rtl_update_ZFSF(&res);
 	rtl_flag_set(id_dest->val, id_src->val, res, oldCF);
-
-    operand_write(id_dest, &res);
-
+	
+	operand_write(id_dest, &res);
+	
 	print_asm_template2(sbb);
 }
 

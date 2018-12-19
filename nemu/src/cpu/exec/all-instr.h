@@ -20,6 +20,8 @@ make_EHelper(add);
 make_EHelper(adc);
 make_EHelper(sbb);
 make_EHelper(cmp);
+make_EHelper(not);
+make_EHelper(neg);
 
 make_EHelper(nop);
 
@@ -45,6 +47,9 @@ make_EHelper(setcc);
 make_EHelper(imul1);
 make_EHelper(imul2);
 make_EHelper(imul3);
+make_EHelper(mul);
+make_EHelper(div);
+make_EHelper(idiv);
 
 make_EHelper(cbw_cwde);
 make_EHelper(cwd_cdq);
