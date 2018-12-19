@@ -96,7 +96,7 @@ void difftest_step(uint32_t eip) {
 	failed = failed || cpu.eip != ref_cpu.eip;
 	using namespace EFLAGS;
 	uint32_t test_flags = MASK_OF | MASK_CF | MASK_SF | MASK_ZF;
-	test_flags &= ~g_ignore_eflags;
+	// test_flags &= ~g_ignore_eflags;
 	failed = failed || ((cpu.eflags ^ ref_cpu.eflags) & test_flags) != 0;
 	g_ignore_eflags = 0;
 	

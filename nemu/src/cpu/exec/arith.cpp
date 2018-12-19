@@ -85,14 +85,14 @@ make_EHelper(neg) {
 
 void rtl_flag_set(const rtlreg_t &res, const rtlreg_t &src1, const rtlreg_t &src2, const rtlreg_t &carry) {
 	rtlreg_t CF, OF, t_xor1, t_xor2, t_and, isZero, ord;
-	rtl_setrelop(RELOP_LEU, &ord, &res, &id_src->val);
-	rtl_setrelopi(RELOP_NE, &isZero, &id_dest->val, 0);
+	rtl_setrelop(RELOP_LEU, &ord, &res, &src2);
+	rtl_setrelopi(RELOP_NE, &isZero, &src1, 0);
 	rtl_or(&isZero, &isZero, &carry);
 	rtl_and(&CF, &ord, &isZero);
 	rtl_update_CF(&CF);
 	
-	rtl_xor(&t_xor1, &res, &id_dest->val);
-	rtl_xor(&t_xor2, &res, &id_src->val);
+	rtl_xor(&t_xor1, &res, &src1);
+	rtl_xor(&t_xor2, &res, &src2);
 	rtl_and(&t_and, &t_xor1, &t_xor2);
 	rtl_msb(&OF, &t_and, id_dest->width);
 	rtl_update_OF(&OF);
@@ -102,6 +102,7 @@ make_EHelper(adc) {
 	rtlreg_t res, oldCF;
 	rtl_add(&res, &id_dest->val, &id_src->val);
 	rtl_get_CF(&oldCF);
+
 	rtl_add(&res, &res, &oldCF);
 	rtl_update_ZFSF(&res, id_dest->width);
 	rtl_flag_set(res, id_dest->val, id_src->val, oldCF);
@@ -120,7 +121,9 @@ make_EHelper(sbb) {
 	rtl_sub(&res, &res, &oldCF);
 	rtl_update_ZFSF(&res, id_dest->width);
 	rtl_flag_set(id_dest->val, id_src->val, res, oldCF);
-	
+
+    operand_write(id_dest, &res);
+
 	print_asm_template2(sbb);
 }
 
