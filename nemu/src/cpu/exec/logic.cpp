@@ -2,7 +2,7 @@
 #include "cpu/cc.h"
 
 void logical_update_XF(const rtlreg_t* res) {
-  rtl_update_ZFSF(res, id_dest->width);
+  rtl_update_ZFSF(res);
   rtl_clear_OF();
   rtl_clear_CF();
 }

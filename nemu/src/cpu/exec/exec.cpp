@@ -12,7 +12,7 @@ typedef struct {
 #define EXW(ex, w)         {NULL, concat(exec_, ex), w}
 #define EX(ex)             EXW(ex, 0)
 #define EMPTY              EX(inv)
-
+int& rtl_width = id_dest->width;
 
 // DOG: set width according to opcode AND CPU_status(real 16bit/flat 32bit)
 static inline void set_width(int width) {

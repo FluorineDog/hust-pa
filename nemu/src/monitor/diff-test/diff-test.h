@@ -2,7 +2,7 @@
 #define __DIFF_TEST_H__
 #include "nemu.h"
 
-#define DIFFTEST_REG_SIZE (sizeof(uint32_t) * 9) // GRPs + EIP
+#define DIFFTEST_REG_SIZE (sizeof(uint32_t) * 10) // GRPs + EIP
 
 extern "C"
 void difftest_memcpy_from_dut(paddr_t dest, void *src, size_t n);

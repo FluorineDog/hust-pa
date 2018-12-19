@@ -6,9 +6,10 @@
 #include "eflags.h"
 
 extern rtlreg_t t0, t1, t2, t3;
+extern int& rtl_width;
 
 void decoding_set_jmp(bool is_jmp);
-bool interpret_relop(uint32_t relop, const rtlreg_t src1, const rtlreg_t src2);
+bool interpret_relop(uint32_t relop, const rtlreg_t src1, const rtlreg_t src2, int width);
 
 /* RTL basic instructions */
 
@@ -105,7 +106,7 @@ static inline void interpret_rtl_host_sm(void *addr, const rtlreg_t *src1, int l
 
 static inline void interpret_rtl_setrelop(uint32_t relop, rtlreg_t *dest,
     const rtlreg_t *src1, const rtlreg_t *src2) {
-  *dest = interpret_relop(relop, *src1, *src2);
+  *dest = interpret_relop(relop, *src1, *src2, rtl_width);
 }
 
 static inline void interpret_rtl_j(vaddr_t target) {
@@ -121,7 +122,7 @@ static inline void interpret_rtl_jr(rtlreg_t *target) {
 
 static inline void interpret_rtl_jrelop(uint32_t relop,
     const rtlreg_t *src1, const rtlreg_t *src2, vaddr_t target) {
-  bool is_jmp = interpret_relop(relop, *src1, *src2);
+  bool is_jmp = interpret_relop(relop, *src1, *src2, rtl_width);
   if (is_jmp) cpu.eip = target;
   decoding_set_jmp(is_jmp);
 }
@@ -202,13 +203,12 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 
 
 #define make_rtl_setget_eflags(f) \
-  static inline void concat(rtl_update_, f) (const rtlreg_t* src) { \
+  static inline void concat(rtl_update_bit_, f) (const rtlreg_t* src_bit) { \
     using namespace EFLAGS;  \
+    rtlreg_t bitmask; \
     auto OFFSET = OFFSET_ ## f;\
     auto CL_MASK = ~(MASK_ ## f); \
-    rtlreg_t bitmask; \
-    rtl_setrelopi(RELOP_NE, &bitmask, src, 0);\
-    rtl_shli(&bitmask, &bitmask, OFFSET);\
+    rtl_shli(&bitmask, src_bit, OFFSET);\
     rtl_andi(&cpu.eflags, &cpu.eflags, CL_MASK);\
     rtl_or(&cpu.eflags, &cpu.eflags, &bitmask); \
     /*TODO();*/ \
@@ -238,24 +238,24 @@ make_rtl_setget_eflags(OF)
 make_rtl_setget_eflags(ZF)
 make_rtl_setget_eflags(SF)
 
-static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
+static inline void rtl_fullupdate_ZF(const rtlreg_t* result) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
   rtlreg_t res_at;
   rtl_setrelopi(RELOP_EQ, &res_at, result, 0);
-  rtl_update_ZF(&res_at);
+  rtl_update_bit_ZF(&res_at);
 //  TODO();
 }
 
-static inline void rtl_update_SF(const rtlreg_t* result, int width) {
+static inline void rtl_fullupdate_SF(const rtlreg_t* result) {
   // eflags.SF <- is_sign(result[width * 8 - 1 .. 0])
   rtlreg_t res_at;
   rtl_setrelopi(RELOP_LT, &res_at, result, 0);
-  rtl_update_SF(&res_at);
+  rtl_update_bit_SF(&res_at);
 //  TODO();
 }
 
-static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
-  rtl_update_ZF(result, width);
-  rtl_update_SF(result, width);
+static inline void rtl_update_ZFSF(const rtlreg_t* result) {
+  rtl_fullupdate_ZF(result);
+  rtl_fullupdate_SF(result);
 }
 
