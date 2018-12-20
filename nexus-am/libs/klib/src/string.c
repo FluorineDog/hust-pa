@@ -3,26 +3,43 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 size_t strlen(const char* s) {
-    return 0;
+    int n = 0;
+    while(s[n]) ++n;
+    return n;
 }
 
 char* strcpy(char* dst, const char* src) {
-    return NULL;
+    char* iter = dst;
+    while(*iter++ = *src++){}
+    return dst;
 }
 
 char* strncpy(char* dst, const char* src, size_t n) {
-    return NULL;
+    char* iter = dst;
+    while(n-- && (*iter++ = *src++)){}
+    return dst;
 }
 
 char* strcat(char* dst, const char* src) {
-    return NULL;
+    char* iter = dst;
+    while(*iter)++iter;
+    while(*iter++ = *src++){}
+    return dst;
 }
 
 int strcmp(const char* s1, const char* s2) {
-    return 0;
+    return strncmp(s1, s2, -1);    
 }
 
 int strncmp(const char* s1, const char* s2, size_t n) {
+    for(int i = 0 ; i < n; ++i){
+        if(s1[i] == s2[i] && s1[i]) {
+            continue;
+        }
+        else {
+            return s1[i] - s2[i];
+        }
+    }
     return 0;
 }
 
