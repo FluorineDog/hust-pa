@@ -4,26 +4,26 @@
 
 size_t strlen(const char* s) {
     int n = 0;
-    while(s[n]) ++n;
+    while((s[n])) ++n;
     return n;
 }
 
 char* strcpy(char* dst, const char* src) {
     char* iter = dst;
-    while(*iter++ = *src++){}
+    while((*iter++ = *src++)){}
     return dst;
 }
 
 char* strncpy(char* dst, const char* src, size_t n) {
     char* iter = dst;
-    while(n-- && (*iter++ = *src++)){}
+    while((n-- && (*iter++ = *src++))){}
     return dst;
 }
 
 char* strcat(char* dst, const char* src) {
     char* iter = dst;
-    while(*iter)++iter;
-    while(*iter++ = *src++){}
+    while((*iter))++iter;
+    while((*iter++ = *src++)){}
     return dst;
 }
 
