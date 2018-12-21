@@ -44,6 +44,16 @@ make_EHelper(ret) {
   print_asm("ret");
 }
 
+make_EHelper(ret_imm) {
+//  TODO();
+  assert(rtl_width == 2);
+  rtlreg_t target_eip;
+  rtl_pop(&target_eip);
+  rtl_add(&cpu.esp, &cpu.esp, &id_dest->val);
+  rtl_jr(&target_eip);
+  print_asm("ret");
+}
+
 make_EHelper(call_rm) {
   rtlreg_t seqEIP;
   rtl_li(&seqEIP, g_decoding.seq_eip);

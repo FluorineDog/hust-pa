@@ -31,6 +31,7 @@ make_EHelper(xor);
 make_EHelper(leave);
 
 make_EHelper(ret);
+make_EHelper(ret_imm);
 
 make_EHelper(lea);
 make_EHelper(and);
@@ -62,3 +63,5 @@ make_EHelper(sar);
 
 make_EHelper(in);
 make_EHelper(out);
+
+make_EHelper(rol);

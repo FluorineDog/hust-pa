@@ -61,6 +61,35 @@ inline void shift_issue(const rtlreg_t& res){
   rtl_update_ZFSF(&updater);
 }
 
+make_EHelper(rol) {
+  using namespace EFLAGS;
+  g_ignore_eflags |= MASK_OF;
+  g_ignore_eflags &= ~MASK_CF;
+  // others regarded as TODO
+  assert(rtl_width == 4);
+  
+  rtlreg_t res, left_shift, right_shift, oldCF, curCF, CF, ZERO;
+  rtl_get_CF(&oldCF);
+  
+  rtl_andi(&left_shift, &id_src->val, 0x1F);
+  
+  rtl_li(&ZERO, 0);
+  rtl_sub(&right_shift, &ZERO, &id_src->val);
+  rtl_andi(&right_shift, &right_shift, 0x1F);
+  
+  rtlreg_t ansL, ansR;
+  rtl_shl(&ansL, &id_dest->val, &left_shift);
+  rtl_shr(&ansR, &id_dest->val, &right_shift);
+  
+  rtl_or(&res, &ansL, &ansR);
+  rtl_andi(&curCF, &res, 0x1);
+  rtl_cond(&CF, &left_shift, &curCF, &oldCF);
+  rtl_update_bit_CF(&CF);
+  operand_write(id_dest, &res);
+
+  print_asm_template2(sar);
+}
+
 make_EHelper(sar) {
   rtlreg_t res;
   rtl_sar(&res, &id_dest->val, &id_src->val);

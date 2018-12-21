@@ -48,7 +48,7 @@ make_group(gp1,
 
 /* 0xc0, 0xc1, 0xd0, 0xd1, 0xd2, 0xd3 */
 make_group(gp2,
-		EMPTY, EMPTY, EMPTY, EMPTY,
+		EX(rol), EMPTY, EMPTY, EMPTY,
 		EX(shl), EX(shr), EMPTY, EX(sar))
 
 /* 0xf6, 0xf7 */
@@ -151,7 +151,7 @@ opcode_entry opcode_table[512] = {
 		/* xxxx *///  4      5      6      7
 		/* xxxx *///  8      9      A      B
 		/* xxxx *///  C      D      E      F
-		/* 0xc0 */    IDEXW(gp2_Ib2E, gp2, 1), IDEX(gp2_Ib2E, gp2), EMPTY, EX(ret),
+		/* 0xc0 */    IDEXW(gp2_Ib2E, gp2, 1), IDEX(gp2_Ib2E, gp2), IDEXW(I, ret_imm, 2), EX(ret),
 		/* 0xc4 */    EMPTY, EMPTY, IDEXW(mov_I2E, mov, 1), IDEX(mov_I2E, mov),
 		/* 0xc8 */    EMPTY, EX(leave), EMPTY, EMPTY,
 		/* 0xcc */    EMPTY, EMPTY, EMPTY, EMPTY,
