@@ -25,9 +25,8 @@ static void buf_w(OutputEngine* eng) {
 }
 
 static void io_w(OutputEngine* eng) {
-    // TODO
-    // char ch = eng->ch;
-    // (char)ch;
+    char ch = eng->ch;
+    _putc(ch);    
 }
 
 static void exec(OutputEngine* eng, char ch, int index) {
