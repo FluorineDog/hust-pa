@@ -7,12 +7,12 @@
 static uint8_t mmio_space_pool[MMIO_SPACE_MAX];
 static uint32_t mmio_space_free_index = 0;
 
-typedef struct {
+struct MMIO_t{
   paddr_t low;
   paddr_t high;
   uint8_t *mmio_space;
   mmio_callback_t callback;
-} MMIO_t;
+};
 
 static MMIO_t maps[NR_MAP];
 static int nr_map = 0;
