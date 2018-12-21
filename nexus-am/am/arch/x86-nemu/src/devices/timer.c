@@ -3,11 +3,12 @@
 #include <amdev.h>
 #define RTC_PORT 0x48
 
+static uint32_t boot_time;
 size_t timer_read(uintptr_t reg, void *buf, size_t size) {
   switch (reg) {
     case _DEVREG_TIMER_UPTIME: {
       _UptimeReg *uptime = (_UptimeReg *)buf;
-      uint32_t ms = inb(RTC_PORT);
+      uint32_t ms = inl(RTC_PORT) - boot_time;
       uptime->hi = 0;
       uptime->lo = ms;
       return sizeof(_UptimeReg);
@@ -27,4 +28,5 @@ size_t timer_read(uintptr_t reg, void *buf, size_t size) {
 }
 
 void timer_init() {
+    boot_time = inl(RTC_PORT);
 }
