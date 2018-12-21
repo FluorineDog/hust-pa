@@ -43,7 +43,6 @@ make_EHelper(iret) {
 
 make_EHelper(in) {
   TODO();
-
   print_asm_template2(in);
 
 #if defined(DIFF_TEST)

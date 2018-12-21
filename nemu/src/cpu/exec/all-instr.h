@@ -59,3 +59,5 @@ make_EHelper(cwd_cdq);
 make_EHelper(shl);
 make_EHelper(shr);
 make_EHelper(sar);
+
+make_EHelper(in);
