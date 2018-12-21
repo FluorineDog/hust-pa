@@ -240,14 +240,17 @@ opcode_entry opcode_table[512] = {
 		/* 0xc4 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xc8 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xcc */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0xd0 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xd4 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xd8 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xdc */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0xe0 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xe4 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xe8 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xec */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0xf0 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xf4 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xf8 */    EMPTY, EMPTY, EMPTY, EMPTY,
