@@ -48,9 +48,9 @@ int atoi_internal(char* buf, int x_) {
         return 1;
     }
     int idx = prefix; 
-    while(x){
-       buf[idx] = x_ % 10;
-       x_ /= 10;
+    while(x > 0){
+       buf[idx] = x % 10 + '0';
+       x /= 10;
        ++idx;
     }
     int iter1 = prefix; 
@@ -59,6 +59,8 @@ int atoi_internal(char* buf, int x_) {
         char tmp = buf[iter1];
         buf[iter1] = buf[iter2];
         buf[iter2] = tmp;
+        ++iter1;
+        --iter2;
     }
     return idx;
 }
@@ -68,6 +70,7 @@ int handler(OutputEngine* eng, const char* fmt, va_list va) {
     while(*fmt) {
         if(*fmt != '%') {
             exec(eng, *fmt, dest_idx++);
+            ++fmt;
             continue;
         }
         assert(*fmt == '%');
@@ -76,22 +79,29 @@ int handler(OutputEngine* eng, const char* fmt, va_list va) {
             case 'd': {
                 int x = va_arg(va, int);
                 char buf[30];
-                int delta = atoi_internal(buf, x);
-                for(int i = 0; i < delta; ++delta){
+                const int delta = atoi_internal(buf, x);
+                for(int i = 0; i < delta; ++i){
                     exec(eng, buf[i], dest_idx++);
                 }
+                ++fmt;
+                continue;
             }
             case 's': {
-                const char* str= va_arg(va, char*);
+                const char* str = va_arg(va, char*);
                 while(*str) {
                     exec(eng, *str++, dest_idx++);
                 }
+                ++fmt;
+                continue;
             }
+            default: goto FUCK;
         }
     }
     exec(eng, 0, dest_idx++);
+FUCK:
     return dest_idx - 1;
 }
+
 
 int printf(const char* fmt, ...) {
     OutputEngine eng;
