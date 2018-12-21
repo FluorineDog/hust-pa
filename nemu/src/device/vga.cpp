@@ -35,6 +35,6 @@ void init_vga() {
 
   BITCAST(screensize_port_base, add_pio_map(SCREEN_PORT, 4, NULL));
   *screensize_port_base = ((SCREEN_W) << 16) | (SCREEN_H);
-  vmem = add_mmio_map(VMEM, 0x80000, NULL);
+  BITCAST(vmem, add_mmio_map(VMEM, 0x80000, nullptr));
 }
 #endif	/* HAS_IOE */
