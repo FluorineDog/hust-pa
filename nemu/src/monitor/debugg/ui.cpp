@@ -131,7 +131,7 @@ constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
 static void scan_memory_kernel(char *args, int n) {
     auto expr = compile_expr(args);
     int addr_v = expr->eval();
-    uint32_t addr_base [[maybe_unused]] = addr_v & ~3U;
+    uint32_t addr_base [[maybe_unused]] = addr_v;
     for (int i = 0; i < n; ++i) {
         auto addr = addr_base + 4 * i;
         if (i % 4 == 0) {

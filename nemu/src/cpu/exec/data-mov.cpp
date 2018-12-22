@@ -6,12 +6,14 @@ make_EHelper(mov) {
 }
 
 make_EHelper(mov_str) {
+	// ALWAYS WRONG
 	rtlreg_t data;
-	rtl_lm(&data, &cpu.esi, rtl_width);
-	rtl_sm(&data, &cpu.edi, rtl_width);
+	assert(rtl_width == 1);
+	rtl_lm(&data, (const rtlreg_t *)&cpu.esi, rtl_width);
+	rtl_sm(&cpu.edi, (const rtlreg_t *)&data, rtl_width);
 	rtl_addi(&cpu.esi, &cpu.esi, rtl_width);
 	rtl_addi(&cpu.edi, &cpu.edi, rtl_width);
-	print_asm_template2(mov);
+	print_asm_template2(movs);
 }
 
 make_EHelper(push) {
