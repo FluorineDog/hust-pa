@@ -1,4 +1,5 @@
 #include "nemu.h"
+#include "device/mmio.h"
 
 #define PMEM_SIZE (128 * 1024 * 1024)
 
@@ -12,19 +13,25 @@ uint8_t pmem[PMEM_SIZE];
 /* Memory accessing interfaces */
 
 uint32_t paddr_read(paddr_t addr, int len) {
-	return pmem_rw(addr, uint32_t) & (~0u >> ((4 - len) << 3));
+	int no = is_mmio(addr);
+	if (no == -1) {
+		return pmem_rw(addr, uint32_t) & (~0u >> ((4 - len) << 3));
+	}
+	return mmio_read(addr, len, no);
 }
 
 void paddr_write(paddr_t addr, uint32_t data, int len) {
-	memcpy(guest_to_host(addr), &data, len);
+	int no = is_mmio(addr);
+	if(no == -1){
+		memcpy(guest_to_host(addr), &data, len);
+	}
+	mmio_write(addr, len, data, no);
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
-	// TODO
 	return paddr_read(addr, len);
 }
 
 void vaddr_write(vaddr_t addr, uint32_t data, int len) {
-	// TODO
 	paddr_write(addr, data, len);
 }
