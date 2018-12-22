@@ -92,6 +92,7 @@ make_EHelper(rol) {
 
 make_EHelper(sar) {
   rtlreg_t res;
+  rtl_andi(&id_src->val, &id_src->val, rtl_width * 8 - 1);
   rtl_sar(&res, &id_dest->val, &id_src->val);
   shift_issue(res);
   operand_write(id_dest, &res);
@@ -101,6 +102,7 @@ make_EHelper(sar) {
 
 make_EHelper(shl) {
   rtlreg_t res;
+  rtl_andi(&id_src->val, &id_src->val, rtl_width * 8 - 1);
   rtl_shl(&res, &id_dest->val, &id_src->val);
   shift_issue(res);
   operand_write(id_dest, &res);
@@ -110,6 +112,7 @@ make_EHelper(shl) {
 
 make_EHelper(shr) {
   rtlreg_t res;
+  rtl_andi(&id_src->val, &id_src->val, rtl_width * 8 - 1);
   rtl_shr(&res, &id_dest->val, &id_src->val);
   shift_issue(res);
   operand_write(id_dest, &res);
