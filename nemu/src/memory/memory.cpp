@@ -16,16 +16,18 @@ uint32_t paddr_read(paddr_t addr, int len) {
 	int no = is_mmio(addr);
 	if (no == -1) {
 		return pmem_rw(addr, uint32_t) & (~0u >> ((4 - len) << 3));
+	} else {
+		return mmio_read(addr, len, no);
 	}
-	return mmio_read(addr, len, no);
 }
 
 void paddr_write(paddr_t addr, uint32_t data, int len) {
 	int no = is_mmio(addr);
 	if(no == -1){
 		memcpy(guest_to_host(addr), &data, len);
+	} else {
+		mmio_write(addr, len, data, no);
 	}
-	mmio_write(addr, len, data, no);
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {

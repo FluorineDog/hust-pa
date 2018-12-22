@@ -24,10 +24,15 @@ size_t video_write(uintptr_t reg, void *buf, size_t size) {
     switch(reg) {
         case _DEVREG_VIDEO_FBCTL: {
             _FBCtlReg *ctl = (_FBCtlReg *)buf;
+            
             // int size = screen_width() * screen_height();
-            // for(int i = 0; i < size; ++i) {
-            //     fb[i] = i;
-            // }
+            int W = screen_width();
+            uint32_t* base = fb + ctl->y * W + ctl->x;
+            for(int dy = 0; dy < ctl->h; ++dy){
+                for(int dx = 0; dx < ctl->w; ++dx){
+                    base[dy * W + dx] = ctl->pixels[dy * ctl->w + dx]; 
+                }
+            }
             if(ctl->sync) {
                 // do nothing, hardware syncs.
             }
