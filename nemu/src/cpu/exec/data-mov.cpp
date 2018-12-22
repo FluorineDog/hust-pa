@@ -5,6 +5,15 @@ make_EHelper(mov) {
 	print_asm_template2(mov);
 }
 
+make_EHelper(mov_str) {
+	rtlreg_t data;
+	rtl_lm(&data, &cpu.esi, rtl_width);
+	rtl_sm(&data, &cpu.edi, rtl_width);
+	rtl_addi(&cpu.esi, &cpu.esi, rtl_width);
+	rtl_addi(&cpu.edi, &cpu.edi, rtl_width);
+	print_asm_template2(mov);
+}
+
 make_EHelper(push) {
 //  TODO();
 	rtl_push(&id_dest->val);

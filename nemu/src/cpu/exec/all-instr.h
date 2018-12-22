@@ -3,6 +3,7 @@
 make_EHelper(mov);
 make_EHelper(movzx);
 make_EHelper(movsx);
+make_EHelper(mov_str);
 
 make_EHelper(operand_size);
 
@@ -65,3 +66,4 @@ make_EHelper(in);
 make_EHelper(out);
 
 make_EHelper(rol);
+
