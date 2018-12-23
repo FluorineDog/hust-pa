@@ -2,10 +2,7 @@
  * The Nexus Abstract Machine Architecture (AM)
  * A portable abstraction of a bare-metal computer
  */
-
-#ifndef __AM_H__
-#define __AM_H__
-
+#pragma once
 #include <stdint.h>
 #include <stddef.h>
 #include <arch.h>
@@ -100,4 +97,3 @@ intptr_t _atomic_xchg(volatile intptr_t *addr, intptr_t newval);
 }
 #endif
 
-#endif
