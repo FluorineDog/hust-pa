@@ -1,10 +1,9 @@
-#include "proc.h"
-
-#define DEFAULT_ENTRY 0x4000000
-
+#include "loader.h"
+#include <klib.h>
 static uintptr_t loader(PCB *pcb, const char *filename) {
     // fuck the filenames
-    TODO();
+    ramdisk_read((void *)DEFAULT_ENTRY, 0, RAMDISK_SIZE);
+    // TODO();
     return DEFAULT_ENTRY;
 }
 
