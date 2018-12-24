@@ -319,3 +319,8 @@ static inline void rtl_cond(rtlreg_t *res, const rtlreg_t *cond, const rtlreg_t 
 	rtl_and(&nomask, &nomask, no);
 	rtl_or(res, &yesmask, &nomask);
 }
+
+static inline void rtl_testbit(rtlreg_t* dest, const rtlreg_t* src, int bit_offset){
+	rtl_shri(dest, src, bit_offset);
+	rtl_andi(dest, dest, 0x1);
+}

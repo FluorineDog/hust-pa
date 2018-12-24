@@ -6,12 +6,30 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 	/* TODO: Trigger an interrupt/exception with ``NO''.
 	 * That is, use ``NO'' to index the IDT.
 	 */
-	assert(NO * 8 + 7 < cpu.idtr.limit);
-	rtl_push()
-	rtlreg_t addr;
-	rtl_addi(&addr, &cpu.idtr.base, NO * 8);
+	assert(NO * 8U + 7U < cpu.idtr.limit);
+	rtl_push(&cpu.eflags);
+	rtl_push(&cpu.cs);
+	rtl_push(&cpu.eip);
+	rtlreg_t s_addr;
+	rtlreg_t gate_0_31, gate_32_63;
+	rtl_addi(&s_addr, &cpu.idtr.base, NO * 8);
 	
-	TODO();
+	// load gate
+	rtl_lm(&gate_0_31, &s_addr, 4);	
+	rtl_addi(&s_addr, &s_addr, 4);
+	rtl_lm(&gate_32_63, &s_addr, 4);
+	assert( ((gate_32_63 >> 15) & 1)  == 1 );
+	// cs == 8
+	assert( (gate_0_31 >> 16) == 0x8);
+	
+	rtlreg_t offset, off_hi, off_lo;
+	rtl_li(&off_hi, 0xFFFF0000);
+	rtl_li(&off_lo, 0x0000FFFF);	
+	rtl_andi(&off_hi, &off_hi, gate_32_63);
+	rtl_andi(&off_lo, &off_lo, gate_0_31);
+	rtl_or(&offset, &off_hi, &off_lo);
+	
+	rtl_jr(&offset);
 }
 
 void dev_raise_intr() {
