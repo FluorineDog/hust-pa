@@ -9,7 +9,9 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 	assert(NO * 8U + 7U < cpu.idtr.limit);
 	rtl_push(&cpu.eflags);
 	rtl_push(&cpu.cs);
-	rtl_push(&cpu.eip);
+	rtlreg_t seqEIP;
+	rtl_li(&seqEIP, g_decoding.seq_eip)
+	rtl_push(&seqEIP);
 	rtlreg_t s_addr;
 	rtlreg_t gate_0_31, gate_32_63;
 	rtl_addi(&s_addr, &cpu.idtr.base, NO * 8);

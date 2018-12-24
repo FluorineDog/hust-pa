@@ -32,6 +32,8 @@ make_EHelper(pop) {
 
 make_EHelper(pusha) {
 	TODO();
+	assert(rtl_width == 4);
+	rtlreg_t tempESP;
 	
 	print_asm("pusha");
 }
