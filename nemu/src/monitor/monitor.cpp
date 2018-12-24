@@ -1,6 +1,7 @@
 #include "nemu.h"
 #include "monitor/monitor.h"
 #include <unistd.h>
+#include "cpu/eflags.h"
 
 const char* g_so_file = "/home/mike/workspace/x86/ics-pa/nemu/tools/qemu-diff/build/qemu-so";
 
@@ -87,6 +88,8 @@ static inline long load_img() {
 static inline void restart() {
   /* Set the initial instruction pointer. */
   cpu.eip = ENTRY_START;
+  cpu.cs = 8;
+  cpu.eflags = EFLAGS::MASK_IF;
 }
 
 static inline void parse_args(int argc, char *argv[]) {
