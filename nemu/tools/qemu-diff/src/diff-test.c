@@ -69,7 +69,7 @@ void difftest_init(void) {
   int pid = fork();
   if (pid == -1) {
     perror("fork");
-    panic("wtf");
+    assert(0);
   }
   else if (pid == 0) {
     // child
@@ -78,18 +78,18 @@ void difftest_init(void) {
     int r = prctl(PR_SET_PDEATHSIG, SIGTERM);
     if (r == -1) {
       perror("prctl error");
-      panic("wtf");
+      assert(0);
     }
 
     if (getppid() != ppid_before_fork) {
       printf("parent has died!\n");
-      panic("wtf");
+      assert(0);
     }
 
     close(STDIN_FILENO);
     execlp("qemu-system-i386", "qemu-system-i386", "-S", "-s", "-nographic", NULL);
     perror("exec");
-    panic("wtf");
+    assert(0);
   }
   else {
     // father
