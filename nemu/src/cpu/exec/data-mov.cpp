@@ -1,3 +1,4 @@
+#include <nemu.h>
 #include "cpu/exec.h"
 
 make_EHelper(mov) {
@@ -31,10 +32,19 @@ make_EHelper(pop) {
 }
 
 make_EHelper(pusha) {
-	TODO();
+//	TODO();
 	assert(rtl_width == 4);
-//	rtlreg_t tempESP;
-	
+	rtlreg_t tempESP;
+	rtl_mv(&tempESP, &cpu.esp);
+	static_assert(&cpu.esp == &cpu.gpr[4]._32);
+	rtl_push(&cpu.gpr[0]._32);
+	rtl_push(&cpu.gpr[1]._32);
+	rtl_push(&cpu.gpr[2]._32);
+	rtl_push(&cpu.gpr[3]._32);
+	rtl_push(&tempESP);
+	rtl_push(&cpu.gpr[5]._32);
+	rtl_push(&cpu.gpr[6]._32);
+	rtl_push(&cpu.gpr[7]._32);
 	print_asm("pusha");
 }
 
