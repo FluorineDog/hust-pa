@@ -4,14 +4,20 @@
 #include <am.h>
 
 #define PMEM_SIZE (128 * 1024 * 1024)
-#define PGSIZE    4096    // Bytes mapped by a page
+#define PGSIZE 4096    // Bytes mapped by a page
 
 typedef uint32_t size_t;
 
 struct _Context {
-  uintptr_t esi, ebx, eax, eip, edx, err, eflags, ecx, cs, esp, edi, ebp;
-  struct _Protect *prot;
-  int       irq;
+    struct _Protect *prot;
+    struct {
+        uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    };
+    int irq;
+    uint32_t err;
+    uint32_t eip;
+    uint32_t cs;
+    uint32_t eflags;
 };
 
 #define GPR1 eax
