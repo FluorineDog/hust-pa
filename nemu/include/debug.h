@@ -41,7 +41,7 @@ extern FILE* log_fp;
   } while (0)
 
 #define panic(format, ...) \
-  Assert(0, format, ## __VA_ARGS__)
+  do{Assert(0, format, ## __VA_ARGS__); __builtin_unreachable();}while(0)
 
 #define TODO() panic("please implement me")
 
