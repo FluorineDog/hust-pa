@@ -35,10 +35,11 @@ static void exec(OutputEngine* eng, char ch, int index) {
     eng->fn(eng);
 }
 
-int atoi_internal(char* buf, int x_) {
+static int atoi_internal(char* buf, int x_, int base, int is_unsigned) {
+    const char* alphabet = "0123456789abcdef";
     int prefix = 0;
     unsigned x = x_;
-    if(x < 0) {
+    if(x < 0 && !is_unsigned) {
         buf[0] = '-';
         x = -x_;
         prefix = 1;
@@ -48,8 +49,8 @@ int atoi_internal(char* buf, int x_) {
     }
     int idx = prefix; 
     while(x > 0){
-       buf[idx] = x % 10 + '0';
-       x /= 10;
+       buf[idx] = alphabet[x % base];
+       x /= base;
        ++idx;
     }
     int iter1 = prefix; 
@@ -66,6 +67,7 @@ int atoi_internal(char* buf, int x_) {
 
 int handler(OutputEngine* eng, const char* fmt, va_list va) {
     int dest_idx = 0;
+    
     while(*fmt) {
         if(*fmt != '%') {
             exec(eng, *fmt, dest_idx++);
@@ -74,11 +76,31 @@ int handler(OutputEngine* eng, const char* fmt, va_list va) {
         }
         assert(*fmt == '%');
         ++fmt;
+        int width = 0;
+        char padding = ' ';
+        if(*fmt == '0'){
+            padding = '0';
+            ++fmt;
+        }
+
+        while('0' <= *fmt && *fmt <= '9'){
+            width *= 10;
+            width += *fmt - '0';
+            ++fmt;
+        }
+
         switch(*fmt) { 
-            case 'd': {
+            case 'd': 
+            case 'x': 
+            {
+                int is_base16 = *fmt == 'x';
                 int x = va_arg(va, int);
                 char buf[30];
-                const int delta = atoi_internal(buf, x);
+                const int delta = atoi_internal(buf, x, is_base16 ? 16: 10, is_base16);
+                while(delta < width){
+                    exec(eng, padding, dest_idx++);
+                    --width;
+                }
                 for(int i = 0; i < delta; ++i){
                     exec(eng, buf[i], dest_idx++);
                 }
@@ -87,6 +109,13 @@ int handler(OutputEngine* eng, const char* fmt, va_list va) {
             }
             case 's': {
                 const char* str = va_arg(va, char*);
+                const int delta = strlen(str);
+
+                while(delta < width){
+                    exec(eng, padding, dest_idx++);
+                    --width;
+                }
+                
                 while(*str) {
                     exec(eng, *str++, dest_idx++);
                 }
