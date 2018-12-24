@@ -29,6 +29,10 @@ typedef union {
       rtlreg_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
       vaddr_t eip;
       rtlreg_t eflags;
+      struct{
+          rtlreg_t limit;
+          rtlreg_t base;
+      }idtr;
   };
 } CPU_state;
 
