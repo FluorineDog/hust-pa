@@ -3,6 +3,7 @@
 static uintptr_t loader(PCB *pcb, const char *filename) {
     // fuck the filenames
     ramdisk_read((void *)DEFAULT_ENTRY, 0, RAMDISK_SIZE);
+    printf("[%08x %08x]", *(uint32_t *)DEFAULT_ENTRY, *(uint32_t *) &ramdisk_start);
     // TODO();
     return DEFAULT_ENTRY;
 }

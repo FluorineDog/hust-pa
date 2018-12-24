@@ -6,6 +6,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 	/* TODO: Trigger an interrupt/exception with ``NO''.
 	 * That is, use ``NO'' to index the IDT.
 	 */
+	assert(0 <= NO);
 	assert(NO * 8U + 7U < cpu.idtr.limit);
 	rtl_push(&cpu.eflags);
 	rtl_push(&cpu.cs);
