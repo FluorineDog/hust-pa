@@ -10,7 +10,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 	rtl_push(&cpu.eflags);
 	rtl_push(&cpu.cs);
 	rtlreg_t seqEIP;
-	rtl_li(&seqEIP, g_decoding.seq_eip)
+	rtl_li(&seqEIP, g_decoding.seq_eip);
 	rtl_push(&seqEIP);
 	rtlreg_t s_addr;
 	rtlreg_t gate_0_31, gate_32_63;
