@@ -31,5 +31,5 @@ int main() {
   _yield();
 #endif
 
-  panic("Should not reach here");
+  panic("Should not reach here, bitch");
 }

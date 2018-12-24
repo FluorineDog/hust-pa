@@ -115,7 +115,7 @@ opcode_entry opcode_table[512] = {
 		/* 0x58 */    IDEX(r, pop), IDEX(r, pop), IDEX(r, pop), IDEX(r, pop),
 		/* 0x5c */    IDEX(r, pop), IDEX(r, pop), IDEX(r, pop), IDEX(r, pop),
 		
-		/* 0x60 */    EX(pusha), EMPTY, EMPTY, EMPTY,
+		/* 0x60 */    EX(pusha), EX(popa), EMPTY, EMPTY,
 		/* 0x64 */    EMPTY, EMPTY, EX(operand_size), EMPTY,
 		/* 0x68 */    IDEX(I, push), EMPTY, IDEXW(I, push, 1), EMPTY,
 		/* 0x6c */    EMPTY, EMPTY, EMPTY, EMPTY,
@@ -154,7 +154,7 @@ opcode_entry opcode_table[512] = {
 		/* 0xc0 */    IDEXW(gp2_Ib2E, gp2, 1), IDEX(gp2_Ib2E, gp2), IDEXW(I, ret_imm, 2), EX(ret),
 		/* 0xc4 */    EMPTY, EMPTY, IDEXW(mov_I2E, mov, 1), IDEX(mov_I2E, mov),
 		/* 0xc8 */    EMPTY, EX(leave), EMPTY, EMPTY,
-		/* 0xcc */    EMPTY, IDEXW(I, int, 1), EMPTY, EMPTY,
+		/* 0xcc */    EMPTY, IDEXW(I, int, 1), EMPTY, EX(iret),
 		
 		/* 0xd0 */    IDEXW(gp2_1_E, gp2, 1), IDEX(gp2_1_E, gp2), IDEXW(gp2_cl2E, gp2, 1), IDEX(gp2_cl2E, gp2),
 		/* 0xd4 */    EMPTY, EMPTY, EX(nemu_trap), EMPTY,

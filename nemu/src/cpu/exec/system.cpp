@@ -42,8 +42,9 @@ make_EHelper(int) {
 }
 
 make_EHelper(iret) {
-    TODO();
-
+//    TODO();
+    return_from_intr();
+    
     print_asm("iret");
 }
 

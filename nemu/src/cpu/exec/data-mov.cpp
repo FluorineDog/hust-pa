@@ -63,8 +63,17 @@ make_EHelper(pusha) {
 }
 
 make_EHelper(popa) {
-	TODO();
-	
+	// TODO
+	rtlreg_t dummy;
+	rtl_pop(&cpu.gpr[7]._32);
+	rtl_pop(&cpu.gpr[6]._32);
+	rtl_pop(&cpu.gpr[5]._32);
+	rtl_pop(&dummy);
+	static_assert(&cpu.esp == &cpu.gpr[4]._32);
+	rtl_pop(&cpu.gpr[3]._32);
+	rtl_pop(&cpu.gpr[2]._32);
+	rtl_pop(&cpu.gpr[1]._32);
+	rtl_pop(&cpu.gpr[0]._32);
 	print_asm("popa");
 }
 

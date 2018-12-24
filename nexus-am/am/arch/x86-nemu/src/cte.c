@@ -1,4 +1,5 @@
 #include <am.h>
+#include <klib.h>
 #include <x86.h>
 
 static _Context *(*user_handler)(_Event, _Context *) = NULL;
@@ -10,7 +11,12 @@ _Context *irq_handle(_Context *tf) {
     _Context *next = tf;
     if(user_handler) {
         _Event ev = {0};
+        printf("[fuck with %d]", tf->irq);
         switch(tf->irq) {
+            case 0x81: {
+                ev.event = _EVENT_YIELD;
+                break;
+            }
             default: ev.event = _EVENT_ERROR; break;
         }
 

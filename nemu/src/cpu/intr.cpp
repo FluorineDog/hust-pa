@@ -34,6 +34,16 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 	rtl_jr(&offset);
 }
 
+void return_from_intr(){
+	rtlreg_t tempEIP, tempCS, tempEFLAGS;
+	rtl_pop(&tempEIP);
+	rtl_pop(&tempCS);
+	rtl_pop(&tempEFLAGS);
+	rtl_mv(&cpu.eflags, &tempEFLAGS);
+	assert(tempCS == 8);
+	rtl_jr(&tempEIP);
+}
+
 void dev_raise_intr() {
 }
 
