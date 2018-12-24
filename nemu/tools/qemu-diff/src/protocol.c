@@ -116,13 +116,13 @@ struct gdb_conn* gdb_begin_inet(const char *addr, uint16_t port) {
   int r = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&tmp, sizeof(tmp));
   if (r) {
     perror("setsockopt");
-    assert(0);
+    panic("wtf");
   }
   tmp = 1;
   r = setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *)&tmp, sizeof(tmp));
   if (r) {
     perror("setsockopt");
-    assert(0);
+    panic("wtf");
   }
 
   // initialize the rest of gdb on this handle

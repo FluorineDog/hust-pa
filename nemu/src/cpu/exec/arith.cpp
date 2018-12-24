@@ -159,7 +159,7 @@ make_EHelper(mul) {
 			rtl_sr(R_EAX, &t1, 4);
 			break;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 	
 	print_asm_template1(mul);
@@ -187,7 +187,7 @@ make_EHelper(imul1) {
 			rtl_sr(R_EAX, &t1, 4);
 			break;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 	
 	print_asm_template1(imul);
@@ -248,7 +248,7 @@ make_EHelper(div) {
 			rtl_div64_r(&cpu.edx, &t1, &t0, &id_dest->val);
 			break;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 	
 	print_asm_template1(div);
@@ -282,7 +282,7 @@ make_EHelper(idiv) {
 			rtl_idiv64_r(&cpu.edx, &t1, &t0, &id_dest->val);
 			break;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 	
 	print_asm_template1(idiv);
