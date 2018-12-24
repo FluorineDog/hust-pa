@@ -1,5 +1,6 @@
 #include "syscall.h"
 #include "common.h"
+#define stdin 1
 
 _Context* do_syscall(_Context* c) {
     //   uintptr_t a[4];
@@ -19,6 +20,9 @@ _Context* do_syscall(_Context* c) {
             break;
         }
         case SYS_write: {
+            int fd = c->GPR2; 
+            char* buf = (char *)c->GPR3;
+            int size = c->GPR4;
             
             break;
         }
