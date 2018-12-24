@@ -12,17 +12,17 @@ _Context *irq_handle(_Context *tf) {
     _Context *next = tf;
     if(user_handler) {
         _Event ev = {0};
-        printf("[fuck with %d]", tf->irq);
+        // printf("[fuck with %d]", tf->irq);
         switch(tf->irq) {
             case 0x81: {
                 // trap
-                printf("[trap]");
+                // printf("[trap]");
                 ev.event = _EVENT_YIELD;
                 break;
             }
             case 0x80: {
                 // syscall
-                printf("[syscall]");
+                // printf("[syscall]");
                 ev.event = _EVENT_SYSCALL;
                 break;
             }
