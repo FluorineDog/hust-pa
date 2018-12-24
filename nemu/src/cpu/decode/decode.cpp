@@ -331,6 +331,10 @@ make_DHelper(out_a2dx) {
 #endif
 }
 
+make_DHelper(a2wtf) {
+  decode_op_a(eip, id_src, true);
+}
+
 make_DHelper(M2M) {
   id_dest->type = id_src->type = OP_TYPE_MEM;
   rtl_mv(&id_dest->addr, &cpu.edi);

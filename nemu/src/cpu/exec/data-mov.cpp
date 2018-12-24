@@ -7,24 +7,38 @@ make_EHelper(mov) {
 }
 
 make_EHelper(mov_str) {
-	// ALWAYS WRONG
 	rtlreg_t data;
-	assert(rtl_width == 1);
+	assert(!(cpu.eflags & EFLAGS::MASK_DF));
 	rtl_lm(&data, (const rtlreg_t *)&cpu.esi, rtl_width);
 	rtl_sm(&cpu.edi, (const rtlreg_t *)&data, rtl_width);
 	rtl_addi(&cpu.esi, &cpu.esi, rtl_width);
 	rtl_addi(&cpu.edi, &cpu.edi, rtl_width);
+#ifdef DEBUG
+	strcpy(id_dest->str, "%es:%(edi)");
+	strcpy(id_src->str, "%ds:%(esi)");
+#endif
+	
 	print_asm_template2(movs);
 }
 
+
+make_EHelper(sto_str) {
+	// ALWAYS WRONG
+	assert(!(cpu.eflags & EFLAGS::MASK_DF));
+	rtl_sm(&cpu.edi, (const rtlreg_t *)&id_src->val, rtl_width);
+	rtl_addi(&cpu.edi, &cpu.edi, rtl_width);
+#ifdef DEBUG
+	strcpy(id_dest->str, "%es:%(edi)");
+#endif
+	print_asm_template2(stos);
+}
+
 make_EHelper(push) {
-//  TODO();
 	rtl_push(&id_dest->val);
 	print_asm_template1(push);
 }
 
 make_EHelper(pop) {
-//  TODO();
 	rtlreg_t tmp;
 	rtl_pop(&tmp);
 	operand_write(id_dest, &tmp);
@@ -55,7 +69,6 @@ make_EHelper(popa) {
 }
 
 make_EHelper(leave) {
-//   TODO();
 	rtl_mv(&cpu.esp, &cpu.ebp);
 	rtl_pop(&cpu.ebp);
 	print_asm("leave");

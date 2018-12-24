@@ -140,7 +140,7 @@ opcode_entry opcode_table[512] = {
 		
 		/* 0xa0 */    IDEXW(O2a, mov, 1), IDEX(O2a, mov), IDEXW(a2O, mov, 1), IDEX(a2O, mov),
 		/* 0xa4 */    EXW(mov_str, 1), EX(mov_str), EMPTY, EMPTY,
-		/* 0xa8 */    IDEXW(I2a, test, 1), IDEX(I2a, test), EMPTY, EMPTY,
+		/* 0xa8 */    IDEXW(I2a, test, 1), IDEX(I2a, test), IDEXW(a2wtf, sto_str, 1), IDEX(a2wtf, sto_str),
 		/* 0xac */    EMPTY, EMPTY, EMPTY, EMPTY,
 		
 		/* 0xb0 */    IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1), IDEXW(mov_I2r, mov, 1),
