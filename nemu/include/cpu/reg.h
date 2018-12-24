@@ -62,7 +62,7 @@ static inline const char* reg_name(int index, int width) {
     case 4: return regsl[index];
     case 1: return regsb[index];
     case 2: return regsw[index];
-    default: assert(0);
+    default: panic("wtf");
   }
 }
 

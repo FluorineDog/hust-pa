@@ -115,7 +115,7 @@ static inline void interpret_rtl_host_lm(rtlreg_t *dest, const void *addr, int l
 			*dest = *(uint16_t *) addr;
 			return;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 }
 
@@ -131,7 +131,7 @@ static inline void interpret_rtl_host_sm(void *addr, const rtlreg_t *src1, int l
 			*(uint16_t *) addr = *src1;
 			return;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 }
 
@@ -175,7 +175,7 @@ static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
 			rtl_host_lm(dest, &reg_w(r), 2);
 			return;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 }
 
@@ -191,7 +191,7 @@ static inline void rtl_sr(int r, const rtlreg_t *src1, int width) {
 			rtl_host_sm(&reg_w(r), src1, 2);
 			return;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 }
 

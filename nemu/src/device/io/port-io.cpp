@@ -49,7 +49,7 @@ uint32_t pio_read_common(ioaddr_t addr, int len) {
     case 4: return *(uint32_t *)(pio_space + addr);
     case 2: return *(uint16_t *)(pio_space + addr);
     case 1: return *(uint8_t *)(pio_space + addr);
-    default: assert(0);
+    default: panic("wtf");
   }
 }
 
@@ -59,7 +59,7 @@ void pio_write_common(ioaddr_t addr, uint32_t data, int len) {
     case 4: *(uint32_t *)(pio_space + addr) = data; break;
     case 2: *(uint16_t *)(pio_space + addr) = data; break;
     case 1: *(uint8_t *)(pio_space + addr) = data; break;
-    default: assert(0);
+    default: panic("wtf");
   }
   pio_callback(addr, len, true);
 }
