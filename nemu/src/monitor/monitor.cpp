@@ -65,7 +65,7 @@ static inline long load_img() {
     size = load_default_img();
   }
   else {
-    int ret;
+    int ret __attribute__((unused));
 
     FILE *fp = fopen(img_file, "rb");
     Assert(fp, "Can not open '%s'", img_file);
