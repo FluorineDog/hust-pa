@@ -1,4 +1,5 @@
 #include "cpu/exec.h"
+#include <unistd.h>
 
 make_EHelper(mov);
 make_EHelper(movzx);
