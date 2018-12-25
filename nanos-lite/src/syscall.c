@@ -3,6 +3,7 @@
 #define stdin 0
 #define stdout 1
 #define stderr 2
+extern char _end;
 
 _Context* do_syscall(_Context* c) {
     //   uintptr_t a[4];
@@ -45,12 +46,12 @@ _Context* do_syscall(_Context* c) {
             int increment = c->GPR2;
             void* old = (void*) _heap.start;
             void* new = old + increment;
-            if(new >= _heap.end) {
-                c->GPR1 = -1;
-                break;
-            } else {
+            if(&_end < new && new < _heap.end) {
                 _heap.start = new;
                 c->GPR1 = (uint32_t) old;
+                break;
+            } else {
+                c->GPR1 = -1;
                 break;
             }
         }
