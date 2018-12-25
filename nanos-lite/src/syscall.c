@@ -34,7 +34,7 @@ _Context* do_syscall(_Context* c) {
                 // printf("[size = $%d]", size);
                 // assert(fd == 1);
 
-                int ref = printf("[%s]", buf);
+                int ref = printf("%s", buf);
                 assert(true || ref == size);
                 c->GPR1 = ref;
             } else {
