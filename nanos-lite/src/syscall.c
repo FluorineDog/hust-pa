@@ -46,7 +46,7 @@ _Context* do_syscall(_Context* c) {
             // int size = c->GPR4;
             _def(fd, 2, int);
             _def(buf, 3, char*);
-            _def(size, 4, int);
+            _def(size, 4, size_t);
             _ret() = vfs_read(fd, buf, size);
             break;
         }
@@ -56,7 +56,7 @@ _Context* do_syscall(_Context* c) {
             // int size = c->GPR4;
             _def(fd, 2, int);
             _def(buf, 3, const char*);
-            _def(size, 4, int);
+            _def(size, 4, size_t);
             _ret() = vfs_write(fd, buf, size);
             break;
         }
@@ -69,7 +69,7 @@ _Context* do_syscall(_Context* c) {
         }
         case SYS_lseek: {
             _def(fd, 2, int);
-            _def(offset, 3, off_t);
+            _def(offset, 3, ssize_t);
             _def(whence, 4, int);
             _ret() = vfs_lseek(fd, offset, whence);
             break;
