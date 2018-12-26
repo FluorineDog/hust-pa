@@ -37,7 +37,7 @@ _Context* do_syscall(_Context* c) {
             _def(filename, 2, const char*);
             _def(flags, 3, int);
             _def(mode, 4, mode_t);
-            vfs_open(filename, flags, mode);
+            _ret() = vfs_open(filename, flags, mode);
             break;
         }
         case SYS_read: {
