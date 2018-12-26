@@ -35,7 +35,6 @@ static void open_display() {
     fprintf(stderr, "Cannot open display information (/proc/dispinfo).\n");
     exit(1);
   }
-
   char buf[128], key[128], value[128], *delim;
   while (fgets(buf, 128, dispinfo)) {
     *(delim = strchr(buf, ':')) = '\0';
@@ -44,7 +43,7 @@ static void open_display() {
     if (strcmp(key, "WIDTH") == 0) sscanf(value, "%d", &W);
     if (strcmp(key, "HEIGHT") == 0) sscanf(value, "%d", &H);
   }
-
+                
   fclose(dispinfo);
 
   if (W == -1 || H == -1) {

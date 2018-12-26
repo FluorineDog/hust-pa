@@ -54,7 +54,7 @@ size_t vfs_read(int fd, void *buf, size_t size) {
     Finfo *h = file_table + fd;
     int offset = h->open_offset + h->disk_offset;
     int remaining = h->size - h->open_offset;
-    if(size > remaining){
+    if(size > remaining) {
         size = remaining;
     }
     int delta = h->read(buf, offset, size);
@@ -64,7 +64,8 @@ size_t vfs_read(int fd, void *buf, size_t size) {
         return delta;
     }
     assert(size == delta);
-    Log("read from %d to %d", h->open_offset, h->open_offset + delta);
+    Log("read{fd = %d, buf=%p, size=%d} from %d to %d", fd, buf, h->size, h->open_offset,
+        h->open_offset + delta);
     h->open_offset += delta;
     return delta;
 }
@@ -78,8 +79,9 @@ size_t vfs_write(int fd, const void *buf, size_t size) {
         panic("wtf");
         return delta;
     }
-    if(size != delta){
-        Log("write %d from %d to %d[%d]", fd, h->open_offset, h->open_offset + delta, size);
+    if(size != delta) {
+        Log("write %d from %d to %d[%d]", fd, h->open_offset, h->open_offset + delta,
+            size);
     }
     assert(size == delta);
     h->open_offset += delta;
@@ -121,10 +123,11 @@ ssize_t vfs_lseek(int fd, ssize_t offset, int whence) {
         default: panic("wtf");
     }
     ssize_t new = base + offset;
-    Log("lseek %d{size = %d, off=%d} with {offset=%d, whence=%d}, to %d", fd, handle->size, handle->open_offset, offset, whence, new);
+    Log("lseek %d{size = %d, off=%d} with {offset=%d, whence=%d}, to %d", fd,
+        handle->size, handle->open_offset, offset, whence, new);
     assert(0 <= new);
     // piss off the fix size
     assert(new <= handle->size);
     handle->open_offset = new;
-    return new; 
+    return new;
 }
