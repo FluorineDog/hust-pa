@@ -88,7 +88,6 @@ int handler(OutputEngine* eng, const char* fmt, va_list va) {
             width += *fmt - '0';
             ++fmt;
         }
-
         switch(*fmt) { 
             case 'd': 
             case 'x': 
@@ -106,6 +105,23 @@ int handler(OutputEngine* eng, const char* fmt, va_list va) {
                 }
                 ++fmt;
                 continue;
+            }
+            case 'p': {
+                width = sizeof(size_t) * 2;
+                padding = '0';
+                size_t x = va_arg(va, size_t);
+                char buf[30];
+                const int delta = atoi_internal(buf, x, 16, 1);
+                while(delta < width){
+                    exec(eng, padding, dest_idx++);
+                    --width;
+                }
+                for(int i = 0; i < delta; ++i){
+                    exec(eng, buf[i], dest_idx++);
+                }
+                ++fmt;
+                continue;
+
             }
             case 's': {
                 const char* str = va_arg(va, char*);

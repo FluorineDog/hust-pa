@@ -13,13 +13,13 @@ struct _Context {
     // always wrong !!!
     struct _Protect *prot;
     struct {
-        uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+        size_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
     };
-    int irq;
-    uint32_t err;
-    uint32_t eip;
-    uint32_t cs;
-    uint32_t eflags;
+    ssize_t irq;
+    size_t err;
+    size_t eip;
+    size_t cs;
+    size_t eflags;
 };
 
 #define GPR1 eax
