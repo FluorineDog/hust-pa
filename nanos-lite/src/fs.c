@@ -29,8 +29,8 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
     {"stdin", 0, 0, invalid_read, invalid_write},
-    {"stdout", 0, 0, invalid_read, serial_write},
-    {"stderr", 0, 0, invalid_read, serial_write},
+    {"stdout", -1, 0, invalid_read, serial_write},
+    {"stderr", -1, 0, invalid_read, serial_write},
     {"/usr/fb", 0, 0, invalid_read, fb_write},
     {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
 #include "files.h"
@@ -52,12 +52,18 @@ size_t vfs_read(int fd, void *buf, size_t size) {
     assert(0 <= fd && fd < NR_FILES);
     Finfo *h = file_table + fd;
     int offset = h->open_offset + h->disk_offset;
+    int remaining = h->size - h->open_offset;
+    if(size > remaining){
+        size = remaining;
+    }
     int delta = h->read(buf, offset, size);
+    assert(delta == size);
     if(delta < 0) {
         panic("wtf");
         return delta;
     }
     assert(size == delta);
+    Log("read from %d to %d", h->open_offset, h->open_offset + delta);
     h->open_offset += delta;
     return delta;
 }
@@ -71,8 +77,12 @@ size_t vfs_write(int fd, const void *buf, size_t size) {
         panic("wtf");
         return delta;
     }
+    if(size != delta){
+        Log("write %d from %d to %d[%d]", fd, h->open_offset, h->open_offset + delta, size);
+    }
     assert(size == delta);
     h->open_offset += delta;
+    assert(h->open_offset <= h->size);
     return delta;
 }
 
