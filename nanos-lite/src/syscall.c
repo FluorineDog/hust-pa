@@ -75,18 +75,12 @@ _Context* do_syscall(_Context* c) {
             break;
         }
         case SYS_brk: {
-            // int increment = c->GPR2;
             _def(new_addr, 2, void*);
-            if((void*)&_end < new_addr && new_addr < _heap.end) {
-                _heap.start = new_addr;
-                _set_ret(new_addr);
-                break;
-                // c->GPR1 = (size_t)old;
-            } else {
-                void* old_addr = (void*)_heap.start;
-                _set_ret(old_addr);
-                break;
+            static void* program_break = &_end;
+            if(new_addr >= (void*)&_end) {
+                program_break = new_addr;
             }
+            _set_ret(program_break);
             break;
         }
         default: panic("Unhandled syscall ID = %d", syscall_type);
