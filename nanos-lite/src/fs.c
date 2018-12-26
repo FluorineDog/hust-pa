@@ -12,6 +12,7 @@ typedef struct {
     ReadFn read;
     WriteFn write;
     ssize_t open_offset;
+    int file_lock;
 } Finfo;
 
 enum { FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_DISPINFO, FD_FILES_BEGIN };
@@ -32,7 +33,7 @@ static Finfo file_table[] __attribute__((used)) = {
     {"stdout", -1, 0, invalid_read, serial_write},
     {"stderr", -1, 0, invalid_read, serial_write},
     {"/dev/fb", 0, 0, invalid_read, fb_write},
-    {"/proc/dispinfoFK", 128, 0, dispinfo_read, invalid_write},
+    {"/proc/dispinfo", 128, 0, dispinfo_read, invalid_write},
 #include "files.h"
 };
 
@@ -96,6 +97,8 @@ int vfs_open(const char *filename, int flags, int mode) {
         Finfo *handle = file_table + fd;
         if(strcmp(handle->name, filename) == 0) {
             // match
+            assert(handle->file_lock == 0);
+            handle->file_lock++;
             handle->open_offset = 0;
             Log("opened with fd=%d", fd);
             return fd;
@@ -111,6 +114,9 @@ size_t vfs_filesz(int fd) {
 }
 
 int vfs_close(int fd) {
+    Finfo *handle = file_table + fd;
+    assert(handle->file_lock == 1);
+    handle->file_lock--;
     Log("closing %d", fd);
     return 0;
 }
