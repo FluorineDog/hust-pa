@@ -14,11 +14,11 @@ extern char _end;
 
 // #define _def(variable, NO) _def_conv(int, variable, NO)
 #define _ret() c->GPR1
-#define _set_ret(value) _ret() = (int)(size_t)value
+#define _set_ret(value) _ret() = (ssize_t)value
 
 _Context* do_syscall(_Context* c) {
     // uint32_t syscall_type = c->GPR1;
-    _def(syscall_type, 1, int);
+    _def(syscall_type, 1, ssize_t);
 
     switch(syscall_type) {
         case SYS_exit: {
