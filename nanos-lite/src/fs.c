@@ -11,7 +11,7 @@ typedef struct {
     size_t disk_offset;
     ReadFn read;
     WriteFn write;
-    size_t open_offset;
+    ssize_t open_offset;
 } Finfo;
 
 enum { FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_DISPINFO, FD_FILES_BEGIN };
@@ -48,7 +48,7 @@ void init_fs() {
     file_table[FD_FB].size = screen_width() * screen_height() * sizeof(int);
 }
 
-size_t vfs_read(int fd, void *buf, int size) {
+size_t vfs_read(int fd, void *buf, size_t size) {
     assert(0 <= fd && fd < NR_FILES);
     Finfo *h = file_table + fd;
     int offset = h->open_offset + h->disk_offset;
@@ -61,7 +61,7 @@ size_t vfs_read(int fd, void *buf, int size) {
     return delta;
 }
 
-size_t vfs_write(int fd, const void *buf, int size) {
+size_t vfs_write(int fd, const void *buf, size_t size) {
     assert(0 <= fd && fd < NR_FILES);
     Finfo *h = file_table + fd;
     int offset = h->open_offset + h->disk_offset;
@@ -72,4 +72,45 @@ size_t vfs_write(int fd, const void *buf, int size) {
     }
     h->open_offset += delta;
     return delta;
+}
+
+// @ret: fd
+int vfs_open(const char *filename, int flags, int mode) {
+    for(int fd = 0; fd < NR_FILES; ++fd) {
+        Finfo *handle = file_table + fd;
+        if(strcmp(handle->name, filename) == 0) {
+            // match
+            handle->open_offset = 0;
+            return fd;
+        }
+    }
+    // error
+    return -1;
+}
+
+size_t vfs_filesz(int fd) {
+    Finfo *handle = file_table + fd;
+    return handle->size;
+}
+
+int vfs_close(int fd) {
+    // do nothing
+    return 0;
+}
+
+ssize_t vfs_lseek(int fd, ssize_t offset, int whence) {
+    Finfo *handle = file_table + fd;
+    ssize_t base;
+    switch(whence) {
+        case SEEK_SET: base = 0; break;
+        case SEEK_CUR: base = handle->open_offset; break;
+        case SEEK_END: base = handle->size; break;
+        default: panic("wtf");
+    }
+    ssize_t new = base + offset;
+    assert(0 <= new);
+    // piss off the fix size
+    assert(new < handle->size);
+    handle->open_offset = new;
+    return new; 
 }

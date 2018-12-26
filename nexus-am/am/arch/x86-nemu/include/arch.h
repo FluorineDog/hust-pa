@@ -7,6 +7,7 @@
 #define PGSIZE 4096    // Bytes mapped by a page
 
 typedef uint32_t size_t;
+typedef int32_t ssize_t;
 
 struct _Context {
     // always wrong !!!
