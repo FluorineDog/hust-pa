@@ -71,7 +71,7 @@ extern "C" {
 #define _DEVREG_VIDEO_FBCTL   2
   typedef struct {
     int x, y;         // draw to (@x, @y)
-    uint32_t *pixels; // @pixels: @w*@h pixels to draw
+    const uint32_t *pixels; // @pixels: @w*@h pixels to draw
     int w, h;         //   @pixels[i * w + j] is 00RRGGBB 
     int sync;         // @sync ? sync screen : do nothing
   } _FBCtlReg;
