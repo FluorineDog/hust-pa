@@ -14,7 +14,7 @@ extern char _end;
 
 // #define _def(variable, NO) _def_conv(int, variable, NO)
 #define _ret() c->GPR1
-#define _set_ret(value) _ret() = value
+#define _set_ret(value) _ret() = (int)(size_t)value
 
 _Context* do_syscall(_Context* c) {
     // uint32_t syscall_type = c->GPR1;
@@ -76,19 +76,18 @@ _Context* do_syscall(_Context* c) {
         }
         case SYS_brk: {
             // int increment = c->GPR2;
-            _def(increment, 2, int);
-            void* old = (void*)_heap.start;
-            void* new = old + increment;
-            if((void*)&_end < new&& new < _heap.end) {
-                _heap.start = new;
-                // c->GPR1 = (size_t)old;
-                _set_ret((size_t)old);
+            _def(new_addr, 2, void*);
+            if((void*)&_end < new_addr && new_addr < _heap.end) {
+                _heap.start = new_addr;
+                _set_ret(new_addr);
                 break;
+                // c->GPR1 = (size_t)old;
             } else {
-                // c->GPR1 = -1;
-                _set_ret(-1);
+                void* old_addr = (void*)_heap.start;
+                _set_ret(old_addr);
                 break;
             }
+            break;
         }
         default: panic("Unhandled syscall ID = %d", syscall_type);
     }
