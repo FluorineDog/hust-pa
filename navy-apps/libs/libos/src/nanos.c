@@ -39,7 +39,7 @@ int _write(int fd, void *buf, size_t count){
   return ret;
 }
 
-static int _program_break = 0;
+static void* _program_break = 0;
 void *_sbrk(intptr_t increment){
   if(!_program_break) {
     _program_break = (void *)_syscall_(SYS_brk, NULL, 0, 0);
