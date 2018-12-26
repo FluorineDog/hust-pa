@@ -1,6 +1,4 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
-
+#pragma once
 /* Uncomment these macros to enable corresponding functionality. */
 #define HAS_CTE
 //#define HAS_VME
@@ -13,4 +11,4 @@ typedef char bool;
 #define true 1
 #define false 0
 
-#endif
+// #define TODO() panic("TODO");

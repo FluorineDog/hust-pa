@@ -1,4 +1,5 @@
 #include "syscall.h"
+#include "fs.h"
 #include "common.h"
 #define stdin 0
 #define stdout 1
@@ -25,30 +26,27 @@ _Context* do_syscall(_Context* c) {
         }
         case SYS_write: {
             int fd = c->GPR2;
+            const char* buf = (const char*)c->GPR3;
+            int size = c->GPR4;
+            int ret = vfs_write(fd, buf, size); 
+            c->GPR1 = ret;
+            break;
+        }
+        case SYS_read: {
+            int fd = c->GPR2;
             char* buf = (char*)c->GPR3;
             int size = c->GPR4;
-            // printf("[write_fd = %d]", fd);
-            assert(fd > 0);
-            assert(fd == 1);
-            if(fd <= 3) {
-                // special file
-                // printf("[size = $%d]", size);
-                // assert(fd == 1);
-
-                int ref = printf("%s", buf);
-                assert(true || ref == size);
-                c->GPR1 = ref;
-            } else {
-            }
+            int ret = vfs_read(fd, buf, size); 
+            c->GPR1 = ret;
             break;
         }
         case SYS_brk: {
             int increment = c->GPR2;
-            void* old = (void*) _heap.start;
+            void* old = (void*)_heap.start;
             void* new = old + increment;
-            if(&_end < new && new < _heap.end) {
+            if((void*)&_end < new&& new < _heap.end) {
                 _heap.start = new;
-                c->GPR1 = (uint32_t) old;
+                c->GPR1 = (size_t)old;
                 break;
             } else {
                 c->GPR1 = -1;

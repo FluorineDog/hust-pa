@@ -1,5 +1,4 @@
-#ifndef __FS_H__
-#define __FS_H__
+#pragma once
 
 #include "common.h"
 
@@ -7,4 +6,6 @@
 enum {SEEK_SET, SEEK_CUR, SEEK_END};
 #endif
 
-#endif
+
+size_t vfs_read(int fd, void* buf, int size);
+size_t vfs_write(int fd, const void* buf, int size);
