@@ -57,6 +57,7 @@ size_t vfs_read(int fd, void *buf, size_t size) {
         panic("wtf");
         return delta;
     }
+    assert(size == delta);
     h->open_offset += delta;
     return delta;
 }
@@ -70,6 +71,7 @@ size_t vfs_write(int fd, const void *buf, size_t size) {
         panic("wtf");
         return delta;
     }
+    assert(size == delta);
     h->open_offset += delta;
     return delta;
 }
@@ -108,9 +110,10 @@ ssize_t vfs_lseek(int fd, ssize_t offset, int whence) {
         default: panic("wtf");
     }
     ssize_t new = base + offset;
+    Log("lseek %d{size = %d, off=%d} with {offset=%d, whence=%d}, to %d", fd, handle->size, handle->open_offset, offset, whence, new);
     assert(0 <= new);
     // piss off the fix size
-    assert(new < handle->size);
+    assert(new <= handle->size);
     handle->open_offset = new;
     return new; 
 }
