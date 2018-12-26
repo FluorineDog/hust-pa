@@ -35,10 +35,10 @@ static void exec(OutputEngine* eng, char ch, int index) {
     eng->fn(eng);
 }
 
-static int atoi_internal(char* buf, int x_, int base, int is_unsigned) {
+static int atoi_internal(char* buf, size_t x_, int base, int is_unsigned) {
     const char* alphabet = "0123456789abcdef";
     int prefix = 0;
-    unsigned x = x_;
+    size_t x = x_;
     if(x < 0 && !is_unsigned) {
         buf[0] = '-';
         x = -x_;
