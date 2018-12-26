@@ -8,7 +8,9 @@
 /* read `len' bytes starting from `offset' of ramdisk into `buf' */
 size_t ramdisk_read(void *buf, size_t offset, size_t len) {
   assert(offset + len <= RAMDISK_SIZE);
+  Log("CP %p INFO %p size=%d", &ramdisk_start + offset, buf, len);
   memcpy(buf, &ramdisk_start + offset, len);
+  Log("CPed");
   return len;
 }
 

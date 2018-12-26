@@ -32,8 +32,7 @@ static Finfo file_table[] __attribute__((used)) = {
     {"stdout", -1, 0, invalid_read, serial_write},
     {"stderr", -1, 0, invalid_read, serial_write},
     {"/dev/fb", 0, 0, invalid_read, fb_write},
-    {"/proc/dispinfo", 128, 0, dispinfo_read, invalid_write},
-    {"/dev/events", 0, 0, invalid_read, invalid_write},
+    {"/proc/dispinfoFK", 128, 0, dispinfo_read, invalid_write},
 #include "files.h"
 };
 
@@ -91,25 +90,28 @@ size_t vfs_write(int fd, const void *buf, size_t size) {
 
 // @ret: fd
 int vfs_open(const char *filename, int flags, int mode) {
+    Log("opening %s", filename);
+    // assert(0);
     for(int fd = 0; fd < NR_FILES; ++fd) {
         Finfo *handle = file_table + fd;
         if(strcmp(handle->name, filename) == 0) {
             // match
             handle->open_offset = 0;
+            Log("opened with fd=%d", fd);
             return fd;
         }
     }
-    // error
     return -1;
 }
 
 size_t vfs_filesz(int fd) {
+    Log("get size of %d", fd);
     Finfo *handle = file_table + fd;
     return handle->size;
 }
 
 int vfs_close(int fd) {
-    // do nothing
+    Log("closing %d", fd);
     return 0;
 }
 
