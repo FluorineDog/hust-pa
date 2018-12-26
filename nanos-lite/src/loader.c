@@ -3,13 +3,13 @@
 #include <klib.h>
 static uintptr_t loader(PCB *pcb, const char *filename) {
     // fuck the filenames
-    ramdisk_read((void *)DEFAULT_ENTRY, 0, RAMDISK_SIZE);
-    // assert(filename != NULL);
-    // int fd = vfs_open(filename, 0, 0);
-    // int size = vfs_filesz(fd); 
-    // Log("load program %s {fd=%d} with size=%d", filename, fd, size);
-    // vfs_read(fd, (void*)DEFAULT_ENTRY, size);
-    // vfs_close(fd);
+    // ramdisk_read((void *)DEFAULT_ENTRY, 0, RAMDISK_SIZE);
+    assert(filename != NULL);
+    int fd = vfs_open(filename, 0, 0);
+    int size = vfs_filesz(fd); 
+    Log("load program %s {fd=%d} with size=%d", filename, fd, size);
+    vfs_read(fd, (void*)DEFAULT_ENTRY, size);
+    vfs_close(fd);
     return DEFAULT_ENTRY;
 }
 

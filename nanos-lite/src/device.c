@@ -18,7 +18,6 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 static char dispinfo[128];
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-    assert(0);
     assert(offset <= 128);
     if(len > 128 - offset){
         len = 128 - offset; 

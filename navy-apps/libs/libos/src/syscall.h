@@ -4,18 +4,18 @@
 enum {
   SYS_exit,
   SYS_yield,
-  SYS_open,
+  SYS_open, // 2
   SYS_read,
-  SYS_write,
+  SYS_write, 
 
-  SYS_kill,
+  SYS_kill, //5
   SYS_getpid,
 
   SYS_close,
   SYS_lseek,
   SYS_brk,
 
-  SYS_fstat,
+  SYS_fstat, //10
   SYS_time,
   SYS_signal,
   SYS_execve,
