@@ -43,7 +43,7 @@ static int _program_break = 0;
 void *_sbrk(intptr_t increment){
   if(!_program_break) {
     _program_break = (void *)_syscall_(SYS_brk, NULL, 0, 0);
-    printf("%08x", (int)_program_break);
+    // printf("%08x", (int)_program_break);
   }
   if(increment == 0){
     return _program_break;

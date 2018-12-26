@@ -14,7 +14,7 @@ extern char _end;
 
 // #define _def(variable, NO) _def_conv(int, variable, NO)
 #define _ret() c->GPR1
-#define _set_ret(value) _ret() = (int)value
+#define _set_ret(value) _ret() = (int)(size_t)value
 
 _Context* do_syscall(_Context* c) {
     // uint32_t syscall_type = c->GPR1;
