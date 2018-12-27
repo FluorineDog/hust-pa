@@ -90,7 +90,7 @@ size_t vfs_write(int fd, const void *buf, size_t size) {
 
 // @ret: fd
 int vfs_open(const char *filename, int flags, int mode) {
-    Log("opening %s", filename);
+    // Log("opening %s", filename);
     // assert(0);
     for(int fd = 0; fd < NR_FILES; ++fd) {
         Finfo *handle = file_table + fd;
@@ -99,7 +99,7 @@ int vfs_open(const char *filename, int flags, int mode) {
             // assert(handle->file_lock == 0);
             // handle->file_lock++;
             handle->open_offset = 0;
-            Log("opened with fd=%d", fd);
+            // Log("opened with fd=%d", fd);
             return fd;
         }
     }
@@ -107,7 +107,7 @@ int vfs_open(const char *filename, int flags, int mode) {
 }
 
 size_t vfs_filesz(int fd) {
-    Log("get size of %d", fd);
+    // Log("get size of %d", fd);
     Finfo *handle = file_table + fd;
     return handle->size;
 }
@@ -116,7 +116,7 @@ int vfs_close(int fd) {
     // Finfo *handle = file_table + fd;
     // assert(handle->file_lock == 1);
     // handle->file_lock--;
-    Log("closing %d", fd);
+    // Log("closing %d", fd);
     return 0;
 }
 
