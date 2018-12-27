@@ -16,8 +16,8 @@ static char dispinfo[128];
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
     Log("display");
     assert(offset <= 128);
-    if(len > 128 - offset){
-        len = 128 - offset; 
+    if(len > 128 - offset) {
+        len = 128 - offset;
     }
     memcpy(buf, dispinfo + offset, len);
     return len;
@@ -30,7 +30,7 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
     len /= sizeof(int);
     size_t x = offset % width;
     size_t y = offset / width;
-    if(x + len >= width){
+    if(x + len >= width) {
         Log("x=%d, y=%d, len=%d", x, y, len);
     }
     assert(x + len <= width);
@@ -54,24 +54,24 @@ void init_device() {
 size_t events_read(void *buf, size_t offset, size_t len) {
     // Log("buf=%p, off=%d, len=%d", buf, offset, len);
     int keycode = read_key();
-    const char* status = "ku";
-    if (keycode & 0x8000) {
-      keycode ^= 0x8000;
-      status = "kd";
+    const char *status = "ku";
+    if(keycode & 0x8000) {
+        keycode ^= 0x8000;
+        status = "kd";
     }
-     
+
     static int next_time = 0;
-    if(keycode != _KEY_NONE){
-        const char* name = keyname[keycode];
-        int n = snprintf(buf, len, "k%s %s\n", status, name);
+    if(keycode != _KEY_NONE) {
+        const char *name = keyname[keycode];
+        int n = snprintf(buf, len + 100, "%s %s\n", status, name);
+        assert(n < len);
         return n;
     } else {
         // time here
         int time;
-        if((time = uptime()) <= next_time){
-            return 0;
+        while((time = uptime()) <= next_time) {
         }
-        next_time = time;
+        next_time = next_time + 100;
         int n = snprintf(buf, len, "t %d\n", time);
         return n;
     }
