@@ -52,19 +52,27 @@ void init_device() {
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
+    // Log("buf=%p, off=%d, len=%d", buf, offset, len);
     int keycode = read_key();
-    char status = 'u';
+    const char* status = "ku";
     if (keycode & 0x8000) {
       keycode ^= 0x8000;
-      status = 'd';
+      status = "kd";
     }
+     
+    static int next_time = 0;
     if(keycode != _KEY_NONE){
-        // time here
-        int n = snprintf(buf, len, "t 1234");
+        const char* name = keyname[keycode];
+        int n = snprintf(buf, len, "k%s %s\n", status, name);
         return n;
     } else {
-        const char* name = keyname[keycode];
-        int n = snprintf(buf, len, "k%c %s", status, name);
+        // time here
+        int time;
+        if((time = uptime()) <= next_time){
+            return 0;
+        }
+        next_time = time;
+        int n = snprintf(buf, len, "t %d\n", time);
         return n;
     }
 }

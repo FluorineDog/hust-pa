@@ -63,8 +63,8 @@ size_t vfs_read(int fd, void *buf, size_t size) {
         panic("wtf");
         return delta;
     }
-    Log("read{fd = %d, buf=%p, size=%d} from %d to %d", fd, buf, h->size, h->open_offset,
-        h->open_offset + delta);
+    // Log("read{fd = %d, buf=%p, size=%d} from %d to %d", fd, buf, h->size, h->open_offset,
+    //     h->open_offset + delta);
     h->open_offset += delta;
     return delta;
 }

@@ -9,7 +9,7 @@ static _Context* do_event(_Event e, _Context* c) {
         break;
     }
     case _EVENT_SYSCALL:{
-        Log("irq=%p, pa1=%p, pa2=%p, pa3=%p", c->GPR1, c->GPR2, c->GPR3, c->GPR4);
+        // Log("irq=%p, pa1=%p, pa2=%p, pa3=%p", c->GPR1, c->GPR2, c->GPR3, c->GPR4);
         do_syscall(c);
         break;
     }
