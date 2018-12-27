@@ -1,4 +1,5 @@
 #include "device.h"
+#include "fs.h"
 size_t serial_write(const void *buf, size_t offset, size_t len) {
     for(int i = 0; i < len; ++i) {
         _putc(((char *)buf)[i]);
@@ -51,6 +52,6 @@ void init_device() {
     // described in the Navy-apps convention
     int width = screen_width();
     int height = screen_height();
-    sprintf(dispinfo, "WIDTH:%d\nHEIGHT:%d\n", width, height);
-    
+    int size = sprintf(dispinfo, "WIDTH:%d\nHEIGHT:%d\n", width, height);
+    vfs_set_size(FD_DISPINFO, size);
 }

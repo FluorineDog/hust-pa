@@ -15,7 +15,6 @@ typedef struct {
     int file_lock;
 } Finfo;
 
-enum { FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_DISPINFO, FD_EVENTS, FD_FILES_BEGIN };
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
     panic("should not reach here");
@@ -33,7 +32,7 @@ static Finfo file_table[] __attribute__((used)) = {
     {"stdout", -1, 0, invalid_read, serial_write},
     {"stderr", -1, 0, invalid_read, serial_write},
     {"/dev/fb", 0, 0, invalid_read, fb_write},
-    {"/proc/dispinfo", 128, 0, dispinfo_read, invalid_write},
+    {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
     {"/dev/events", 0, 0, invalid_read, invalid_write},
 #include "files.h"
 };
@@ -139,4 +138,10 @@ ssize_t vfs_lseek(int fd, ssize_t offset, int whence) {
     assert(new <= handle->size);
     handle->open_offset = new;
     return new;
+}
+
+void vfs_set_size(int fd, size_t size){
+    assert(0 <= size);
+    assert(0 <= fd && fd < FD_FILES_BEGIN);
+    file_table[fd].size = size;
 }

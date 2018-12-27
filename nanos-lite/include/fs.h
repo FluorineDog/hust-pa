@@ -15,3 +15,5 @@ int vfs_close(int fd);
 
 ssize_t vfs_lseek(int fd, ssize_t offset, int whence);
 
+void vfs_set_size(int fd, size_t size);
+enum { FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_DISPINFO, FD_EVENTS, FD_FILES_BEGIN };
