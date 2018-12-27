@@ -39,24 +39,16 @@ int _write(int fd, void *buf, size_t count){
   return ret;
 }
 
-static void* _program_break = 0;
+static void* _program_break = &end;
 void *_sbrk(intptr_t increment){
-  if(!_program_break) {
-    _program_break = (void *)_syscall_(SYS_brk, NULL, 0, 0);
-    // printf("%08x", (int)_program_break);
-  }
-  if(increment == 0){
-    return _program_break;
-  }
-  void *old = _program_break;
-  void* new_addr = _program_break + increment;
-  void *ret = (void *)_syscall_(SYS_brk, new_addr, 0, 0);
-
-  if(old == ret){
-    return (void*)-1;
+  void* new_pb = _program_break + increment;
+  int ret = _syscall_(SYS_brk, new_pb, 0, 0);
+  if(ret < 0){
+    assert(0);
   } else {
-    _program_break = ret;
-    return old;
+    void *old_pb = _program_break;
+    _program_break = new_pb;
+    return old_pb;
   }
 }
 

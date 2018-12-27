@@ -6,7 +6,6 @@
 #define stdin 0
 #define stdout 1
 #define stderr 2
-extern char _end;
 
 #define _def(variable, NO, type) type variable = (type)c->GPR##NO
 #define _def_unused(variable, NO, type) \
@@ -75,12 +74,7 @@ _Context* do_syscall(_Context* c) {
             break;
         }
         case SYS_brk: {
-            _def(new_addr, 2, void*);
-            static void* program_break = &_end;
-            if(new_addr >= (void*)&_end) {
-                program_break = new_addr;
-            }
-            _set_ret(program_break);
+            _set_ret(0);
             break;
         }
         default: panic("Unhandled syscall ID = %d", syscall_type);

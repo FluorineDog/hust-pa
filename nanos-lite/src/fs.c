@@ -97,8 +97,8 @@ int vfs_open(const char *filename, int flags, int mode) {
         Finfo *handle = file_table + fd;
         if(strcmp(handle->name, filename) == 0) {
             // match
-            assert(handle->file_lock == 0);
-            handle->file_lock++;
+            // assert(handle->file_lock == 0);
+            // handle->file_lock++;
             handle->open_offset = 0;
             Log("opened with fd=%d", fd);
             return fd;
@@ -114,9 +114,9 @@ size_t vfs_filesz(int fd) {
 }
 
 int vfs_close(int fd) {
-    Finfo *handle = file_table + fd;
-    assert(handle->file_lock == 1);
-    handle->file_lock--;
+    // Finfo *handle = file_table + fd;
+    // assert(handle->file_lock == 1);
+    // handle->file_lock--;
     Log("closing %d", fd);
     return 0;
 }
@@ -131,8 +131,8 @@ ssize_t vfs_lseek(int fd, ssize_t offset, int whence) {
         default: panic("wtf");
     }
     ssize_t new = base + offset;
-    Log("lseek %d{size = %d, off=%d} with {offset=%d, whence=%d}, to %d", fd,
-        handle->size, handle->open_offset, offset, whence, new);
+    // Log("lseek %d{size = %d, off=%d} with {offset=%d, whence=%d}, to %d", fd,
+    //     handle->size, handle->open_offset, offset, whence, new);
     assert(0 <= new);
     // piss off the fix size
     assert(new <= handle->size);
