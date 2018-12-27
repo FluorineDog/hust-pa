@@ -15,7 +15,7 @@ typedef struct {
     int file_lock;
 } Finfo;
 
-enum { FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_DISPINFO, FD_FILES_BEGIN };
+enum { FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB, FD_DISPINFO, FD_EVENTS, FD_FILES_BEGIN };
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
     panic("should not reach here");
@@ -34,6 +34,7 @@ static Finfo file_table[] __attribute__((used)) = {
     {"stderr", -1, 0, invalid_read, serial_write},
     {"/dev/fb", 0, 0, invalid_read, fb_write},
     {"/proc/dispinfo", 128, 0, dispinfo_read, invalid_write},
+    {"/dev/events", 0, 0, invalid_read, invalid_write},
 #include "files.h"
 };
 
