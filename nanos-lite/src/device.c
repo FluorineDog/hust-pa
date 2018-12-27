@@ -71,7 +71,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
         int time;
         while((time = uptime()) <= next_time) {
         }
-        next_time = next_time + 100;
+        next_time = next_time;
         int n = snprintf(buf, len, "t %d\n", time);
         return n;
     }
