@@ -31,7 +31,8 @@ _Context* handler(_Event ev, _Context *ctx) {
 int main(){
   _ioe_init();
   _cte_init(handler);
-  assert(!_intr_read());
+  int ret = _intr_read();
+  assert(!ret);
   _intr_write(1);
   while (1) {
     _yield();

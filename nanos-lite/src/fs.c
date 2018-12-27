@@ -33,7 +33,7 @@ static Finfo file_table[] __attribute__((used)) = {
     {"stderr", -1, 0, invalid_read, serial_write},
     {"/dev/fb", 0, 0, invalid_read, fb_write},
     {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
-    {"/dev/events", 0, 0, invalid_read, invalid_write},
+    {"/dev/events", -1, 0, events_read, invalid_write},
 #include "files.h"
 };
 
@@ -58,12 +58,11 @@ size_t vfs_read(int fd, void *buf, size_t size) {
         size = remaining;
     }
     int delta = h->read(buf, offset, size);
-    assert(delta == size);
+    assert(size == delta || h->size == (size_t) -1);
     if(delta < 0) {
         panic("wtf");
         return delta;
     }
-    assert(size == delta);
     Log("read{fd = %d, buf=%p, size=%d} from %d to %d", fd, buf, h->size, h->open_offset,
         h->open_offset + delta);
     h->open_offset += delta;

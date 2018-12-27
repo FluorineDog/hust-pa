@@ -63,7 +63,7 @@ int vsprintf(char *str, const char *format, va_list ap);
 
 // assert.h
 #ifdef NDEBUG
-  #define assert(ignore) ((void)0)
+  #define assert(ignore) ((void)sizeof(ignore))
 #else
   #define assert(cond) \
     do { \

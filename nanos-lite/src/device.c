@@ -9,12 +9,7 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 
 #define NAME(key) [_KEY_##key] = #key,
 
-static const char *keyname[256]
-    __attribute__((used)) = {[_KEY_NONE] = "NONE", _KEYS(NAME)};
-
-size_t events_read(void *buf, size_t offset, size_t len) {
-    return 0;
-}
+static const char *keyname[256] = {[_KEY_NONE] = "NONE", _KEYS(NAME)};
 
 static char dispinfo[128];
 
@@ -54,4 +49,22 @@ void init_device() {
     int height = screen_height();
     int size = sprintf(dispinfo, "WIDTH:%d\nHEIGHT:%d\n", width, height);
     vfs_set_size(FD_DISPINFO, size);
+}
+
+size_t events_read(void *buf, size_t offset, size_t len) {
+    int keycode = read_key();
+    char status = 'u';
+    if (keycode & 0x8000) {
+      keycode ^= 0x8000;
+      status = 'd';
+    }
+    if(keycode != _KEY_NONE){
+        // time here
+        int n = snprintf(buf, len, "t 1234");
+        return n;
+    } else {
+        const char* name = keyname[keycode];
+        int n = snprintf(buf, len, "k%c %s", status, name);
+        return n;
+    }
 }
