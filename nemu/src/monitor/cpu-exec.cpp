@@ -86,6 +86,7 @@ void cpu_exec(uint64_t n) {
 }
 
 #include <fstream>
+#include "device/mmio.h"
 using std::ofstream;
 using std::ifstream;
 constexpr uint64_t magic_number = 0x12d8b5d9FFBBCCDD;
@@ -94,6 +95,7 @@ void image_save(const char* filename){
     fout.write((char*)&magic_number, sizeof(magic_number));
     fout.write((char*)&cpu, sizeof(cpu));
     fout.write((char*)pmem, PMEM_SIZE);
+    save_mmio(fout);
 }
 
 void image_load(const char* filename) {
@@ -105,6 +107,7 @@ void image_load(const char* filename) {
     }
     fin.read((char*)&cpu, sizeof(cpu));
     fin.read((char*)pmem, PMEM_SIZE);
+    load_mmio(fin);
     if(g_diff_test_enabled){
         difftest_recover();
     }

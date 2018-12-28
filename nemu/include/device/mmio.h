@@ -2,6 +2,9 @@
 #define __MMIO_H__
 
 #include "common.h"
+#include <fstream>
+using std::ofstream;
+using std::ifstream;
 
 typedef void(*mmio_callback_t)(paddr_t paddr, int len, bool is_write);
 
@@ -11,5 +14,8 @@ int is_mmio(paddr_t paddr);
 
 uint32_t mmio_read(paddr_t paddr, int len, int map_NO);
 void mmio_write(paddr_t paddr, int len, uint32_t data, int map_NO);
+
+void save_mmio(ofstream& fout);
+void load_mmio(ifstream& fin);
 
 #endif
