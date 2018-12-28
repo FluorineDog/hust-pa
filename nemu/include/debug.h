@@ -1,6 +1,4 @@
-#ifndef __DEBUG_H__
-#define __DEBUG_H__
-
+#pragma once
 #include "common.h"
 #include <stdio.h>
 #include <assert.h>
@@ -45,4 +43,3 @@ extern FILE* log_fp;
 
 #define TODO() panic("please implement me")
 
-#endif

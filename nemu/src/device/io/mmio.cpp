@@ -78,8 +78,28 @@ void mmio_write(paddr_t addr, int len, uint32_t data, int map_NO) {
 	}
 }
 
-void mmio_save() {
+
+void save_mmio(ofstream& fout){
 	for (int mapNO = 0; mapNO < nr_map; ++mapNO) {
-	
+		auto& mapping = maps[mapNO];
+		Log("saving %d, %08x -> %08x", mapNO, mapping.low, mapping.high);
+		for(paddr_t addr = mapping.low; addr < mapping.high; addr += 4){
+			uint32_t data = mmio_read(addr, 4, mapNO);
+			fout.write((char*)&data, sizeof(uint32_t));
+		}
 	}
 }
+
+void load_mmio(ifstream& fin){
+	for (int mapNO = 0; mapNO < nr_map; ++mapNO) {
+		auto& mapping = maps[mapNO];
+		Log("loading %d, %08x -> %08x", mapNO, mapping.low, mapping.high);
+		for(paddr_t addr = mapping.low; addr < mapping.high; addr += 4){
+			uint32_t data;
+			fin.read((char*)&data, sizeof(uint32_t));
+			mmio_write(addr, 4, data, mapNO);
+		}
+	}
+}
+
+

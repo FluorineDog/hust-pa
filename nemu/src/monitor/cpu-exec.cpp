@@ -91,14 +91,16 @@ using std::ofstream;
 using std::ifstream;
 constexpr uint64_t magic_number = 0x12d8b5d9FFBBCCDD;
 void image_save(const char* filename){
+    Log("image saving");
     ofstream fout(filename, std::ios::binary| std::ios::out);
-    fout.write((char*)&magic_number, sizeof(magic_number));
-    fout.write((char*)&cpu, sizeof(cpu));
-    fout.write((char*)pmem, PMEM_SIZE);
+    fout.write((const char*)&magic_number, sizeof(magic_number));
+    fout.write((const char*)&cpu, sizeof(cpu));
+    fout.write((const char*)pmem, PMEM_SIZE);
     save_mmio(fout);
 }
 
 void image_load(const char* filename) {
+	Log("image loading");
     ifstream fin(filename, std::ios::binary| std::ios::in);
     uint64_t magic;
     fin.read((char*)&magic, sizeof(magic));
@@ -107,7 +109,7 @@ void image_load(const char* filename) {
     }
     fin.read((char*)&cpu, sizeof(cpu));
     fin.read((char*)pmem, PMEM_SIZE);
-    load_mmio(fin);
+	load_mmio(fin);
     if(g_diff_test_enabled){
         difftest_recover();
     }
