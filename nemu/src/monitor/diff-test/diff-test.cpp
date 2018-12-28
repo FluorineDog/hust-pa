@@ -6,7 +6,7 @@
 #include "nemu.h"
 
 uint32_t g_ignore_eflags = 0;
-bool diff_test_enabled = true;
+bool g_diff_test_enabled = true;
 
 static void (*ref_difftest_memcpy_from_dut)(paddr_t dest, void *src, size_t n);
 
@@ -72,7 +72,7 @@ void init_difftest(const char *ref_so_file, long img_size) {
 }
 
 void difftest_step(uint32_t eip) {
-    if(!diff_test_enabled) {
+    if(!g_diff_test_enabled) {
         return;
     }
     CPU_state ref_cpu;

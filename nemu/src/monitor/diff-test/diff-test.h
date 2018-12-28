@@ -1,7 +1,7 @@
 #pragma once
 #include "nemu.h"
 
-extern bool diff_test_enabled;
+extern bool g_diff_test_enabled;
 
 #define DIFFTEST_REG_SIZE (sizeof(uint32_t) * 10) // GRPs + EIP
 
@@ -20,5 +20,4 @@ void difftest_exec(uint64_t n);
 extern "C"
 void difftest_init(void);
 
-extern "C"
 void difftest_recover(void);

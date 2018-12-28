@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "../diff-test/diff-test.h"
 
 void cpu_exec(uint64_t);
 
@@ -80,9 +81,14 @@ static struct {
 		/* TODO: Add more commands */
 };
 
-static int cmd_attach_difftest(char *args) {}
+static int cmd_attach_difftest(char *args) {
+	difftest_recover();
+	g_diff_test_enabled = true;
+}
 
-static int cmd_detach_difftest(char *args) {}
+static int cmd_detach_difftest(char *args) {
+	g_diff_test_enabled = false;
+}
 
 
 static int cmd_delete_watch(char *args) {

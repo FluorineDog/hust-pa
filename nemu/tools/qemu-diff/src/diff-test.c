@@ -35,22 +35,22 @@ void difftest_exec(uint64_t n) {
 }
 
 union IDTR {
-    uint8_t data[] = {
-        0x00, 0x00,                                  // padding
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,          // IDTR content
-        0x0f, 0x01, 0x1d, 0x02, 0x7e, 0x00, 0x00,    // IDTR content
-    };
+    uint8_t data[16];
     struct {
         uint16_t padding;
         uint16_t limit;
         uint32_t base;
-    }
-} idtr;
+    };
+} idtr = {{
+    0x00, 0x00,                                  // padding
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00,          // IDTR content
+    0x0f, 0x01, 0x1d, 0x02, 0x7e, 0x00, 0x00,    // IDTR content
+}};
 
 void difftest_loadidt(uint16_t limit, uint32_t base) {
     idtr.limit = limit;
     idtr.base = base;
-    bool ok = gdb_memcpy_to_qemu(0x7e00, idtr, sizeof(idtr));
+    bool ok = gdb_memcpy_to_qemu(0x7e00, &idtr, sizeof(idtr));
     assert(ok == 1);
 
     union gdb_regs r;
