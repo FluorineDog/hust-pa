@@ -1,5 +1,6 @@
 #include "common.h"
 #include "device/mmio.h"
+#include "device/device.h"
 
 #define MMIO_SPACE_MAX (512 * 1024)
 #define NR_MAP 2
@@ -103,7 +104,6 @@ void load_mmio(ifstream &fin) {
 			mmio_write(addr, 4, data, mapNO);
 		}
 	}
-	extern void device_update();
 	device_update();
 }
 

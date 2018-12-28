@@ -37,7 +37,7 @@ static void timer_sig_handler(int signum) {
   Assert(ret == 0, "Can not set timer");
 }
 
-void device_update() {
+void device_update(bool force) {
   if (!device_update_flag) {
     return;
   }

@@ -9,6 +9,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "monitor/diff-test.h"
+#include "device/device.h"
 
 void cpu_exec(uint64_t);
 
@@ -286,7 +287,6 @@ void ui_mainloop(int is_batch_mode) {
 		}
 
 #ifdef HAS_IOE
-		extern void sdl_clear_event_queue(void);
 		sdl_clear_event_queue();
 #endif
 		
