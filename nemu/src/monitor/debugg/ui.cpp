@@ -84,10 +84,12 @@ static struct {
 static int cmd_attach_difftest(char *args) {
 	difftest_recover();
 	g_diff_test_enabled = true;
+	return 0;
 }
 
 static int cmd_detach_difftest(char *args) {
 	g_diff_test_enabled = false;
+	return 0;
 }
 
 
