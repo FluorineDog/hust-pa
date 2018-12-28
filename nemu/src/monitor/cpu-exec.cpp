@@ -1,8 +1,8 @@
 #include "nemu.h"
+#include "device/device.h"
 #include "monitor/monitor.h"
 #include "monitor/watchpoint.h"
 #include "monitor/diff-test.h"
-#include "device/device.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -101,6 +101,7 @@ void image_save(const char* filename){
 
 void image_load(const char* filename) {
 	Log("image loading");
+	sdl_clear_event_queue();
     ifstream fin(filename, std::ios::binary| std::ios::in);
     uint64_t magic;
     fin.read((char*)&magic, sizeof(magic));
@@ -110,6 +111,7 @@ void image_load(const char* filename) {
     fin.read((char*)&cpu, sizeof(cpu));
     fin.read((char*)pmem, PMEM_SIZE);
 	load_mmio(fin);
+    device_update(true);
     if(g_diff_test_enabled){
         difftest_recover();
     }

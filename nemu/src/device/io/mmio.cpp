@@ -104,7 +104,6 @@ void load_mmio(ifstream &fin) {
 			mmio_write(addr, 4, data, mapNO);
 		}
 	}
-	device_update();
 }
 
 

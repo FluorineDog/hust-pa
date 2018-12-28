@@ -38,6 +38,10 @@ static void timer_sig_handler(int signum) {
 }
 
 void device_update(bool force) {
+  if(force){
+    device_update_flag = true;
+    update_screen_flag = true;
+  }
   if (!device_update_flag) {
     return;
   }
