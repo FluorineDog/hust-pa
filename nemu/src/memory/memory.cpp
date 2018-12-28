@@ -1,7 +1,6 @@
 #include "nemu.h"
 #include "device/mmio.h"
 
-#define PMEM_SIZE (128 * 1024 * 1024)
 
 #define pmem_rw(addr, type) *(type *)({\
     Assert(addr < PMEM_SIZE, "physical address(0x%08x) is out of bound", addr); \
