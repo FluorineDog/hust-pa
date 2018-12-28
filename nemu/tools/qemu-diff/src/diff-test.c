@@ -1,6 +1,7 @@
 #include <signal.h>
 #include <sys/prctl.h>
 #include "common.h"
+#include "eflags.h"
 
 typedef uint32_t paddr_t;
 #define DIFFTEST_REG_SIZE (sizeof(uint32_t) * 10)    // GPRs + EIP + EFLAGS
@@ -26,7 +27,10 @@ void difftest_getregs(void *r) {
 void difftest_setregs(const void *r) {
     union gdb_regs qemu_r;
     gdb_getregs(&qemu_r);
-    memcpy(&qemu_r, r, DIFFTEST_REG_SIZE);
+    memcpy(&qemu_r, r, DIFFTEST_REG_SIZE - 4);
+    uint32_t mask = MASK_OF | MASK_SF | MASK_ZF | MASK_CF | MASK_IF;
+    qemu_r.eflags &= ~mask;
+    qemu_r.eflags |= mask & ((union gdb_regs*)r)->eflags;
     gdb_setregs(&qemu_r);
 }
 
@@ -61,6 +65,7 @@ void difftest_loadidt(uint16_t limit, uint32_t base) {
     r.cs = 0x0000;
     ok = gdb_setregs(&r);
     assert(ok == 1);
+    gdb_si();
 }
 
 static uint8_t mbr[] = {

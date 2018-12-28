@@ -21,7 +21,7 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-    naive_uload(NULL, "/bin/pal");
+    naive_uload(NULL, "/bin/bmptest");
 }
 
 _Context* schedule(_Context *prev) {
