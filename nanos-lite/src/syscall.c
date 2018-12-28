@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "common.h"
+#include "proc.h"
 #include "fs.h"
 #define stdin 0
 #define stdout 1
@@ -74,7 +75,16 @@ _Context* do_syscall(_Context* c) {
             break;
         }
         case SYS_brk: {
+            // TODO
             _set_ret(0);
+            break;
+        }
+
+        case SYS_execve: {
+            _def(path, 2, const char*);
+            _def(argv, 3, char* const*);
+            _def(envp, 4, char* const*);
+            _ret() = proc_execve(path, argv, envp);
             break;
         }
         default: panic("Unhandled syscall ID = %d", syscall_type);

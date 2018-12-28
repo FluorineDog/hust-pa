@@ -21,9 +21,16 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-    naive_uload(NULL, "/bin/pal");
+    naive_uload(NULL, "/bin/init");
 }
 
 _Context* schedule(_Context *prev) {
   return NULL;
+}
+
+int proc_execve(const char *path, char *const argv[], char *const envp[]){
+    // TODO
+    naive_uload(NULL, path); 
+    panic("wtf");
+    return -1;
 }

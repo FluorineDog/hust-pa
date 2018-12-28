@@ -18,5 +18,7 @@ typedef union {
 } PCB;
 
 extern PCB *current;
+int proc_execve(const char *path, char *const argv[], char *const envp[]);
+
 
 #endif
