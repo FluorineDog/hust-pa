@@ -59,10 +59,7 @@ void difftest_loadidt(uint16_t limit, uint32_t base) {
 
     union gdb_regs r;
     gdb_getregs(&r);
-
-    // set cs:eip to 0000:7c00
     r.eip = 0x7e08;
-    r.cs = 0x0000;
     ok = gdb_setregs(&r);
     assert(ok == 1);
     gdb_si();

@@ -136,7 +136,7 @@ void difftest_step(uint32_t eip) {
 
 
 void difftest_recover(){
-     ref_difftest_loadidt((uint16_t)cpu.idtr.limit, cpu.idtr.base);
+    ref_difftest_loadidt((uint16_t)cpu.idtr.limit, cpu.idtr.base);
     ref_difftest_memcpy_from_dut(0, guest_to_host(0), 0x7c00);
     ref_difftest_memcpy_from_dut(ENTRY_START, guest_to_host(ENTRY_START), PMEM_SIZE - ENTRY_START);
     ref_difftest_setregs(&cpu);
