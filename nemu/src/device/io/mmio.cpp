@@ -46,11 +46,14 @@ int is_mmio(paddr_t addr) {
 uint32_t mmio_read(paddr_t addr, int len, int map_NO) {
 	assert(len >= 1 && len <= 4);
 	MMIO_t *map = &maps[map_NO];
-	uint32_t data = *(uint32_t *) (map->mmio_space + (addr - map->low))
+	uint32_t data = *(uint32_t * )(map->mmio_space + (addr - map->low))
 	                & (~0u >> ((4 - len) << 3));
 	if (map->callback != NULL) {
 		map->callback(addr, len, false);
 	}
+//	if(data != 0){
+//		Log("%08x ", data);
+//	}
 	return data;
 }
 
@@ -59,8 +62,8 @@ void mmio_write(paddr_t addr, int len, uint32_t data, int map_NO) {
 	MMIO_t *map = &maps[map_NO];
 	
 	uint8_t *p = map->mmio_space + (addr - map->low);
-	uint8_t *p_data = (uint8_t *) &data;
-	
+	uint8_t *p_data = (uint8_t * ) & data;
+
 	switch (len) {
 		case 4:
 			p[3] = p_data[3];
@@ -79,27 +82,29 @@ void mmio_write(paddr_t addr, int len, uint32_t data, int map_NO) {
 }
 
 
-void save_mmio(ofstream& fout){
+void save_mmio(ofstream &fout) {
 	for (int mapNO = 0; mapNO < nr_map; ++mapNO) {
-		auto& mapping = maps[mapNO];
+		auto &mapping = maps[mapNO];
 		Log("saving %d, %08x -> %08x", mapNO, mapping.low, mapping.high);
-		for(paddr_t addr = mapping.low; addr < mapping.high; addr += 4){
+		for (paddr_t addr = mapping.low; addr < mapping.high; addr += 4) {
 			uint32_t data = mmio_read(addr, 4, mapNO);
-			fout.write((char*)&data, sizeof(uint32_t));
+			fout.write((char *) &data, sizeof(uint32_t));
 		}
 	}
 }
 
-void load_mmio(ifstream& fin){
+void load_mmio(ifstream &fin) {
 	for (int mapNO = 0; mapNO < nr_map; ++mapNO) {
-		auto& mapping = maps[mapNO];
+		auto &mapping = maps[mapNO];
 		Log("loading %d, %08x -> %08x", mapNO, mapping.low, mapping.high);
-		for(paddr_t addr = mapping.low; addr < mapping.high; addr += 4){
+		for (paddr_t addr = mapping.low; addr < mapping.high; addr += 4) {
 			uint32_t data;
-			fin.read((char*)&data, sizeof(uint32_t));
+			fin.read((char *) &data, sizeof(uint32_t));
 			mmio_write(addr, 4, data, mapNO);
 		}
 	}
+	extern void device_update();
+	device_update();
 }
 
 
