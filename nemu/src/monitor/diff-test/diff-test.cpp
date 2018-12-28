@@ -1,7 +1,7 @@
 #include <dlfcn.h>
 
 #include "cpu/eflags.h"
-#include "diff-test.h"
+#include "monitor/diff-test.h"
 #include "monitor/monitor.h"
 #include "nemu.h"
 

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "../diff-test/diff-test.h"
+#include "monitor/diff-test.h"
 
 void cpu_exec(uint64_t);
 
@@ -55,6 +55,10 @@ static int cmd_add_watch(char *args);
 
 static int cmd_delete_watch(char *args);
 
+static int cmd_save_image(char *args);
+
+static int cmd_load_image(char *args);
+
 static int cmd_attach_difftest(char *args);
 
 static int cmd_detach_difftest(char *args);
@@ -78,8 +82,27 @@ static struct {
 		{"d",      "delete_watchpoint",                                 cmd_delete_watch},
 		{"attach", "attach difftest",                                   cmd_attach_difftest},
 		{"detach", "detach difftest",                                   cmd_detach_difftest},
+		{"save",   "save image",                                        cmd_save_image},
+		{"load",   "load image",                                        cmd_load_image},
 		/* TODO: Add more commands */
 };
+
+void image_save(const char *filename);
+
+void image_load(const char *filename);
+
+static int cmd_load_image(char *args) {
+	char *filename = strtok(nullptr, " ");
+	image_load(filename);
+	return 0;
+}
+
+static int cmd_save_image(char *args) {
+	char *filename = strtok(nullptr, " ");
+	image_save(filename);
+	return 0;
+}
+
 
 static int cmd_attach_difftest(char *args) {
 	difftest_recover();

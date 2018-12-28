@@ -1,6 +1,7 @@
 #include "nemu.h"
 #include "monitor/monitor.h"
 #include "monitor/watchpoint.h"
+#include "monitor/diff-test.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -83,3 +84,30 @@ void cpu_exec(uint64_t n) {
 
     if (nemu_state == NEMU_RUNNING) { nemu_state = NEMU_STOP; }
 }
+
+#include <fstream>
+using std::ofstream;
+using std::ifstream;
+constexpr uint64_t magic_number = 0x12d8b5d9FFBBCCDD;
+void image_save(const char* filename){
+    ofstream fout(filename, std::ios::binary| std::ios::out);
+    fout.write((char*)&magic_number, sizeof(magic_number));
+    fout.write((char*)&cpu, sizeof(cpu));
+    fout.write((char*)pmem, PMEM_SIZE);
+}
+
+void image_load(const char* filename) {
+    ifstream fin(filename, std::ios::binary| std::ios::in);
+    uint64_t magic;
+    fin.read((char*)&magic, sizeof(magic));
+    if(magic != magic_number){
+        panic("fuck you, this is not an image file");
+    }
+    fin.read((char*)&cpu, sizeof(cpu));
+    fin.read((char*)pmem, PMEM_SIZE);
+    if(g_diff_test_enabled){
+        difftest_recover();
+    }
+}
+
+
