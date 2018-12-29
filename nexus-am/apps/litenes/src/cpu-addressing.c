@@ -79,26 +79,35 @@ void cpu_address_relative()
     }
 }
 
+inline word memory_readw_warp(word addr){
+    if((addr & 0xFF) != 0xFF){
+        return memory_readw(addr); 
+    } else {
+        return (memory_readb(arg_addr & 0xFF00) << 8) | memory_readb(arg_addr);
+    }
+}
+
 void cpu_address_indirect()
 {
     word arg_addr = memory_readw(cpu.PC);
 
-    // The famous 6502 bug when instead of reading from $C0FF/$C100 it reads from $C0FF/$C000
-    if ((arg_addr & 0xFF) == 0xFF) {
-        // Buggy code
-        op_address = (memory_readb(arg_addr & 0xFF00) << 8) + memory_readb(arg_addr);
-    }
-    else {
-        // Normal code
-        op_address = memory_readw(arg_addr);
-    }
+    // // The famous 6502 bug when instead of reading from $C0FF/$C100 it reads from $C0FF/$C000
+    // if ((arg_addr & 0xFF) == 0xFF) {
+    //     // Buggy code
+    //     op_address = (memory_readb(arg_addr & 0xFF00) << 8) + memory_readb(arg_addr);
+    // }
+    // else {
+    //     // Normal code
+    op_address = memory_readw_warp(arg_addr);
+    // }
     cpu.PC += 2;
 }
 
 void cpu_address_indirect_x()
 {
     byte arg_addr = memory_readb(cpu.PC);
-    op_address = (memory_readb((arg_addr + cpu.X + 1) & 0xFF) << 8) | memory_readb((arg_addr + cpu.X) & 0xFF);
+    // op_address = (memory_readb((arg_addr + cpu.X + 1) & 0xFF) << 8) | memory_readb((arg_addr + cpu.X) & 0xFF);
+    op_address = memory_readw_warp((arg_addr + cpu.X) & 0xFF);
     op_value = memory_readb(op_address);
     cpu.PC++;
 }
@@ -106,7 +115,8 @@ void cpu_address_indirect_x()
 void cpu_address_indirect_y()
 {
     byte arg_addr = memory_readb(cpu.PC);
-    op_address = (((memory_readb((arg_addr + 1) & 0xFF) << 8) | memory_readb(arg_addr)) + cpu.Y) & 0xFFFF;
+    // op_address = (((memory_readb((arg_addr + 1 + cpu.Y) & 0xFF) << 8) | memory_readb(arg_addr)) + cpu.Y) & 0xFFFF;
+    op_address = memory_readw_warp((arg_addr + cpu.Y) & 0xFF);
     op_value = memory_readb(op_address);
     cpu.PC++;
 
