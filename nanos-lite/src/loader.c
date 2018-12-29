@@ -20,14 +20,12 @@ void naive_uload(PCB *pcb, const char *filename) {
 }
 
 static char buf[3][128];
+const char *argv[3] = {buf[0], buf[1], buf[2]};
 void program_naive_uload(PCB *pcb, const char *filename, char *const *raw_argv) {
     int i = 0;
     Log(">>>%s", raw_argv[1]);
-    const char *argv[3] = {buf[0], buf[1], buf[2]};
-    if(raw_argv[0]) strcpy(buf[0], raw_argv[0]);
-    if(raw_argv[1]) strcpy(buf[1], raw_argv[1]);
-    if(raw_argv[2]) strcpy(buf[2], raw_argv[2]);
-    while(argv[i] != NULL) {
+    while(raw_argv[i] != NULL && i < 3) {
+        strcpy(buf[i], raw_argv[i]);
         i++;
     }
     uintptr_t entry = loader(pcb, filename);
