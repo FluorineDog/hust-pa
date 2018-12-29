@@ -30,7 +30,7 @@ _Context* schedule(_Context *prev) {
 
 int proc_execve(const char *path, char *const argv[], char *const envp[]){
     // TODO
-    naive_uload(NULL, path); 
+    program_naive_uload(NULL, path, argv); 
     panic("wtf");
     return -1;
 }
