@@ -7,3 +7,5 @@
 
 void naive_uload(PCB *pcb, const char *filename);
 void context_uload(PCB *pcb, const char *filename);
+
+void program_naive_uload(PCB* pcb, const char *filename, char *const*argv);
