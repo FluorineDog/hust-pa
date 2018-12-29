@@ -1,4 +1,5 @@
 #include "syscall.h"
+#include "loader.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include "common.h"
@@ -25,7 +26,12 @@ _Context* do_syscall(_Context* c) {
             // int status = c->GPR2;
             _def(status, 2, int);
             // printf("[status = %d]", status);
-            _halt(status);
+            // _halt(status);
+            if(status != 0) {
+                _halt(status);
+                panic("wtf");
+            }
+            naive_uload(NULL, "/bin/init");
             break;
         }
         case SYS_yield: {

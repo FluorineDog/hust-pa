@@ -1,14 +1,14 @@
 #include "loader.h"
-#include "fs.h"
 #include <klib.h>
+#include "fs.h"
 static uintptr_t loader(PCB *pcb, const char *filename) {
     // fuck the filenames
     // ramdisk_read((void *)DEFAULT_ENTRY, 0, RAMDISK_SIZE);
     assert(filename != NULL);
     int fd = vfs_open(filename, 0, 0);
-    int size = vfs_filesz(fd); 
+    int size = vfs_filesz(fd);
     Log("load program %s {fd=%d} with size=%d", filename, fd, size);
-    vfs_read(fd, (void*)DEFAULT_ENTRY, size);
+    vfs_read(fd, (void *)DEFAULT_ENTRY, size);
     vfs_close(fd);
     return DEFAULT_ENTRY;
 }
@@ -16,6 +16,23 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 void naive_uload(PCB *pcb, const char *filename) {
     uintptr_t entry = loader(pcb, filename);
     ((void (*)())entry)();
+    panic("wtf");
+}
+
+static char buf[3][128];
+const char *argv[3] = {buf[0], buf[1], buf[2]};
+void program_naive_uload(PCB *pcb, const char *filename, char *const *raw_argv) {
+    int i = 0;
+    Log(">>>%s", raw_argv[1]);
+    if(raw_argv[0]) strcpy(buf[0], raw_argv[0]);
+    if(raw_argv[1]) strcpy(buf[1], raw_argv[1]);
+    if(raw_argv[2]) strcpy(buf[2], raw_argv[2]);
+    while(argv[i] != NULL) {
+        i++;
+    }
+    uintptr_t entry = loader(pcb, filename);
+    ((void (*)(int argc, const char *const *argv))entry)(i, argv);
+    panic("wtf");
 }
 
 void context_kload(PCB *pcb, void *entry) {
