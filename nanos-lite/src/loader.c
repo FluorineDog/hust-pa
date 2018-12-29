@@ -23,7 +23,6 @@ static char buf[3][128];
 const char *argv[3] = {buf[0], buf[1], buf[2]};
 void program_naive_uload(PCB *pcb, const char *filename, char *const *raw_argv) {
     int i = 0;
-    Log(">>>%s", raw_argv[1]);
     while(raw_argv[i] != NULL && i < 3) {
         strcpy(buf[i], raw_argv[i]);
         i++;
