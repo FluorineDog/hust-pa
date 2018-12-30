@@ -69,13 +69,14 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     } else {
         // time here
         int time;
-        static int max_time = -1;
-        if(next_time < max_time) {
+        static int max_time = 0;
+        if(max_time < next_time) {
             while((time = uptime()) <= next_time) {
             }
             max_time = time;
         }
         next_time++;
+        // Log("[%d - %d]", next_time, max_time);
         int n = snprintf(buf, len, "t %d\n", next_time);
         return n;
     }
