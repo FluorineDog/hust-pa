@@ -36,6 +36,7 @@ uint32_t uptime();
 void get_timeofday(void *rtc);
 int read_key();
 void draw_rect(const uint32_t *pixels, int x, int y, int w, int h);
+void draw_line(const uint32_t *pixels, int line_offset_beg, int length);
 void draw_sync();
 int screen_width();
 int screen_height();

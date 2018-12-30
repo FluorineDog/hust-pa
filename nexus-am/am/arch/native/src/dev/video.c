@@ -1,4 +1,4 @@
-#include <am.h>
+#include <SDL2/SDL.h>
 #include <amdev.h>
 #include <SDL2/SDL.h>
 
@@ -68,6 +68,18 @@ size_t video_write(uintptr_t reg, const void *buf, size_t size) {
         // do nothing, texture_sync() is called by SDL_timer
       }
       return size;
+    }
+    case _DEVREG_VIDEO_FBCTL_LINE: {
+        _FBCtlReg *ctl = (_FBCtlReg *)buf;
+        // int size = screen_width() * screen_height();
+        uint32_t* base = fb + ctl->line_offset_beg;
+        for(int d = 0; d < ctl->length; ++d){
+            base[d] = ctl->pixels[d]; 
+        }
+        if(ctl->sync) {
+            // do nothing, hardware syncs.
+        }
+        return size;
     }
   }
   return 0;

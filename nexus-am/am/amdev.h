@@ -69,10 +69,19 @@ extern "C" {
   } _VideoInfoReg;
 
 #define _DEVREG_VIDEO_FBCTL   2
+#define _DEVREG_VIDEO_FBCTL_LINE   3
   typedef struct {
-    int x, y;         // draw to (@x, @y)
+    union {
+      struct {
+        int x, y;         // draw to (@x, @y)
+        int w, h;         //   @pixels[i * w + j] is 00RRGGBB 
+      };
+      struct {
+        int line_offset_beg;
+        int length;
+      };
+    };
     const uint32_t *pixels; // @pixels: @w*@h pixels to draw
-    int w, h;         //   @pixels[i * w + j] is 00RRGGBB 
     int sync;         // @sync ? sync screen : do nothing
   } _FBCtlReg;
 

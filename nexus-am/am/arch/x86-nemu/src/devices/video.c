@@ -38,6 +38,18 @@ size_t video_write(uintptr_t reg, const void *buf, size_t size) {
             }
             return sizeof(_FBCtlReg);
         }
+        case _DEVREG_VIDEO_FBCTL_LINE: {
+            _FBCtlReg *ctl = (_FBCtlReg *)buf;
+            // int size = screen_width() * screen_height();
+            uint32_t* base = fb + ctl->line_offset_beg;
+            for(int d = 0; d < ctl->length; ++d){
+                base[d] = ctl->pixels[d]; 
+            }
+            if(ctl->sync) {
+                // do nothing, hardware syncs.
+            }
+            return sizeof(_FBCtlReg);
+        }
     }
     return 0;
 }

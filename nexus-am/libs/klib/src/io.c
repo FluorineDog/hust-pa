@@ -40,6 +40,16 @@ int read_key() {
   return ret;
 }
 
+void draw_line(const uint32_t *pixels, int line_offset_beg, int length){
+  _Device *dev = getdev(&video_dev, _DEV_VIDEO);
+  _FBCtlReg ctl;
+  ctl.pixels = pixels;
+  ctl.line_offset_beg = line_offset_beg;
+  ctl.length = length;
+  ctl.sync = 0;
+  dev->write(_DEVREG_VIDEO_FBCTL_LINE, &ctl, sizeof(ctl));
+}
+
 void draw_rect(const uint32_t *pixels, int x, int y, int w, int h) {
   _Device *dev = getdev(&video_dev, _DEV_VIDEO);
   _FBCtlReg ctl;
