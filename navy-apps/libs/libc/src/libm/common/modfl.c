@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-modfl (long double x, long double *iptr)
-{
-  return modf(x, (double *)iptr);
+long double modfl(long double x, long double *iptr) {
+    return modf(x, (double *)iptr);
 }
 #endif
-

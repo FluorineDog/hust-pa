@@ -61,47 +61,46 @@ QUICKREF
 #include <errno.h>
 
 #ifndef _DOUBLE_IS_32BITS
- 
+
 #ifdef __STDC__
-	double cosh(double x)		/* wrapper cosh */
+double cosh(double x) /* wrapper cosh */
 #else
-	double cosh(x)			/* wrapper cosh */
-	double x;
+double cosh(x) /* wrapper cosh */
+    double x;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_cosh(x);
+    return __ieee754_cosh(x);
 #else
-	double z;
-	struct exception exc;
-	z = __ieee754_cosh(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(fabs(x)>7.10475860073943863426e+02) {	
-	    /* cosh(finite) overflow */
+    double z;
+    struct exception exc;
+    z = __ieee754_cosh(x);
+    if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
+    if(fabs(x) > 7.10475860073943863426e+02) {
+        /* cosh(finite) overflow */
 #ifndef HUGE_VAL
 #define HUGE_VAL inf
-	    double inf = 0.0;
+        double inf = 0.0;
 
-	    SET_HIGH_WORD(inf,0x7ff00000);	/* set inf to infinite */
+        SET_HIGH_WORD(inf, 0x7ff00000); /* set inf to infinite */
 #endif
-	    exc.type = OVERFLOW;
-	    exc.name = "cosh";
-	    exc.err = 0;
-	    exc.arg1 = exc.arg2 = x;
-	    if (_LIB_VERSION == _SVID_)
-	       exc.retval = HUGE;
-	    else
-	       exc.retval = HUGE_VAL;
-	    if (_LIB_VERSION == _POSIX_)
-	       errno = ERANGE;
-	    else if (!matherr(&exc)) {
-	       errno = ERANGE;
-	    }
-	    if (exc.err != 0)
-	       errno = exc.err;
-	    return exc.retval; 
-	} else
-	    return z;
+        exc.type = OVERFLOW;
+        exc.name = "cosh";
+        exc.err = 0;
+        exc.arg1 = exc.arg2 = x;
+        if(_LIB_VERSION == _SVID_)
+            exc.retval = HUGE;
+        else
+            exc.retval = HUGE_VAL;
+        if(_LIB_VERSION == _POSIX_)
+            errno = ERANGE;
+        else if(!matherr(&exc)) {
+            errno = ERANGE;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    } else
+        return z;
 #endif
 }
 

@@ -16,51 +16,52 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-static const float 
+static const float
 #else
-static float 
+static float
 #endif
-one =  1.0000000000e+00, /* 0x3F800000 */
-ln2 =  6.9314718246e-01, /* 0x3f317218 */
-huge=  1.0000000000e+30; 
+    one = 1.0000000000e+00, /* 0x3F800000 */
+    ln2 = 6.9314718246e-01, /* 0x3f317218 */
+    huge = 1.0000000000e+30;
 
 #ifdef __STDC__
-	float asinhf(float x)
+float asinhf(float x)
 #else
-	float asinhf(x)
-	float x;
+float asinhf(x) float x;
 #endif
-{	
-	float t,w;
-	__int32_t hx,ix;
-	GET_FLOAT_WORD(hx,x);
-	ix = hx&0x7fffffff;
-	if(ix>=0x7f800000) return x+x;	/* x is inf or NaN */
-	if(ix< 0x31800000) {	/* |x|<2**-28 */
-	    if(huge+x>one) return x;	/* return x inexact except 0 */
-	} 
-	if(ix>0x4d800000) {	/* |x| > 2**28 */
-	    w = logf(fabsf(x))+ln2;
-	} else if (ix>0x40000000) {	/* 2**28 > |x| > 2.0 */
-	    t = fabsf(x);
-	    w = logf((float)2.0*t+one/(sqrtf(x*x+one)+t));
-	} else {		/* 2.0 > |x| > 2**-28 */
-	    t = x*x;
-	    w =log1pf(fabsf(x)+t/(one+sqrtf(one+t)));
-	}
-	if(hx>0) return w; else return -w;
+{
+    float t, w;
+    __int32_t hx, ix;
+    GET_FLOAT_WORD(hx, x);
+    ix = hx & 0x7fffffff;
+    if(ix >= 0x7f800000) return x + x; /* x is inf or NaN */
+    if(ix < 0x31800000) {              /* |x|<2**-28 */
+        if(huge + x > one) return x;   /* return x inexact except 0 */
+    }
+    if(ix > 0x4d800000) { /* |x| > 2**28 */
+        w = logf(fabsf(x)) + ln2;
+    } else if(ix > 0x40000000) { /* 2**28 > |x| > 2.0 */
+        t = fabsf(x);
+        w = logf((float)2.0 * t + one / (sqrtf(x * x + one) + t));
+    } else { /* 2.0 > |x| > 2**-28 */
+        t = x * x;
+        w = log1pf(fabsf(x) + t / (one + sqrtf(one + t)));
+    }
+    if(hx > 0)
+        return w;
+    else
+        return -w;
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double asinh(double x)
+double asinh(double x)
 #else
-	double asinh(x)
-	double x;
+double asinh(x) double x;
 #endif
 {
-	return (double) asinhf((float) x);
+    return (double)asinhf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

@@ -39,18 +39,12 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_fcntl_r (struct _reent *ptr,
-     int fd,
-     int cmd,
-     int arg)
-{
-  int ret;
+int _fcntl_r(struct _reent *ptr, int fd, int cmd, int arg) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _fcntl (fd, cmd, arg)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _fcntl(fd, cmd, arg)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

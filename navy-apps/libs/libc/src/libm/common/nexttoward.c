@@ -29,10 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "local.h"
 
 #ifdef _LDBL_EQ_DBL
-double
-nexttoward (double x, long double y)
-{
-  return nextafter(x, y);
+double nexttoward(double x, long double y) {
+    return nextafter(x, y);
 }
 #endif
-

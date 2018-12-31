@@ -30,42 +30,31 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #ifndef _REENT_ONLY
 
-int
-vsprintf (char *__restrict str,
-       const char *__restrict fmt,
-       va_list ap)
-{
-  return _vsprintf_r (_REENT, str, fmt, ap);
+int vsprintf(char *__restrict str, const char *__restrict fmt, va_list ap) {
+    return _vsprintf_r(_REENT, str, fmt, ap);
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-vsiprintf (char *, const char *, __VALIST)
-       _ATTRIBUTE ((__alias__("vsprintf")));
+int vsiprintf(char *, const char *, __VALIST) _ATTRIBUTE((__alias__("vsprintf")));
 #endif
 
 #endif /* !_REENT_ONLY */
 
-int
-_vsprintf_r (struct _reent *ptr,
-       char *__restrict str,
-       const char *__restrict fmt,
-       va_list ap)
-{
-  int ret;
-  FILE f;
+int _vsprintf_r(struct _reent *ptr, char *__restrict str, const char *__restrict fmt,
+                va_list ap) {
+    int ret;
+    FILE f;
 
-  f._flags = __SWR | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._w = INT_MAX;
-  f._file = -1;  /* No file. */
-  ret = _svfprintf_r (ptr, &f, fmt, ap);
-  *f._p = 0;
-  return ret;
+    f._flags = __SWR | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._w = INT_MAX;
+    f._file = -1; /* No file. */
+    ret = _svfprintf_r(ptr, &f, fmt, ap);
+    *f._p = 0;
+    return ret;
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-_vsiprintf_r (struct _reent *, char *, const char *, __VALIST)
-       _ATTRIBUTE ((__alias__("_vsprintf_r")));
+int _vsiprintf_r(struct _reent *, char *, const char *, __VALIST)
+    _ATTRIBUTE((__alias__("_vsprintf_r")));
 #endif

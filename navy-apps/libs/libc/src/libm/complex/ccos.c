@@ -64,18 +64,15 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include <math.h>
 #include "cephes_subr.h"
 
-double complex
-ccos(double complex z)
-{
-	double complex w;
-	double ch, sh;
+double complex ccos(double complex z) {
+    double complex w;
+    double ch, sh;
 
-	_cchsh(cimag(z), &ch, &sh);
-	w = cos(creal(z)) * ch - (sin(creal(z)) * sh) * I;
-	return w;
+    _cchsh(cimag(z), &ch, &sh);
+    w = cos(creal(z)) * ch - (sin(creal(z)) * sh) * I;
+    return w;
 }

@@ -93,75 +93,57 @@ PORTABILITY
 #define fputws fputws_unlocked
 #endif
 
-int
-_fputws_r (struct _reent *ptr,
-	const wchar_t *ws,
-	FILE *fp)
-{
-  size_t nbytes;
-  char buf[BUFSIZ];
+int _fputws_r(struct _reent *ptr, const wchar_t *ws, FILE *fp) {
+    size_t nbytes;
+    char buf[BUFSIZ];
 #ifdef _FVWRITE_IN_STREAMIO
-  struct __suio uio;
-  struct __siov iov;
+    struct __suio uio;
+    struct __siov iov;
 
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, 1);
-  if (cantwrite (ptr, fp) != 0)
-    goto error;
-  uio.uio_iov = &iov;
-  uio.uio_iovcnt = 1;
-  iov.iov_base = buf;
-  do
-    {
-      nbytes = _wcsrtombs_r(ptr, buf, &ws, sizeof (buf), &fp->_mbstate);
-      if (nbytes == (size_t) -1)
-	goto error;
-      iov.iov_len = uio.uio_resid = nbytes;
-      if (__sfvwrite_r(ptr, fp, &uio) != 0)
-	goto error;
-    }
-  while (ws != NULL);
-  _newlib_flockfile_exit (fp);
-  return (0);
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, 1);
+    if(cantwrite(ptr, fp) != 0) goto error;
+    uio.uio_iov = &iov;
+    uio.uio_iovcnt = 1;
+    iov.iov_base = buf;
+    do {
+        nbytes = _wcsrtombs_r(ptr, buf, &ws, sizeof(buf), &fp->_mbstate);
+        if(nbytes == (size_t)-1) goto error;
+        iov.iov_len = uio.uio_resid = nbytes;
+        if(__sfvwrite_r(ptr, fp, &uio) != 0) goto error;
+    } while(ws != NULL);
+    _newlib_flockfile_exit(fp);
+    return (0);
 
 error:
-  _newlib_flockfile_end (fp);
-  return (-1);
+    _newlib_flockfile_end(fp);
+    return (-1);
 #else
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, 1);
-  if (cantwrite (ptr, fp) != 0)
-    goto error;
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, 1);
+    if(cantwrite(ptr, fp) != 0) goto error;
 
-  do
-    {
-      size_t i = 0;
-      nbytes = _wcsrtombs_r (ptr, buf, &ws, sizeof (buf), &fp->_mbstate);
-      if (nbytes == (size_t) -1)
-	goto error;
-      while (i < nbytes)
-        {
-	  if (__sputc_r (ptr, buf[i], fp) == EOF)
-	    goto error;
-	  i++;
+    do {
+        size_t i = 0;
+        nbytes = _wcsrtombs_r(ptr, buf, &ws, sizeof(buf), &fp->_mbstate);
+        if(nbytes == (size_t)-1) goto error;
+        while(i < nbytes) {
+            if(__sputc_r(ptr, buf[i], fp) == EOF) goto error;
+            i++;
         }
-    }
-  while (ws != NULL);
-  _newlib_flockfile_exit (fp);
-  return (0);
+    } while(ws != NULL);
+    _newlib_flockfile_exit(fp);
+    return (0);
 
 error:
-  _newlib_flockfile_end (fp);
-  return (-1);
+    _newlib_flockfile_end(fp);
+    return (-1);
 #endif
 }
 
-int
-fputws (const wchar_t *__restrict ws,
-	FILE *__restrict fp)
-{
-  struct _reent *reent = _REENT;
+int fputws(const wchar_t *__restrict ws, FILE *__restrict fp) {
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT (reent, fp);
-  return _fputws_r (reent, ws, fp);
+    CHECK_INIT(reent, fp);
+    return _fputws_r(reent, ws, fp);
 }

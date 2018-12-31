@@ -103,91 +103,84 @@ static char rcsid[] = "$NetBSD: popen.c,v 1.11 1995/06/16 07:05:33 jtc Exp $";
 #include <fcntl.h>
 
 static struct pid {
-	struct pid *next;
-	FILE *fp;
-	pid_t pid;
-} *pidlist;
+    struct pid *next;
+    FILE *fp;
+    pid_t pid;
+} * pidlist;
 
-FILE *
-popen (const char *program,
-	const char *type)
-{
-	struct pid *cur;
-	FILE *iop;
-	int pdes[2], pid;
+FILE *popen(const char *program, const char *type) {
+    struct pid *cur;
+    FILE *iop;
+    int pdes[2], pid;
 
-       if ((*type != 'r' && *type != 'w')
-	   || (type[1]
+    if((*type != 'r' && *type != 'w') || (type[1]
 #ifdef HAVE_FCNTL
-	       && (type[2] || (type[1] != 'e'))
+                                          && (type[2] || (type[1] != 'e'))
 #endif
-			       )) {
-		errno = EINVAL;
-		return (NULL);
-	}
+                                              )) {
+        errno = EINVAL;
+        return (NULL);
+    }
 
-	if ((cur = malloc(sizeof(struct pid))) == NULL)
-		return (NULL);
+    if((cur = malloc(sizeof(struct pid))) == NULL) return (NULL);
 
-	if (pipe(pdes) < 0) {
-		free(cur);
-		return (NULL);
-	}
+    if(pipe(pdes) < 0) {
+        free(cur);
+        return (NULL);
+    }
 
-	switch (pid = vfork()) {
-	case -1:			/* Error. */
-		(void)close(pdes[0]);
-		(void)close(pdes[1]);
-		free(cur);
-		return (NULL);
-		/* NOTREACHED */
-	case 0:				/* Child. */
-		if (*type == 'r') {
-			if (pdes[1] != STDOUT_FILENO) {
-				(void)dup2(pdes[1], STDOUT_FILENO);
-				(void)close(pdes[1]);
-			}
-			if (pdes[0] != STDOUT_FILENO) {
-				(void) close(pdes[0]);
-			}
-		} else {
-			if (pdes[0] != STDIN_FILENO) {
-				(void)dup2(pdes[0], STDIN_FILENO);
-				(void)close(pdes[0]);
-			}
-			(void)close(pdes[1]);
-		}
-		/* Close all fd's created by prior popen.  */
-		for (cur = pidlist; cur; cur = cur->next)
-			(void)close (fileno (cur->fp));
-		execl(_PATH_BSHELL, "sh", "-c", program, NULL);
-		_exit(127);
-		/* NOTREACHED */
-	}
+    switch(pid = vfork()) {
+        case -1: /* Error. */
+            (void)close(pdes[0]);
+            (void)close(pdes[1]);
+            free(cur);
+            return (NULL);
+            /* NOTREACHED */
+        case 0: /* Child. */
+            if(*type == 'r') {
+                if(pdes[1] != STDOUT_FILENO) {
+                    (void)dup2(pdes[1], STDOUT_FILENO);
+                    (void)close(pdes[1]);
+                }
+                if(pdes[0] != STDOUT_FILENO) {
+                    (void)close(pdes[0]);
+                }
+            } else {
+                if(pdes[0] != STDIN_FILENO) {
+                    (void)dup2(pdes[0], STDIN_FILENO);
+                    (void)close(pdes[0]);
+                }
+                (void)close(pdes[1]);
+            }
+            /* Close all fd's created by prior popen.  */
+            for(cur = pidlist; cur; cur = cur->next) (void)close(fileno(cur->fp));
+            execl(_PATH_BSHELL, "sh", "-c", program, NULL);
+            _exit(127);
+            /* NOTREACHED */
+    }
 
-	/* Parent; assume fdopen can't fail. */
-	if (*type == 'r') {
-		iop = fdopen(pdes[0], type);
-		(void)close(pdes[1]);
-	} else {
-		iop = fdopen(pdes[1], type);
-		(void)close(pdes[0]);
-	}
+    /* Parent; assume fdopen can't fail. */
+    if(*type == 'r') {
+        iop = fdopen(pdes[0], type);
+        (void)close(pdes[1]);
+    } else {
+        iop = fdopen(pdes[1], type);
+        (void)close(pdes[0]);
+    }
 
 #ifdef HAVE_FCNTL
-	/* Mark pipe cloexec if requested.  */
-	if (type[1] == 'e')
-		fcntl (fileno (iop), F_SETFD,
-		       fcntl (fileno (iop), F_GETFD, 0) | FD_CLOEXEC);
+    /* Mark pipe cloexec if requested.  */
+    if(type[1] == 'e')
+        fcntl(fileno(iop), F_SETFD, fcntl(fileno(iop), F_GETFD, 0) | FD_CLOEXEC);
 #endif /* HAVE_FCNTL */
 
-	/* Link into list of file descriptors. */
-	cur->fp = iop;
-	cur->pid =  pid;
-	cur->next = pidlist;
-	pidlist = cur;
+    /* Link into list of file descriptors. */
+    cur->fp = iop;
+    cur->pid = pid;
+    cur->next = pidlist;
+    pidlist = cur;
 
-	return (iop);
+    return (iop);
 }
 
 /*
@@ -195,34 +188,30 @@ popen (const char *program,
  *	Pclose returns -1 if stream is not associated with a `popened' command,
  *	if already `pclosed', or waitpid returns an error.
  */
-int
-pclose (FILE *iop)
-{
-	register struct pid *cur, *last;
-	int pstat;
-	pid_t pid;
+int pclose(FILE *iop) {
+    register struct pid *cur, *last;
+    int pstat;
+    pid_t pid;
 
-	(void)fclose(iop);
+    (void)fclose(iop);
 
-	/* Find the appropriate file pointer. */
-	for (last = NULL, cur = pidlist; cur; last = cur, cur = cur->next)
-		if (cur->fp == iop)
-			break;
-	if (cur == NULL)
-		return (-1);
+    /* Find the appropriate file pointer. */
+    for(last = NULL, cur = pidlist; cur; last = cur, cur = cur->next)
+        if(cur->fp == iop) break;
+    if(cur == NULL) return (-1);
 
-	do {
-		pid = waitpid(cur->pid, &pstat, 0);
-	} while (pid == -1 && errno == EINTR);
+    do {
+        pid = waitpid(cur->pid, &pstat, 0);
+    } while(pid == -1 && errno == EINTR);
 
-	/* Remove the entry from the linked list. */
-	if (last == NULL)
-		pidlist = cur->next;
-	else
-		last->next = cur->next;
-	free(cur);
+    /* Remove the entry from the linked list. */
+    if(last == NULL)
+        pidlist = cur->next;
+    else
+        last->next = cur->next;
+    free(cur);
 
-	return (pid == -1 ? -1 : pstat);
+    return (pid == -1 ? -1 : pstat);
 }
 
-#endif  /* !_NO_POPEN  */
+#endif /* !_NO_POPEN  */

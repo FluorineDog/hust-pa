@@ -22,12 +22,9 @@
 #include <errno.h>
 #include "local.h"
 
-static int
-lflush (FILE *fp)
-{
-  if ((fp->_flags & (__SLBF | __SWR)) == (__SLBF | __SWR))
-    return fflush (fp);
-  return 0;
+static int lflush(FILE *fp) {
+    if((fp->_flags & (__SLBF | __SWR)) == (__SLBF | __SWR)) return fflush(fp);
+    return 0;
 }
 
 /*
@@ -35,102 +32,86 @@ lflush (FILE *fp)
  * Return EOF on eof or error, 0 otherwise.
  */
 
-int
-__srefill_r (struct _reent * ptr,
-       register FILE * fp)
-{
-  /* make sure stdio is set up */
+int __srefill_r(struct _reent *ptr, register FILE *fp) {
+    /* make sure stdio is set up */
 
-  CHECK_INIT (ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  ORIENT (fp, -1);
+    ORIENT(fp, -1);
 
-  fp->_r = 0;			/* largely a convenience for callers */
+    fp->_r = 0; /* largely a convenience for callers */
 
 #ifndef __CYGWIN__
-  /* SysV does not make this test; take it out for compatibility */
-  if (fp->_flags & __SEOF)
-    return EOF;
+    /* SysV does not make this test; take it out for compatibility */
+    if(fp->_flags & __SEOF) return EOF;
 #endif
 
-  /* if not already reading, have to be reading and writing */
-  if ((fp->_flags & __SRD) == 0)
-    {
-      if ((fp->_flags & __SRW) == 0)
-	{
-	  ptr->_errno = EBADF;
-	  fp->_flags |= __SERR;
-	  return EOF;
-	}
-      /* switch to reading */
-      if (fp->_flags & __SWR)
-	{
-	  if (_fflush_r (ptr, fp))
-	    return EOF;
-	  fp->_flags &= ~__SWR;
-	  fp->_w = 0;
-	  fp->_lbfsize = 0;
-	}
-      fp->_flags |= __SRD;
-    }
-  else
-    {
-      /*
+    /* if not already reading, have to be reading and writing */
+    if((fp->_flags & __SRD) == 0) {
+        if((fp->_flags & __SRW) == 0) {
+            ptr->_errno = EBADF;
+            fp->_flags |= __SERR;
+            return EOF;
+        }
+        /* switch to reading */
+        if(fp->_flags & __SWR) {
+            if(_fflush_r(ptr, fp)) return EOF;
+            fp->_flags &= ~__SWR;
+            fp->_w = 0;
+            fp->_lbfsize = 0;
+        }
+        fp->_flags |= __SRD;
+    } else {
+        /*
        * We were reading.  If there is an ungetc buffer,
        * we must have been reading from that.  Drop it,
        * restoring the previous buffer (if any).  If there
        * is anything in that buffer, return.
        */
-      if (HASUB (fp))
-	{
-	  FREEUB (ptr, fp);
-	  if ((fp->_r = fp->_ur) != 0)
-	    {
-	      fp->_p = fp->_up;
-	      return 0;
-	    }
-	}
+        if(HASUB(fp)) {
+            FREEUB(ptr, fp);
+            if((fp->_r = fp->_ur) != 0) {
+                fp->_p = fp->_up;
+                return 0;
+            }
+        }
     }
 
-  if (fp->_bf._base == NULL)
-    __smakebuf_r (ptr, fp);
+    if(fp->_bf._base == NULL) __smakebuf_r(ptr, fp);
 
-  /*
+    /*
    * Before reading from a line buffered or unbuffered file,
    * flush all line buffered output files, per the ANSI C
    * standard.
    */
-  if (fp->_flags & (__SLBF | __SNBF))
-    {
-      /* Ignore this file in _fwalk to avoid potential deadlock. */
-      short orig_flags = fp->_flags;
-      fp->_flags = 1;
-      (void) _fwalk (_GLOBAL_REENT, lflush);
-      fp->_flags = orig_flags;
+    if(fp->_flags & (__SLBF | __SNBF)) {
+        /* Ignore this file in _fwalk to avoid potential deadlock. */
+        short orig_flags = fp->_flags;
+        fp->_flags = 1;
+        (void)_fwalk(_GLOBAL_REENT, lflush);
+        fp->_flags = orig_flags;
 
-      /* Now flush this file without locking it. */
-      if ((fp->_flags & (__SLBF|__SWR)) == (__SLBF|__SWR))
-	__sflush_r (ptr, fp);
+        /* Now flush this file without locking it. */
+        if((fp->_flags & (__SLBF | __SWR)) == (__SLBF | __SWR)) __sflush_r(ptr, fp);
     }
 
-  fp->_p = fp->_bf._base;
-  fp->_r = fp->_read (ptr, fp->_cookie, (char *) fp->_p, fp->_bf._size);
+    fp->_p = fp->_bf._base;
+    fp->_r = fp->_read(ptr, fp->_cookie, (char *)fp->_p, fp->_bf._size);
 #ifndef __CYGWIN__
-  if (fp->_r <= 0)
+    if(fp->_r <= 0)
 #else
-  if (fp->_r > 0)
-    fp->_flags &= ~__SEOF;
-  else
+    if(fp->_r > 0)
+        fp->_flags &= ~__SEOF;
+    else
 #endif
     {
-      if (fp->_r == 0)
-	fp->_flags |= __SEOF;
-      else
-	{
-	  fp->_r = 0;
-	  fp->_flags |= __SERR;
-	}
-      return EOF;
+        if(fp->_r == 0)
+            fp->_flags |= __SEOF;
+        else {
+            fp->_r = 0;
+            fp->_flags |= __SERR;
+        }
+        return EOF;
     }
-  return 0;
+    return 0;
 }

@@ -47,13 +47,9 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include <math.h>
 
-double
-cabs(double complex z)
-{
-
-	return hypot( creal(z), cimag(z) );
+double cabs(double complex z) {
+    return hypot(creal(z), cimag(z));
 }

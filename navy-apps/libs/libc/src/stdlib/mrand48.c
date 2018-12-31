@@ -13,18 +13,14 @@
 
 #include "rand48.h"
 
-long
-_mrand48_r (struct _reent *r)
-{
-  _REENT_CHECK_RAND48(r);
-  __dorand48(r, __rand48_seed);
-  return ((long) __rand48_seed[2] << 16) + (long) __rand48_seed[1];
+long _mrand48_r(struct _reent *r) {
+    _REENT_CHECK_RAND48(r);
+    __dorand48(r, __rand48_seed);
+    return ((long)__rand48_seed[2] << 16) + (long)__rand48_seed[1];
 }
 
 #ifndef _REENT_ONLY
-long
-mrand48 (void)
-{
-  return _mrand48_r (_REENT);
+long mrand48(void) {
+    return _mrand48_r(_REENT);
 }
 #endif /* !_REENT_ONLY */

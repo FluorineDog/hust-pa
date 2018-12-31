@@ -23,28 +23,14 @@
 #define MAGICMENU_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-WORD
-PAL_MagicSelectionMenuUpdate(
-   VOID
-);
+WORD PAL_MagicSelectionMenuUpdate(VOID);
 
-VOID
-PAL_MagicSelectionMenuInit(
-   WORD         wPlayerRole,
-   BOOL         fInBattle,
-   WORD         wDefaultMagic
-);
+VOID PAL_MagicSelectionMenuInit(WORD wPlayerRole, BOOL fInBattle, WORD wDefaultMagic);
 
-WORD
-PAL_MagicSelectionMenu(
-   WORD         wPlayerRole,
-   BOOL         fInBattle,
-   WORD         wDefaultMagic
-);
+WORD PAL_MagicSelectionMenu(WORD wPlayerRole, BOOL fInBattle, WORD wDefaultMagic);
 
 #ifdef __cplusplus
 }

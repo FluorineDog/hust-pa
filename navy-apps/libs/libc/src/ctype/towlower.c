@@ -70,12 +70,10 @@ No supporting OS subroutines are required.
 #include <wctype.h>
 #include "local.h"
 
-wint_t
-towlower (wint_t c)
-{
+wint_t towlower(wint_t c) {
 #ifdef _MB_CAPABLE
-  return towctrans (c, WCT_TOLOWER);
+    return towctrans(c, WCT_TOLOWER);
 #else
-  return c < 0x00ff ? (wint_t)(tolower ((int)c)) : c;
+    return c < 0x00ff ? (wint_t)(tolower((int)c)) : c;
 #endif /* _MB_CAPABLE */
 }

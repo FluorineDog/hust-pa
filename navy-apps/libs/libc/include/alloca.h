@@ -15,7 +15,7 @@
 #ifdef __GNUC__
 #define alloca(size) __builtin_alloca(size)
 #else
-void * alloca (size_t);
+void* alloca(size_t);
 #endif
 
 #endif

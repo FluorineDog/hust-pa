@@ -18,23 +18,21 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-int isposf (float x)
-{
-  __int32_t wx;
+int isposf(float x) {
+    __int32_t wx;
 
-  GET_FLOAT_WORD (wx, x);
+    GET_FLOAT_WORD(wx, x);
 
-  if (wx & 0x80000000)
-    return (0);
-  else
-    return (1);
+    if(wx & 0x80000000)
+        return (0);
+    else
+        return (1);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-int ispos (double x)
-{
-  return isposf ((float) x);
+int ispos(double x) {
+    return isposf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

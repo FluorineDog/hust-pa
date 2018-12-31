@@ -66,8 +66,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswalpha (wint_t c)
-{
-  return iswalpha_l (c, 0);
+int iswalpha(wint_t c) {
+    return iswalpha_l(c, 0);
 }

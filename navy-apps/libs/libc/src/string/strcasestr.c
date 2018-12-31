@@ -73,74 +73,65 @@ QUICKREF
 #include <strings.h>
 
 #if !defined(PREFER_SIZE_OVER_SPEED) && !defined(__OPTIMIZE_SIZE__)
-# define RETURN_TYPE char *
-# define AVAILABLE(h, h_l, j, n_l)			\
-  (!memchr ((h) + (h_l), '\0', (j) + (n_l) - (h_l))	\
-   && ((h_l) = (j) + (n_l)))
-# define CANON_ELEMENT(c) tolower (c)
-#if __GNUC_PREREQ (4, 2)
+#define RETURN_TYPE char *
+#define AVAILABLE(h, h_l, j, n_l) \
+    (!memchr((h) + (h_l), '\0', (j) + (n_l) - (h_l)) && ((h_l) = (j) + (n_l)))
+#define CANON_ELEMENT(c) tolower(c)
+#if __GNUC_PREREQ(4, 2)
 /* strncasecmp uses signed char, CMP_FUNC is expected to use unsigned char. */
 #pragma GCC diagnostic ignored "-Wpointer-sign"
 #endif
-# define CMP_FUNC strncasecmp
-# include "str-two-way.h"
+#define CMP_FUNC strncasecmp
+#include "str-two-way.h"
 #endif
 
 /*
  * Find the first occurrence of find in s, ignore case.
  */
-char *
-strcasestr (const char *s,
-	const char *find)
-{
+char *strcasestr(const char *s, const char *find) {
 #if defined(PREFER_SIZE_OVER_SPEED) || defined(__OPTIMIZE_SIZE__)
 
-  /* Less code size, but quadratic performance in the worst case.  */
-	char c, sc;
-	size_t len;
+    /* Less code size, but quadratic performance in the worst case.  */
+    char c, sc;
+    size_t len;
 
-	if ((c = *find++) != 0) {
-		c = tolower((unsigned char)c);
-		len = strlen(find);
-		do {
-			do {
-				if ((sc = *s++) == 0)
-					return (NULL);
-			} while ((char)tolower((unsigned char)sc) != c);
-		} while (strncasecmp(s, find, len) != 0);
-		s--;
-	}
-	return ((char *)s);
+    if((c = *find++) != 0) {
+        c = tolower((unsigned char)c);
+        len = strlen(find);
+        do {
+            do {
+                if((sc = *s++) == 0) return (NULL);
+            } while((char)tolower((unsigned char)sc) != c);
+        } while(strncasecmp(s, find, len) != 0);
+        s--;
+    }
+    return ((char *)s);
 
-#else /* compilation for speed */
+#else  /* compilation for speed */
 
-  /* Larger code size, but guaranteed linear performance.  */
-  const char *haystack = s;
-  const char *needle = find;
-  size_t needle_len; /* Length of NEEDLE.  */
-  size_t haystack_len; /* Known minimum length of HAYSTACK.  */
-  int ok = 1; /* True if NEEDLE is prefix of HAYSTACK.  */
+    /* Larger code size, but guaranteed linear performance.  */
+    const char *haystack = s;
+    const char *needle = find;
+    size_t needle_len;   /* Length of NEEDLE.  */
+    size_t haystack_len; /* Known minimum length of HAYSTACK.  */
+    int ok = 1;          /* True if NEEDLE is prefix of HAYSTACK.  */
 
-  /* Determine length of NEEDLE, and in the process, make sure
+    /* Determine length of NEEDLE, and in the process, make sure
      HAYSTACK is at least as long (no point processing all of a long
      NEEDLE if HAYSTACK is too short).  */
-  while (*haystack && *needle)
-    ok &= (tolower ((unsigned char) *haystack++)
-	   == tolower ((unsigned char) *needle++));
-  if (*needle)
-    return NULL;
-  if (ok)
-    return (char *) s;
-  needle_len = needle - find;
-  haystack = s + 1;
-  haystack_len = needle_len - 1;
+    while(*haystack && *needle)
+        ok &= (tolower((unsigned char)*haystack++) == tolower((unsigned char)*needle++));
+    if(*needle) return NULL;
+    if(ok) return (char *)s;
+    needle_len = needle - find;
+    haystack = s + 1;
+    haystack_len = needle_len - 1;
 
-  /* Perform the search.  */
-  if (needle_len < LONG_NEEDLE_THRESHOLD)
-    return two_way_short_needle ((const unsigned char *) haystack,
-				 haystack_len,
-				 (const unsigned char *) find, needle_len);
-  return two_way_long_needle ((const unsigned char *) haystack, haystack_len,
-			      (const unsigned char *) find, needle_len);
+    /* Perform the search.  */
+    if(needle_len < LONG_NEEDLE_THRESHOLD)
+        return two_way_short_needle((const unsigned char *)haystack, haystack_len,
+                                    (const unsigned char *)find, needle_len);
+    return two_way_long_needle((const unsigned char *)haystack, haystack_len,
+                               (const unsigned char *)find, needle_len);
 #endif /* compilation for speed */
 }

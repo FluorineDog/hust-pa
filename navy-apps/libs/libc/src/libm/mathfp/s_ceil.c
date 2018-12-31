@@ -19,19 +19,17 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-ceil (double x)
-{
-  double f, y;
+double ceil(double x) {
+    double f, y;
 
-  y = modf (x, &f);
+    y = modf(x, &f);
 
-  if (y == 0.0)
-    return (x);
-  else if (x > -1.0 && x < 1.0)
-    return (x > 0 ? 1.0 : 0.0);
-  else
-    return (x > 0 ? f + 1.0 : f);
+    if(y == 0.0)
+        return (x);
+    else if(x > -1.0 && x < 1.0)
+        return (x > 0 ? 1.0 : 0.0);
+    else
+        return (x > 0 ? f + 1.0 : f);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

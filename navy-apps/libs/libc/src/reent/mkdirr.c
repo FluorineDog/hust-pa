@@ -39,18 +39,12 @@ DESCRIPTION
 
 #include <sys/stat.h>
 
-int
-_mkdir_r (struct _reent *ptr,
-     const char *path,
-     int mode)
-{
-  int ret;
+int _mkdir_r(struct _reent *ptr, const char *path, int mode) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _mkdir (path, mode)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _mkdir(path, mode)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
-
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

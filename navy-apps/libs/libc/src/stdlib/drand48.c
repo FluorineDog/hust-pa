@@ -13,17 +13,13 @@
 
 #include "rand48.h"
 
-double
-_drand48_r (struct _reent *r)
-{
-  _REENT_CHECK_RAND48(r);
-  return _erand48_r(r, __rand48_seed);
+double _drand48_r(struct _reent *r) {
+    _REENT_CHECK_RAND48(r);
+    return _erand48_r(r, __rand48_seed);
 }
 
 #ifndef _REENT_ONLY
-double
-drand48 (void)
-{
-  return _drand48_r (_REENT);
+double drand48(void) {
+    return _drand48_r(_REENT);
 }
 #endif /* !_REENT_ONLY */

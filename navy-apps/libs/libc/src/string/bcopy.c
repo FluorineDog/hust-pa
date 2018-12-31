@@ -23,10 +23,6 @@ QUICKREF
 #include <string.h>
 #include <strings.h>
 
-void
-bcopy (const void *b1,
-	void *b2,
-	size_t length)
-{
-  memmove (b2, b1, length);
+void bcopy(const void *b1, void *b2, size_t length) {
+    memmove(b2, b1, length);
 }

@@ -56,46 +56,46 @@ PORTABILITY
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double hypot(double x, double y)/* wrapper hypot */
+double hypot(double x, double y) /* wrapper hypot */
 #else
-	double hypot(x,y)		/* wrapper hypot */
-	double x,y;
+double hypot(x, y) /* wrapper hypot */
+    double x,
+    y;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_hypot(x,y);
+    return __ieee754_hypot(x, y);
 #else
-	double z;
-	struct exception exc;
-	z = __ieee754_hypot(x,y);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if((!finite(z))&&finite(x)&&finite(y)) {
-	    /* hypot(finite,finite) overflow */
-#ifndef HUGE_VAL 
+    double z;
+    struct exception exc;
+    z = __ieee754_hypot(x, y);
+    if(_LIB_VERSION == _IEEE_) return z;
+    if((!finite(z)) && finite(x) && finite(y)) {
+        /* hypot(finite,finite) overflow */
+#ifndef HUGE_VAL
 #define HUGE_VAL inf
-	    double inf = 0.0;
+        double inf = 0.0;
 
-	    SET_HIGH_WORD(inf,0x7ff00000);	/* set inf to infinite */
+        SET_HIGH_WORD(inf, 0x7ff00000); /* set inf to infinite */
 #endif
-	    exc.type = OVERFLOW;
-	    exc.name = "hypot";
-	    exc.err = 0;
-	    exc.arg1 = x;
-	    exc.arg2 = y;
-	    if (_LIB_VERSION == _SVID_)
-	       exc.retval = HUGE;
-	    else
-	       exc.retval = HUGE_VAL;
-	    if (_LIB_VERSION == _POSIX_)
-	       errno = ERANGE;
-	    else if (!matherr(&exc)) {
-	     	errno = ERANGE;
-	    }
-	    if (exc.err != 0)
-	       errno = exc.err;
-            return exc.retval; 
-	} else
-	    return z;
+        exc.type = OVERFLOW;
+        exc.name = "hypot";
+        exc.err = 0;
+        exc.arg1 = x;
+        exc.arg2 = y;
+        if(_LIB_VERSION == _SVID_)
+            exc.retval = HUGE;
+        else
+            exc.retval = HUGE_VAL;
+        if(_LIB_VERSION == _POSIX_)
+            errno = ERANGE;
+        else if(!matherr(&exc)) {
+            errno = ERANGE;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    } else
+        return z;
 #endif
 }
 

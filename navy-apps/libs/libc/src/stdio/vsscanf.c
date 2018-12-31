@@ -30,42 +30,31 @@
 
 #ifndef _REENT_ONLY
 
-int
-vsscanf (const char *__restrict str,
-       const char *__restrict fmt,
-       va_list ap)
-{
-  return _vsscanf_r (_REENT, str, fmt, ap);
+int vsscanf(const char *__restrict str, const char *__restrict fmt, va_list ap) {
+    return _vsscanf_r(_REENT, str, fmt, ap);
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-vsiscanf (const char *, const char *, __VALIST)
-       _ATTRIBUTE ((__alias__("vsscanf")));
+int vsiscanf(const char *, const char *, __VALIST) _ATTRIBUTE((__alias__("vsscanf")));
 #endif
 
 #endif /* !_REENT_ONLY */
 
-int
-_vsscanf_r (struct _reent *ptr,
-       const char *__restrict str,
-       const char *__restrict fmt,
-       va_list ap)
-{
-  FILE f;
+int _vsscanf_r(struct _reent *ptr, const char *__restrict str, const char *__restrict fmt,
+               va_list ap) {
+    FILE f;
 
-  f._flags = __SRD | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._r = strlen (str);
-  f._read = __seofread;
-  f._ub._base = NULL;
-  f._lb._base = NULL;
-  f._file = -1;  /* No file. */
-  return __ssvfscanf_r (ptr, &f, fmt, ap);
+    f._flags = __SRD | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._r = strlen(str);
+    f._read = __seofread;
+    f._ub._base = NULL;
+    f._lb._base = NULL;
+    f._file = -1; /* No file. */
+    return __ssvfscanf_r(ptr, &f, fmt, ap);
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-_vsiscanf_r (struct _reent *, const char *, const char *, __VALIST)
-       _ATTRIBUTE ((__alias__("_vsscanf_r")));
+int _vsiscanf_r(struct _reent *, const char *, const char *, __VALIST)
+    _ATTRIBUTE((__alias__("_vsscanf_r")));
 #endif

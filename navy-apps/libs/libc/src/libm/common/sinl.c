@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-sinl (long double x)
-{
-  return sin(x);
+long double sinl(long double x) {
+    return sin(x);
 }
 #endif
-

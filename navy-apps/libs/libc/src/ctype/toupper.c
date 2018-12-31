@@ -52,7 +52,7 @@ No supporting OS subroutines are required.
 
 #include <_ansi.h>
 #include <ctype.h>
-#if defined (_MB_EXTENDED_CHARSETS_ISO) || defined (_MB_EXTENDED_CHARSETS_WINDOWS)
+#if defined(_MB_EXTENDED_CHARSETS_ISO) || defined(_MB_EXTENDED_CHARSETS_WINDOWS)
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,22 +61,18 @@ No supporting OS subroutines are required.
 #endif
 
 #undef toupper
-int
-toupper (int c)
-{
-#if defined (_MB_EXTENDED_CHARSETS_ISO) || defined (_MB_EXTENDED_CHARSETS_WINDOWS)
-  if ((unsigned char) c <= 0x7f)
-    return islower (c) ? c - 'a' + 'A' : c;
-  else if (c != EOF && MB_CUR_MAX == 1 && islower (c))
-    {
-      char s[MB_LEN_MAX] = { c, '\0' };
-      wchar_t wc;
-      if (mbtowc (&wc, s, 1) >= 0
-	  && wctomb (s, (wchar_t) towupper ((wint_t) wc)) == 1)
-	c = (unsigned char) s[0];
+int toupper(int c) {
+#if defined(_MB_EXTENDED_CHARSETS_ISO) || defined(_MB_EXTENDED_CHARSETS_WINDOWS)
+    if((unsigned char)c <= 0x7f)
+        return islower(c) ? c - 'a' + 'A' : c;
+    else if(c != EOF && MB_CUR_MAX == 1 && islower(c)) {
+        char s[MB_LEN_MAX] = {c, '\0'};
+        wchar_t wc;
+        if(mbtowc(&wc, s, 1) >= 0 && wctomb(s, (wchar_t)towupper((wint_t)wc)) == 1)
+            c = (unsigned char)s[0];
     }
-  return c;
+    return c;
 #else
-  return islower (c) ? c - 'a' + 'A' : c;
+    return islower(c) ? c - 'a' + 'A' : c;
 #endif
 }

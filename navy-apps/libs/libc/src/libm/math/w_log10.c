@@ -51,57 +51,56 @@ PORTABILITY
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double log10(double x)		/* wrapper log10 */
+double log10(double x) /* wrapper log10 */
 #else
-	double log10(x)			/* wrapper log10 */
-	double x;
+double log10(x) /* wrapper log10 */
+    double x;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_log10(x);
+    return __ieee754_log10(x);
 #else
-	double z;
-	struct exception exc;
-	z = __ieee754_log10(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(x<=0.0) {
-#ifndef HUGE_VAL 
+    double z;
+    struct exception exc;
+    z = __ieee754_log10(x);
+    if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
+    if(x <= 0.0) {
+#ifndef HUGE_VAL
 #define HUGE_VAL inf
-	    double inf = 0.0;
+        double inf = 0.0;
 
-	    SET_HIGH_WORD(inf,0x7ff00000);	/* set inf to infinite */
+        SET_HIGH_WORD(inf, 0x7ff00000); /* set inf to infinite */
 #endif
-	    exc.name = "log10";
-	    exc.err = 0;
-	    exc.arg1 = x;
-	    exc.arg2 = x;
-	    if (_LIB_VERSION == _SVID_)
-               exc.retval = -HUGE;
-	    else
-	       exc.retval = -HUGE_VAL;
-	    if(x==0.0) {
-	        /* log10(0) */
-	        exc.type = SING;
-	        if (_LIB_VERSION == _POSIX_)
-	           errno = ERANGE;
-	        else if (!matherr(&exc)) {
-	           errno = ERANGE;
-	        }
-	    } else { 
-	        /* log10(x<0) */
-	        exc.type = DOMAIN;
-	        if (_LIB_VERSION == _POSIX_)
-	           errno = EDOM;
-	        else if (!matherr(&exc)) {
-	           errno = EDOM;
-	        }
-                exc.retval = nan("");
+        exc.name = "log10";
+        exc.err = 0;
+        exc.arg1 = x;
+        exc.arg2 = x;
+        if(_LIB_VERSION == _SVID_)
+            exc.retval = -HUGE;
+        else
+            exc.retval = -HUGE_VAL;
+        if(x == 0.0) {
+            /* log10(0) */
+            exc.type = SING;
+            if(_LIB_VERSION == _POSIX_)
+                errno = ERANGE;
+            else if(!matherr(&exc)) {
+                errno = ERANGE;
             }
-	    if (exc.err != 0)
-               errno = exc.err;
-            return exc.retval; 
-	} else
-	    return z;
+        } else {
+            /* log10(x<0) */
+            exc.type = DOMAIN;
+            if(_LIB_VERSION == _POSIX_)
+                errno = EDOM;
+            else if(!matherr(&exc)) {
+                errno = EDOM;
+            }
+            exc.retval = nan("");
+        }
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    } else
+        return z;
 #endif
 }
 

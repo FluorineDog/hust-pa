@@ -46,17 +46,12 @@ DESCRIPTION
 	that define __LARGE64_FILES.
 */
 
-int
-_fstat64_r (struct _reent *ptr,
-     int fd,
-     struct stat64 *pstat)
-{
-  int ret;
+int _fstat64_r(struct _reent *ptr, int fd, struct stat64 *pstat) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _fstat64 (fd, pstat)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _fstat64(fd, pstat)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

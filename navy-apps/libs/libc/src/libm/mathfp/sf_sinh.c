@@ -17,17 +17,14 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-sinhf (float x)
-{
-  return (sinehf (x, 0));
+float sinhf(float x) {
+    return (sinehf(x, 0));
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-double sinh (double x)
-{
-  return (double) sinhf ((float) x);
+double sinh(double x) {
+    return (double)sinhf((float)x);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

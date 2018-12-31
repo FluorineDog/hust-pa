@@ -23,38 +23,19 @@
 #define ENDGAME_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-VOID
-PAL_EndingSetEffectSprite(
-   WORD         wSpriteNum
-);
+VOID PAL_EndingSetEffectSprite(WORD wSpriteNum);
 
-VOID
-PAL_ShowFBP(
-   WORD         wChunkNum,
-   WORD         wFade
-);
+VOID PAL_ShowFBP(WORD wChunkNum, WORD wFade);
 
-VOID
-PAL_ScrollFBP(
-   WORD         wChunkNum,
-   WORD         wScrollSpeed,
-   BOOL         fScrollDown
-);
+VOID PAL_ScrollFBP(WORD wChunkNum, WORD wScrollSpeed, BOOL fScrollDown);
 
-VOID
-PAL_EndingAnimation(
-   VOID
-);
+VOID PAL_EndingAnimation(VOID);
 
 #ifdef PAL_WIN95
-VOID
-PAL_EndingScreen(
-   VOID
-);
+VOID PAL_EndingScreen(VOID);
 #endif
 
 #ifdef __cplusplus

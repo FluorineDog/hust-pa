@@ -8,16 +8,13 @@
 #include <_ansi.h>
 #include "std.h"
 
-int
-__ten_mul (double *acc,
-	int digit)
-{
-  /*
+int __ten_mul(double *acc, int digit) {
+    /*
    * [atw] Crude, but effective (at least on a KB)...
    */
 
-  *acc *= 10;
-  *acc += digit;
+    *acc *= 10;
+    *acc += digit;
 
-  return 0;			/* no overflow */
+    return 0; /* no overflow */
 }

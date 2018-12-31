@@ -32,18 +32,14 @@ static char sccsid[] = "%W% (Berkeley) %G%";
  * or if c=='\n' and the file is line buffered.
  */
 
-int
-__swbuf_r (struct _reent *ptr,
-       register int c,
-       register FILE *fp)
-{
-  register int n;
+int __swbuf_r(struct _reent *ptr, register int c, register FILE *fp) {
+    register int n;
 
-  /* Ensure stdio has been initialized.  */
+    /* Ensure stdio has been initialized.  */
 
-  CHECK_INIT (ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  /*
+    /*
    * In case we cannot write, or longjmp takes us out early,
    * make sure _w is 0 (if fully- or un-buffered) or -_bf._size
    * (if line buffered) so that we will get called again.
@@ -51,14 +47,13 @@ __swbuf_r (struct _reent *ptr,
    * calls might wrap _w from negative to positive.
    */
 
-  fp->_w = fp->_lbfsize;
-  if (cantwrite (ptr, fp))
-    return EOF;
-  c = (unsigned char) c;
+    fp->_w = fp->_lbfsize;
+    if(cantwrite(ptr, fp)) return EOF;
+    c = (unsigned char)c;
 
-  ORIENT (fp, -1);
+    ORIENT(fp, -1);
 
-  /*
+    /*
    * If it is completely full, flush it out.  Then, in any case,
    * stuff c into the buffer.  If this causes the buffer to fill
    * completely, or if c is '\n' and the file is line buffered,
@@ -68,27 +63,21 @@ __swbuf_r (struct _reent *ptr,
    * to 0, so we need not do anything else.
    */
 
-  n = fp->_p - fp->_bf._base;
-  if (n >= fp->_bf._size)
-    {
-      if (_fflush_r (ptr, fp))
-	return EOF;
-      n = 0;
+    n = fp->_p - fp->_bf._base;
+    if(n >= fp->_bf._size) {
+        if(_fflush_r(ptr, fp)) return EOF;
+        n = 0;
     }
-  fp->_w--;
-  *fp->_p++ = c;
-  if (++n == fp->_bf._size || (fp->_flags & __SLBF && c == '\n'))
-    if (_fflush_r (ptr, fp))
-      return EOF;
-  return c;
+    fp->_w--;
+    *fp->_p++ = c;
+    if(++n == fp->_bf._size || (fp->_flags & __SLBF && c == '\n'))
+        if(_fflush_r(ptr, fp)) return EOF;
+    return c;
 }
 
 /* This function isn't any longer declared in stdio.h, but it's
    required for backward compatibility with applications built against
    earlier dynamically built newlib libraries. */
-int
-__swbuf (register int c,
-       register FILE *fp)
-{
-  return __swbuf_r (_REENT, c, fp);
+int __swbuf(register int c, register FILE *fp) {
+    return __swbuf_r(_REENT, c, fp);
 }

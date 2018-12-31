@@ -418,61 +418,52 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <stdarg.h>
 #include "local.h"
 
-#ifndef _REENT_ONLY 
+#ifndef _REENT_ONLY
 
-int 
-sscanf (const char *__restrict str,
-       const char * fmt, ...)
-{
-  int ret;
-  va_list ap;
-  FILE f;
+int sscanf(const char *__restrict str, const char *fmt, ...) {
+    int ret;
+    va_list ap;
+    FILE f;
 
-  f._flags = __SRD | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._r = strlen (str);
-  f._read = __seofread;
-  f._ub._base = NULL;
-  f._lb._base = NULL;
-  f._file = -1;  /* No file. */
-  va_start (ap, fmt);
-  ret = __ssvfscanf_r (_REENT, &f, fmt, ap);
-  va_end (ap);
-  return ret;
+    f._flags = __SRD | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._r = strlen(str);
+    f._read = __seofread;
+    f._ub._base = NULL;
+    f._lb._base = NULL;
+    f._file = -1; /* No file. */
+    va_start(ap, fmt);
+    ret = __ssvfscanf_r(_REENT, &f, fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-siscanf (const char *, const char *, ...)
-       _ATTRIBUTE ((__alias__("sscanf")));
+int siscanf(const char *, const char *, ...) _ATTRIBUTE((__alias__("sscanf")));
 #endif
 
 #endif /* !_REENT_ONLY */
 
-int 
-_sscanf_r (struct _reent *ptr,
-       const char *__restrict str,
-       const char *__restrict fmt, ...)
-{
-  int ret;
-  va_list ap;
-  FILE f;
+int _sscanf_r(struct _reent *ptr, const char *__restrict str, const char *__restrict fmt,
+              ...) {
+    int ret;
+    va_list ap;
+    FILE f;
 
-  f._flags = __SRD | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._r = strlen (str);
-  f._read = __seofread;
-  f._ub._base = NULL;
-  f._lb._base = NULL;
-  f._file = -1;  /* No file. */
-  va_start (ap, fmt);
-  ret = __ssvfscanf_r (ptr, &f, fmt, ap);
-  va_end (ap);
-  return ret;
+    f._flags = __SRD | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._r = strlen(str);
+    f._read = __seofread;
+    f._ub._base = NULL;
+    f._lb._base = NULL;
+    f._file = -1; /* No file. */
+    va_start(ap, fmt);
+    ret = __ssvfscanf_r(ptr, &f, fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-_siscanf_r (struct _reent *, const char *, const char *, ...)
-       _ATTRIBUTE ((__alias__("_sscanf_r")));
+int _siscanf_r(struct _reent *, const char *, const char *, ...)
+    _ATTRIBUTE((__alias__("_sscanf_r")));
 #endif

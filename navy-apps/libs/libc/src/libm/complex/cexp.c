@@ -64,19 +64,16 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include <math.h>
 
-double complex
-cexp(double complex z)
-{
-	double complex w;
-	double r, x, y;
+double complex cexp(double complex z) {
+    double complex w;
+    double r, x, y;
 
-	x = creal(z);
-	y = cimag(z);
-	r = exp(x);
-	w = r * cos(y) + r * sin(y) * I;
-	return w;
+    x = creal(z);
+    y = cimag(z);
+    r = exp(x);
+    w = r * cos(y) + r * sin(y) * I;
+    return w;
 }

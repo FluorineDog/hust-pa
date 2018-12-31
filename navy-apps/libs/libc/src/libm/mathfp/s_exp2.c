@@ -8,10 +8,8 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-exp2 (double x)
-{
-  return pow(2.0, x);
+double exp2(double x) {
+    return pow(2.0, x);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

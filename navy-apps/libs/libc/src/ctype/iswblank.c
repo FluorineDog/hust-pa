@@ -65,8 +65,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswblank (wint_t c)
-{
-  return iswblank_l (c, 0);
+int iswblank(wint_t c) {
+    return iswblank_l(c, 0);
 }

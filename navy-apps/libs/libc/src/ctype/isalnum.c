@@ -43,8 +43,6 @@ No OS subroutines are required.
 
 #undef isalnum
 
-int
-isalnum (int c)
-{
-	return(__CTYPE_PTR[c+1] & (_U|_L|_N));
+int isalnum(int c) {
+    return (__CTYPE_PTR[c + 1] & (_U | _L | _N));
 }

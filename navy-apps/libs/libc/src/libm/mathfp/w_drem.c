@@ -7,9 +7,5 @@
 
 #include "fdlibm.h"
 
-double
-drem(x, y)
-	double x, y;
-{
-	return remainder(x, y);
-}
+double drem(x, y) double x, y;
+{ return remainder(x, y); }

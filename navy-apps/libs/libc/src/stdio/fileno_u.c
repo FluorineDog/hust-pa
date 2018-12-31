@@ -29,17 +29,14 @@
 #include <errno.h>
 #include "local.h"
 
-int
-fileno_unlocked (FILE * f)
-{
-  int result;
-  CHECK_INIT (_REENT, f);
-  if (f->_flags)
-    result = __sfileno (f);
-  else
-    {
-      result = -1;
-      _REENT->_errno = EBADF;
+int fileno_unlocked(FILE* f) {
+    int result;
+    CHECK_INIT(_REENT, f);
+    if(f->_flags)
+        result = __sfileno(f);
+    else {
+        result = -1;
+        _REENT->_errno = EBADF;
     }
-  return result;
+    return result;
 }

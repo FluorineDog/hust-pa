@@ -13,13 +13,10 @@
 
 #include <string.h>
 
-char *
-__gnu_basename (const char *path)
-{
-  char *p;
-  if ((p = strrchr (path, '/')))
-    return p + 1;
-  return (char *) path;
+char *__gnu_basename(const char *path) {
+    char *p;
+    if((p = strrchr(path, '/'))) return p + 1;
+    return (char *)path;
 }
 
 #endif /* !_NO_BASENAME  */

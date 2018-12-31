@@ -17,47 +17,45 @@
 #if __OBSOLETE_MATH
 
 #ifdef __STDC__
-	float cosf(float x)
+float cosf(float x)
 #else
-	float cosf(x)
-	float x;
+float cosf(x) float x;
 #endif
 {
-	float y[2],z=0.0;
-	__int32_t n,ix;
+    float y[2], z = 0.0;
+    __int32_t n, ix;
 
-	GET_FLOAT_WORD(ix,x);
+    GET_FLOAT_WORD(ix, x);
 
     /* |x| ~< pi/4 */
-	ix &= 0x7fffffff;
-	if(ix <= 0x3f490fd8) return __kernel_cosf(x,z);
+    ix &= 0x7fffffff;
+    if(ix <= 0x3f490fd8) return __kernel_cosf(x, z);
 
     /* cos(Inf or NaN) is NaN */
-	else if (!FLT_UWORD_IS_FINITE(ix)) return x-x;
+    else if(!FLT_UWORD_IS_FINITE(ix))
+        return x - x;
 
     /* argument reduction needed */
-	else {
-	    n = __ieee754_rem_pio2f(x,y);
-	    switch(n&3) {
-		case 0: return  __kernel_cosf(y[0],y[1]);
-		case 1: return -__kernel_sinf(y[0],y[1],1);
-		case 2: return -__kernel_cosf(y[0],y[1]);
-		default:
-		        return  __kernel_sinf(y[0],y[1],1);
-	    }
-	}
+    else {
+        n = __ieee754_rem_pio2f(x, y);
+        switch(n & 3) {
+            case 0: return __kernel_cosf(y[0], y[1]);
+            case 1: return -__kernel_sinf(y[0], y[1], 1);
+            case 2: return -__kernel_cosf(y[0], y[1]);
+            default: return __kernel_sinf(y[0], y[1], 1);
+        }
+    }
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double cos(double x)
+double cos(double x)
 #else
-	double cos(x)
-	double x;
+double cos(x) double x;
 #endif
 {
-	return (double) cosf((float) x);
+    return (double)cosf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

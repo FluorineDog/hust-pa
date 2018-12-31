@@ -22,15 +22,14 @@
  * I/O descriptors for __sfvwrite_r().
  */
 struct __siov {
-	const void *iov_base;
-	size_t	iov_len;
+    const void *iov_base;
+    size_t iov_len;
 };
 struct __suio {
-	struct	__siov *uio_iov;
-	int	uio_iovcnt;
-	size_t	uio_resid;
+    struct __siov *uio_iov;
+    int uio_iovcnt;
+    size_t uio_resid;
 };
 
-
-extern int __sfvwrite_r (struct _reent *, FILE *, struct __suio *);
-extern int __swsetup_r (struct _reent *, FILE *);
+extern int __sfvwrite_r(struct _reent *, FILE *, struct __suio *);
+extern int __swsetup_r(struct _reent *, FILE *);

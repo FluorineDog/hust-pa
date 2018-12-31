@@ -44,12 +44,10 @@ QUICKREF
 #include <complex.h>
 #include "fdlibm.h"
 
-double complex
-conj(double complex z)
-{
-	double_complex w = { .z = z };
+double complex conj(double complex z) {
+    double_complex w = {.z = z};
 
-	IMAG_PART(w) = -IMAG_PART(w);
+    IMAG_PART(w) = -IMAG_PART(w);
 
-	return (w.z);
+    return (w.z);
 }

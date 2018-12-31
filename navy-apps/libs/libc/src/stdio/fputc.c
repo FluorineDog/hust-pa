@@ -86,35 +86,28 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <stdio.h>
 #include "local.h"
 
-int
-_fputc_r (struct _reent *ptr,
-       int ch,
-       FILE * file)
-{
-  int result;
-  CHECK_INIT(ptr, file);
-   _newlib_flockfile_start (file);
-  result = _putc_r (ptr, ch, file);
-  _newlib_flockfile_end (file);
-  return result;
+int _fputc_r(struct _reent *ptr, int ch, FILE *file) {
+    int result;
+    CHECK_INIT(ptr, file);
+    _newlib_flockfile_start(file);
+    result = _putc_r(ptr, ch, file);
+    _newlib_flockfile_end(file);
+    return result;
 }
 
 #ifndef _REENT_ONLY
-int
-fputc (int ch,
-       FILE * file)
-{
+int fputc(int ch, FILE *file) {
 #if !defined(__OPTIMIZE_SIZE__) && !defined(PREFER_SIZE_OVER_SPEED)
-  int result;
-  struct _reent *reent = _REENT;
+    int result;
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT(reent, file);
-   _newlib_flockfile_start (file);
-  result = _putc_r (reent, ch, file);
-  _newlib_flockfile_end (file);
-  return result;
+    CHECK_INIT(reent, file);
+    _newlib_flockfile_start(file);
+    result = _putc_r(reent, ch, file);
+    _newlib_flockfile_end(file);
+    return result;
 #else
-  return _fputc_r (_REENT, ch, file);
+    return _fputc_r(_REENT, ch, file);
 #endif
 }
 #endif /* !_REENT_ONLY */

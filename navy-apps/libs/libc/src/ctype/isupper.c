@@ -40,8 +40,6 @@ No supporting OS subroutines are required.
 #include <ctype.h>
 
 #undef isupper
-int
-isupper (int c)
-{
-	return ((__CTYPE_PTR[c+1] & (_U|_L)) == _U);
+int isupper(int c) {
+    return ((__CTYPE_PTR[c + 1] & (_U | _L)) == _U);
 }

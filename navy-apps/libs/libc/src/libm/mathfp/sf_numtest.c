@@ -22,41 +22,36 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-int 
-numtestf (float x)
-{
-  __int32_t wx;
-  int exp;
+int numtestf(float x) {
+    __int32_t wx;
+    int exp;
 
-  GET_FLOAT_WORD (wx, x);
+    GET_FLOAT_WORD(wx, x);
 
-  exp = (wx & 0x7f800000) >> 23;
+    exp = (wx & 0x7f800000) >> 23;
 
-  /* Check for a zero input. */
-  if (x == 0.0)
-    {
-      return (0);
+    /* Check for a zero input. */
+    if(x == 0.0) {
+        return (0);
     }
 
-  /* Check for not a number or infinity. */
-  if (exp == 0xff)
-    {
-      if(wx & 0x7fffff)
-        return (NAN);
-      else
-        return (INF);
+    /* Check for not a number or infinity. */
+    if(exp == 0xff) {
+        if(wx & 0x7fffff)
+            return (NAN);
+        else
+            return (INF);
     }
-     
-  /* Otherwise it's a finite value. */ 
-  else
-    return (NUM);
+
+    /* Otherwise it's a finite value. */
+    else
+        return (NUM);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-int numtest (double x)
-{
-  return numtestf ((float) x);
+int numtest(double x) {
+    return numtestf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

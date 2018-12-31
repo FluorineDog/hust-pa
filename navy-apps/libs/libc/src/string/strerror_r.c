@@ -64,14 +64,9 @@ a non-empty alternate string without assigning into its third argument.
 
 /* For backwards-compatible linking, this must be the GNU signature;
    see xpg_strerror_r.c for the POSIX version.  */
-char *
-strerror_r (int errnum,
-	char *buffer,
-	size_t n)
-{
-  char *error = _strerror_r (_REENT, errnum, 1, NULL);
+char *strerror_r(int errnum, char *buffer, size_t n) {
+    char *error = _strerror_r(_REENT, errnum, 1, NULL);
 
-  if (strlen (error) >= n)
-    return error;
-  return strcpy (buffer, error);
+    if(strlen(error) >= n) return error;
+    return strcpy(buffer, error);
 }

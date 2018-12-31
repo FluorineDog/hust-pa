@@ -24,16 +24,15 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	float gammaf_r(float x, int *signgamp)
+float gammaf_r(float x, int *signgamp)
 #else
-	float gammaf_r(x,signgamp)
-	float x; int *signgamp;
+float gammaf_r(x, signgamp) float x;
+int *signgamp;
 #endif
 {
-	return expf (lgammaf_r(x,signgamp));
+    return expf(lgammaf_r(x, signgamp));
 }
 
-float gammaf(float x)
-{
-  return gammaf_r(x, &(_REENT_SIGNGAM(_REENT)));
+float gammaf(float x) {
+    return gammaf_r(x, &(_REENT_SIGNGAM(_REENT)));
 }

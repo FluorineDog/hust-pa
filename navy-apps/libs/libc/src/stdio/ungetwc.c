@@ -73,43 +73,33 @@ C99
 #include <wchar.h>
 #include "local.h"
 
-wint_t
-_ungetwc_r (struct _reent *ptr,
-	wint_t wc,
-	register FILE *fp)
-{
-  char buf[MB_LEN_MAX];
-  size_t len;
+wint_t _ungetwc_r(struct _reent *ptr, wint_t wc, register FILE *fp) {
+    char buf[MB_LEN_MAX];
+    size_t len;
 
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, 1);
-  if (wc == WEOF)
-    wc = WEOF;
-  else if ((len = _wcrtomb_r(ptr, buf, wc, &fp->_mbstate)) == (size_t)-1)
-    {
-      fp->_flags |= __SERR;
-      wc = WEOF;
-    }
-  else
-    while (len-- != 0)
-      if (_ungetc_r(ptr, (unsigned char)buf[len], fp) == EOF)
-	{
-	  wc = WEOF;
-	  break;
-	}
-  _newlib_flockfile_end (fp);
-  return wc;
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, 1);
+    if(wc == WEOF)
+        wc = WEOF;
+    else if((len = _wcrtomb_r(ptr, buf, wc, &fp->_mbstate)) == (size_t)-1) {
+        fp->_flags |= __SERR;
+        wc = WEOF;
+    } else
+        while(len-- != 0)
+            if(_ungetc_r(ptr, (unsigned char)buf[len], fp) == EOF) {
+                wc = WEOF;
+                break;
+            }
+    _newlib_flockfile_end(fp);
+    return wc;
 }
 
 /*
  * MT-safe version.
  */
-wint_t
-ungetwc (wint_t wc,
-	FILE *fp)
-{
-  struct _reent *reent = _REENT;
+wint_t ungetwc(wint_t wc, FILE *fp) {
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT (reent, fp);
-  return _ungetwc_r (reent, wc, fp);
+    CHECK_INIT(reent, fp);
+    return _ungetwc_r(reent, wc, fp);
 }

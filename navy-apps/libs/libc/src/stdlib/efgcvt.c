@@ -102,64 +102,33 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <stdlib.h>
 #include "local.h"
 
-char *
-fcvt (double d,
-	int ndigit,
-	int *decpt,
-	int *sign)
-{
-  return fcvtbuf (d, ndigit, decpt, sign, NULL);
+char *fcvt(double d, int ndigit, int *decpt, int *sign) {
+    return fcvtbuf(d, ndigit, decpt, sign, NULL);
 }
 
-char *
-fcvtf (float d,
-	int ndigit,
-	int *decpt,
-	int *sign)
-{
-  return fcvt ((float) d, ndigit, decpt, sign);
+char *fcvtf(float d, int ndigit, int *decpt, int *sign) {
+    return fcvt((float)d, ndigit, decpt, sign);
 }
 
-
-char *
-gcvtf (float d,
-	int ndigit,
-	char *buf)
-{
-  double asd = d;
-  return gcvt (asd, ndigit, buf);
+char *gcvtf(float d, int ndigit, char *buf) {
+    double asd = d;
+    return gcvt(asd, ndigit, buf);
 }
 
-
-char *
-ecvt (double d,
-	int ndigit,
-	int *decpt,
-	int *sign)
-{
-  return ecvtbuf (d, ndigit, decpt, sign, NULL);
+char *ecvt(double d, int ndigit, int *decpt, int *sign) {
+    return ecvtbuf(d, ndigit, decpt, sign, NULL);
 }
 
-char *
-ecvtf (float d,
-	int ndigit,
-	int *decpt,
-	int *sign)
-{
-  return ecvt ((double) d, ndigit, decpt, sign);
+char *ecvtf(float d, int ndigit, int *decpt, int *sign) {
+    return ecvt((double)d, ndigit, decpt, sign);
 }
 
-
-char *
-gcvt (double d,
-	int ndigit,
-	char *buf)
-{
-  char *tbuf = buf;
-  if (d < 0) {
-    *buf = '-';
-    buf++;
-    ndigit--;
-  }
-  return (_gcvt (_REENT, d, ndigit, buf, 'g', 0) ? tbuf : 0);
+char *gcvt(double d, int ndigit, char *buf) {
+    char *tbuf = buf;
+    if(d < 0) {
+        *buf = '-';
+        buf++;
+        ndigit--;
+    }
+    return (_gcvt(_REENT, d, ndigit, buf, 'g', 0) ? tbuf : 0);
 }

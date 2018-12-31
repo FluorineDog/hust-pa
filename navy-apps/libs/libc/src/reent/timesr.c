@@ -43,13 +43,10 @@ DESCRIPTION
 	<<errno>>.
 */
 
-clock_t
-_times_r (struct _reent *ptr,
-     struct tms *ptms)
-{
-  clock_t ret;
+clock_t _times_r(struct _reent *ptr, struct tms *ptms) {
+    clock_t ret;
 
-  ret = _times (ptms);
-  return ret;
+    ret = _times(ptms);
+    return ret;
 }
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

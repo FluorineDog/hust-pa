@@ -55,26 +55,20 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wchar.h>
 
-size_t
-wcscspn (const wchar_t * s,
-	const wchar_t * set)
-{
-  const wchar_t *p;
-  const wchar_t *q;
+size_t wcscspn(const wchar_t *s, const wchar_t *set) {
+    const wchar_t *p;
+    const wchar_t *q;
 
-  p = s;
-  while (*p)
-    {
-      q = set;
-      while (*q)
-	{
-	  if (*p == *q)
-	    goto done;
-	  q++;
-	}
-      p++;
+    p = s;
+    while(*p) {
+        q = set;
+        while(*q) {
+            if(*p == *q) goto done;
+            q++;
+        }
+        p++;
     }
 
 done:
-  return (p - s);
+    return (p - s);
 }

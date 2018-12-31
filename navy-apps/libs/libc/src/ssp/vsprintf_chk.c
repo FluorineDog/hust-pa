@@ -43,18 +43,15 @@ __RCSID("$NetBSD: vsprintf_chk.c,v 1.6 2009/02/05 05:39:38 lukem Exp $");
 #undef vsnprintf
 
 /*ARGSUSED*/
-int
-__vsprintf_chk(char * __restrict buf, int flags, size_t slen,
-    const char * __restrict fmt, va_list ap)
-{
-	int rv;
+int __vsprintf_chk(char* __restrict buf, int flags, size_t slen,
+                   const char* __restrict fmt, va_list ap) {
+    int rv;
 
-	if (slen > (size_t)INT_MAX)
-		rv = vsprintf(buf, fmt, ap);
-	else {
-		if ((rv = vsnprintf(buf, slen, fmt, ap)) >= 0 && (size_t)rv >= slen)
-			__chk_fail();
-	}
+    if(slen > (size_t)INT_MAX)
+        rv = vsprintf(buf, fmt, ap);
+    else {
+        if((rv = vsnprintf(buf, slen, fmt, ap)) >= 0 && (size_t)rv >= slen) __chk_fail();
+    }
 
-	return rv;
+    return rv;
 }

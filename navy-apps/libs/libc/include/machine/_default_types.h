@@ -10,7 +10,7 @@
 /*
  * Guess on types by examining *_MIN / *_MAX defines.
  */
-#if __GNUC_PREREQ (3, 3)
+#if __GNUC_PREREQ(3, 3)
 /* GCC >= 3.3.0 has __<val>__ implicitly defined. */
 #define __EXP(x) __##x##__
 #else
@@ -21,8 +21,8 @@
 
 /* Check if "long long" is 64bit wide */
 /* Modern GCCs provide __LONG_LONG_MAX__, SUSv3 wants LLONG_MAX */
-#if ( defined(__LONG_LONG_MAX__) && (__LONG_LONG_MAX__ > 0x7fffffff) ) \
-  || ( defined(LLONG_MAX) && (LLONG_MAX > 0x7fffffff) )
+#if(defined(__LONG_LONG_MAX__) && (__LONG_LONG_MAX__ > 0x7fffffff)) || \
+    (defined(LLONG_MAX) && (LLONG_MAX > 0x7fffffff))
 #define __have_longlong64 1
 #endif
 
@@ -46,8 +46,8 @@ typedef unsigned __INT8_TYPE__ __uint8_t;
 #endif
 #define ___int8_t_defined 1
 #elif __EXP(SCHAR_MAX) == 0x7f
-typedef signed char __int8_t ;
-typedef unsigned char __uint8_t ;
+typedef signed char __int8_t;
+typedef unsigned char __uint8_t;
 #define ___int8_t_defined 1
 #endif
 
@@ -113,18 +113,18 @@ typedef unsigned long __uint64_t;
 #define ___int64_t_defined 1
 
 /* GCC has __LONG_LONG_MAX__ */
-#elif  defined(__LONG_LONG_MAX__) && (__LONG_LONG_MAX__ > 0x7fffffff)
+#elif defined(__LONG_LONG_MAX__) && (__LONG_LONG_MAX__ > 0x7fffffff)
 typedef signed long long __int64_t;
 typedef unsigned long long __uint64_t;
 #define ___int64_t_defined 1
 
 /* POSIX mandates LLONG_MAX in <limits.h> */
-#elif  defined(LLONG_MAX) && (LLONG_MAX > 0x7fffffff)
+#elif defined(LLONG_MAX) && (LLONG_MAX > 0x7fffffff)
 typedef signed long long __int64_t;
 typedef unsigned long long __uint64_t;
 #define ___int64_t_defined 1
 
-#elif  __EXP(INT_MAX) > 0x7fffffff
+#elif __EXP(INT_MAX) > 0x7fffffff
 typedef signed int __int64_t;
 typedef unsigned int __uint64_t;
 #define ___int64_t_defined 1

@@ -32,19 +32,14 @@
 
 #undef getwc
 
-wint_t
-_getwc_r (struct _reent *ptr,
-	FILE *fp)
-{
-  return _fgetwc_r (ptr, fp);
+wint_t _getwc_r(struct _reent *ptr, FILE *fp) {
+    return _fgetwc_r(ptr, fp);
 }
 
 /*
  * Synonym for fgetwc(). The only difference is that getwc(), if it is a
  * macro, may evaluate `fp' more than once.
  */
-wint_t
-getwc (FILE *fp)
-{
-  return fgetwc(fp);
+wint_t getwc(FILE *fp) {
+    return fgetwc(fp);
 }

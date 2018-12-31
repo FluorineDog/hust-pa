@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-fmal (long double x, long double y, long double z)
-{
-  return fma(x, y, z);
+long double fmal(long double x, long double y, long double z) {
+    return fma(x, y, z);
 }
 #endif
-

@@ -93,17 +93,14 @@ No supporting OS subroutines are required.
  * In that case, to get the right answer, add 1 to r.quot and
  * subtract denom from r.rem.
  */
-lldiv_t
-lldiv (long long numer, long long denom)
-{
-	lldiv_t retval;
+lldiv_t lldiv(long long numer, long long denom) {
+    lldiv_t retval;
 
-	retval.quot = numer / denom;
-	retval.rem = numer % denom;
-	if (numer >= 0 && retval.rem < 0) {
-		retval.quot++;
-		retval.rem -= denom;
-	}
-	return (retval);
+    retval.quot = numer / denom;
+    retval.rem = numer % denom;
+    if(numer >= 0 && retval.rem < 0) {
+        retval.quot++;
+        retval.rem -= denom;
+    }
+    return (retval);
 }
-

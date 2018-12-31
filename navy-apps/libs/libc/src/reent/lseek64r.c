@@ -40,18 +40,13 @@ DESCRIPTION
         with large file support.
 */
 
-_off64_t
-_lseek64_r (struct _reent *ptr,
-     int fd,
-     _off64_t pos,
-     int whence)
-{
-  _off64_t ret;
+_off64_t _lseek64_r(struct _reent *ptr, int fd, _off64_t pos, int whence) {
+    _off64_t ret;
 
-  errno = 0;
-  if ((ret = _lseek64 (fd, pos, whence)) == (_off64_t) -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _lseek64(fd, pos, whence)) == (_off64_t)-1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

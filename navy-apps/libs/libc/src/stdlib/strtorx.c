@@ -36,7 +36,7 @@ THIS SOFTWARE.
 #include "mprec.h"
 #include "gdtoa.h"
 
-#if defined (_HAVE_LONG_DOUBLE) && !defined (_LDBL_EQ_DBL)
+#if defined(_HAVE_LONG_DOUBLE) && !defined(_LDBL_EQ_DBL)
 
 /* one or the other of IEEE_MC68k or IEEE_8087 should be #defined */
 
@@ -55,69 +55,71 @@ THIS SOFTWARE.
 #define _4 0
 #endif
 
- void
+void
 #ifdef KR_headers
-ULtox(L, bits, exp, k) __UShort *L; __ULong *bits; Long exp; int k;
+    ULtox(L, bits, exp, k) __UShort *L;
+__ULong *bits;
+Long exp;
+int k;
 #else
 ULtox(__UShort *L, __ULong *bits, Long exp, int k)
 #endif
 {
-	switch(k & STRTOG_Retmask) {
-	  case STRTOG_NoNumber:
-	  case STRTOG_Zero:
-		L[0] = L[1] = L[2] = L[3] = L[4] = 0;
-		break;
+    switch(k & STRTOG_Retmask) {
+        case STRTOG_NoNumber:
+        case STRTOG_Zero: L[0] = L[1] = L[2] = L[3] = L[4] = 0; break;
 
-	  case STRTOG_Denormal:
-		L[_0] = 0;
-		goto normal_bits;
+        case STRTOG_Denormal: L[_0] = 0; goto normal_bits;
 
-	  case STRTOG_Normal:
-	  case STRTOG_NaNbits:
-		L[_0] = exp + 0x3fff + 63;
- normal_bits:
-		L[_4] = (__UShort)bits[0];
-		L[_3] = (__UShort)(bits[0] >> 16);
-		L[_2] = (__UShort)bits[1];
-		L[_1] = (__UShort)(bits[1] >> 16);
-		break;
+        case STRTOG_Normal:
+        case STRTOG_NaNbits:
+            L[_0] = exp + 0x3fff + 63;
+        normal_bits:
+            L[_4] = (__UShort)bits[0];
+            L[_3] = (__UShort)(bits[0] >> 16);
+            L[_2] = (__UShort)bits[1];
+            L[_1] = (__UShort)(bits[1] >> 16);
+            break;
 
-	  case STRTOG_Infinite:
-		L[_0] = 0x7fff;
-		L[_1] = 0x8000;
-		L[_2] = L[_3] = L[_4] = 0;
-		break;
+        case STRTOG_Infinite:
+            L[_0] = 0x7fff;
+            L[_1] = 0x8000;
+            L[_2] = L[_3] = L[_4] = 0;
+            break;
 
-	  case STRTOG_NaN:
-		*((long double*)L) = nanl ("");
-	  }
-	if (k & STRTOG_Neg)
-		L[_0] |= 0x8000;
-	}
+        case STRTOG_NaN: *((long double *)L) = nanl("");
+    }
+    if(k & STRTOG_Neg) L[_0] |= 0x8000;
+}
 
- int
+int
 #ifdef KR_headers
-_strtorx_l(p, s, sp, rounding, L, loc) struct _reent *p; const char *s; char **sp; int rounding; void *L; locale_t loc;
+    _strtorx_l(p, s, sp, rounding, L, loc) struct _reent *p;
+const char *s;
+char **sp;
+int rounding;
+void *L;
+locale_t loc;
 #else
 _strtorx_l(struct _reent *p, const char *s, char **sp, int rounding, void *L,
 	   locale_t loc)
 #endif
 {
-	static FPI fpi0 = { 64, 1-16383-64+1, 32766 - 16383 - 64 + 1, 1, SI };
-	FPI *fpi, fpi1;
-	__ULong bits[2];
-	Long exp;
-	int k;
+    static FPI fpi0 = {64, 1 - 16383 - 64 + 1, 32766 - 16383 - 64 + 1, 1, SI};
+    FPI *fpi, fpi1;
+    __ULong bits[2];
+    Long exp;
+    int k;
 
-	fpi = &fpi0;
-	if (rounding != FPI_Round_near) {
-		fpi1 = fpi0;
-		fpi1.rounding = rounding;
-		fpi = &fpi1;
-		}
-	k = _strtodg_l(p, s, sp, fpi, &exp, bits, loc);
-	ULtox((__UShort*)L, bits, exp, k);
-	return k;
-	}
+    fpi = &fpi0;
+    if(rounding != FPI_Round_near) {
+        fpi1 = fpi0;
+        fpi1.rounding = rounding;
+        fpi = &fpi1;
+    }
+    k = _strtodg_l(p, s, sp, fpi, &exp, bits, loc);
+    ULtox((__UShort *)L, bits, exp, k);
+    return k;
+}
 
 #endif /* _HAVE_LONG_DOUBLE && !_LDBL_EQ_DBL */

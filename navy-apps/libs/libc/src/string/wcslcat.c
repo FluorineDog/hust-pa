@@ -67,34 +67,26 @@ No supporting OS subroutines are required.
  * Returns wcslen(initial dst) + wcslen(src); if retval >= siz,
  * truncation occurred.
  */
-size_t
-wcslcat (wchar_t * dst,
-	const wchar_t * src,
-	size_t siz)
-{
-  wchar_t *d = dst;
-  const wchar_t *s = src;
-  size_t n = siz;
-  size_t dlen;
+size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t siz) {
+    wchar_t *d = dst;
+    const wchar_t *s = src;
+    size_t n = siz;
+    size_t dlen;
 
-  /* Find the end of dst and adjust bytes left but don't go past end */
-  while (*d != '\0' && n-- != 0)
-    d++;
-  dlen = d - dst;
-  n = siz - dlen;
+    /* Find the end of dst and adjust bytes left but don't go past end */
+    while(*d != '\0' && n-- != 0) d++;
+    dlen = d - dst;
+    n = siz - dlen;
 
-  if (n == 0)
-    return (dlen + wcslen (s));
-  while (*s != '\0')
-    {
-      if (n != 1)
-	{
-	  *d++ = *s;
-	  n--;
-	}
-      s++;
+    if(n == 0) return (dlen + wcslen(s));
+    while(*s != '\0') {
+        if(n != 1) {
+            *d++ = *s;
+            n--;
+        }
+        s++;
     }
-  *d = '\0';
+    *d = '\0';
 
-  return (dlen + (s - src));	/* count does not include NUL */
+    return (dlen + (s - src)); /* count does not include NUL */
 }

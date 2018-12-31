@@ -42,20 +42,18 @@ ANSI C, POSIX.
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double fdim(double x, double y)
+double fdim(double x, double y)
 #else
-	double fdim(x,y)
-	double x;
-	double y;
+double fdim(x, y) double x;
+double y;
 #endif
 {
-  int c = __fpclassifyd(x);
-  if (c == FP_NAN)  return(x);
-  if (__fpclassifyd(y) == FP_NAN)  return(y);
-  if (c == FP_INFINITE)
-    return HUGE_VAL;
+    int c = __fpclassifyd(x);
+    if(c == FP_NAN) return (x);
+    if(__fpclassifyd(y) == FP_NAN) return (y);
+    if(c == FP_INFINITE) return HUGE_VAL;
 
-  return x > y ? x - y : 0.0;
+    return x > y ? x - y : 0.0;
 }
 
 #endif /* _DOUBLE_IS_32BITS */

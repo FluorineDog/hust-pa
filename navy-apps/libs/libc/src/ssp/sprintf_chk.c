@@ -44,20 +44,18 @@ __RCSID("$NetBSD: sprintf_chk.c,v 1.6 2009/02/05 05:40:36 lukem Exp $");
 
 int
 /*ARGSUSED*/
-__sprintf_chk(char * __restrict buf, int flags, size_t slen,
-    const char * __restrict fmt, ...)
-{
-	va_list ap;
-	int rv;
+__sprintf_chk(char* __restrict buf, int flags, size_t slen, const char* __restrict fmt,
+              ...) {
+    va_list ap;
+    int rv;
 
-	va_start(ap, fmt);
-	if (slen > (size_t)INT_MAX)
-		rv = vsprintf(buf, fmt, ap);
-	else {
-		if ((rv = vsnprintf(buf, slen, fmt, ap)) >= 0 && (size_t)rv >= slen)
-			__chk_fail();
-	}
-	va_end(ap);
+    va_start(ap, fmt);
+    if(slen > (size_t)INT_MAX)
+        rv = vsprintf(buf, fmt, ap);
+    else {
+        if((rv = vsnprintf(buf, slen, fmt, ap)) >= 0 && (size_t)rv >= slen) __chk_fail();
+    }
+    va_end(ap);
 
-	return rv;
+    return rv;
 }

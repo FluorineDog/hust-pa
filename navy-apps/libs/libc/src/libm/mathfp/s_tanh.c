@@ -61,47 +61,41 @@ PORTABILITY
 #ifndef _DOUBLE_IS_32BITS
 
 static const double LN3_OVER2 = 0.54930614433405484570;
-static const double p[] = { -0.16134119023996228053e+4,
-                            -0.99225929672236083313e+2,
-                            -0.96437492777225469787 };
-static const double q[] = { 0.48402357071988688686e+4,
-                            0.22337720718962312926e+4,
-                            0.11274474380534949335e+3 }; 
+static const double p[] = {-0.16134119023996228053e+4, -0.99225929672236083313e+2,
+                           -0.96437492777225469787};
+static const double q[] = {0.48402357071988688686e+4, 0.22337720718962312926e+4,
+                           0.11274474380534949335e+3};
 
-double
-tanh (double x)
-{
-  double f, res, g, P, Q, R;
+double tanh(double x) {
+    double f, res, g, P, Q, R;
 
-  f = fabs (x);
+    f = fabs(x);
 
-  /* Check if the input is too big. */ 
-  if (f > BIGX)
-    res = 1.0; 
+    /* Check if the input is too big. */
+    if(f > BIGX)
+        res = 1.0;
 
-  else if (f > LN3_OVER2)
-    res = 1.0 - 2.0 / (exp (2 * f) + 1.0);
+    else if(f > LN3_OVER2)
+        res = 1.0 - 2.0 / (exp(2 * f) + 1.0);
 
-  /* Check if the input is too small. */
-  else if (f < z_rooteps)
-    res = f;
+    /* Check if the input is too small. */
+    else if(f < z_rooteps)
+        res = f;
 
-  /* Calculate the Taylor series. */
-  else
-    {
-      g = f * f;
+    /* Calculate the Taylor series. */
+    else {
+        g = f * f;
 
-      P = (p[2] * g + p[1]) * g + p[0];
-      Q = ((g + q[2]) * g + q[1]) * g + q[0];
-      R = g * (P / Q);
+        P = (p[2] * g + p[1]) * g + p[0];
+        Q = ((g + q[2]) * g + q[1]) * g + q[0];
+        R = g * (P / Q);
 
-      res = f + f * R;
+        res = f + f * R;
     }
 
-  if (x < 0.0)
-    res = -res;
+    if(x < 0.0) res = -res;
 
-  return (res);
+    return (res);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

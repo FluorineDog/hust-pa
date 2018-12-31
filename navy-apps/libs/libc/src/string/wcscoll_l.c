@@ -36,8 +36,6 @@ PORTABILITY
 #include <_ansi.h>
 #include <wchar.h>
 
-int
-wcscoll_l (const wchar_t *a, const wchar_t *b, struct __locale_t *locale)
-{
-  return wcscmp (a, b);
+int wcscoll_l(const wchar_t *a, const wchar_t *b, struct __locale_t *locale) {
+    return wcscmp(a, b);
 }

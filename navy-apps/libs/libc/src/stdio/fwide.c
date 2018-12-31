@@ -47,30 +47,23 @@ C99, POSIX.1-2001.
 #include <wchar.h>
 #include "local.h"
 
-int
-_fwide_r (struct _reent *ptr,
-	FILE *fp,
-	int mode)
-{
-  int ret;
+int _fwide_r(struct _reent *ptr, FILE *fp, int mode) {
+    int ret;
 
-  CHECK_INIT(ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  _newlib_flockfile_start (fp);
-  if (mode != 0) {
-    ORIENT (fp, mode);
-  }
-  if (!(fp->_flags & __SORD))
-    ret = 0;
-  else
-    ret = (fp->_flags2 & __SWID) ? 1 : -1;
-  _newlib_flockfile_end (fp);
-  return ret;
+    _newlib_flockfile_start(fp);
+    if(mode != 0) {
+        ORIENT(fp, mode);
+    }
+    if(!(fp->_flags & __SORD))
+        ret = 0;
+    else
+        ret = (fp->_flags2 & __SWID) ? 1 : -1;
+    _newlib_flockfile_end(fp);
+    return ret;
 }
 
-int
-fwide (FILE *fp,
-	int mode)
-{
-  return _fwide_r (_REENT, fp, mode);
+int fwide(FILE *fp, int mode) {
+    return _fwide_r(_REENT, fp, mode);
 }

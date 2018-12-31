@@ -1,1 +1,1 @@
-#define __MAX_BAUD  B4000000
+#define __MAX_BAUD B4000000

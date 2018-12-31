@@ -64,27 +64,19 @@ No supporting OS subroutines are required.
 #include <reent.h>
 #include <stdio.h>
 
-int
-_fgetpos_r (struct _reent * ptr,
-       FILE *__restrict fp,
-       _fpos_t *__restrict pos)
-{
-  *pos = _ftell_r (ptr, fp);
+int _fgetpos_r(struct _reent *ptr, FILE *__restrict fp, _fpos_t *__restrict pos) {
+    *pos = _ftell_r(ptr, fp);
 
-  if (*pos != -1)
-    {
-      return 0;
+    if(*pos != -1) {
+        return 0;
     }
-  return 1;
+    return 1;
 }
 
 #ifndef _REENT_ONLY
 
-int
-fgetpos (FILE *__restrict fp,
-       _fpos_t *__restrict pos)
-{
-  return _fgetpos_r (_REENT, fp, pos);
+int fgetpos(FILE *__restrict fp, _fpos_t *__restrict pos) {
+    return _fgetpos_r(_REENT, fp, pos);
 }
 
 #endif /* !_REENT_ONLY */

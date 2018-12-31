@@ -46,50 +46,46 @@ static char sccsid[] = "@(#)opendir.c	5.11 (Berkeley) 2/23/91";
 /*
  * open a directory.
  */
-DIR *
-opendir (const char *name)
-{
-	register DIR *dirp;
-	register int fd;
-	int rc = 0;
+DIR *opendir(const char *name) {
+    register DIR *dirp;
+    register int fd;
+    int rc = 0;
 
-	if ((fd = open(name, 0)) == -1)
-		return NULL;
+    if((fd = open(name, 0)) == -1) return NULL;
 #ifdef HAVE_FCNTL
-	rc = fcntl(fd, F_SETFD, 1);
+    rc = fcntl(fd, F_SETFD, 1);
 #endif
-	if (rc == -1 ||
-	    (dirp = (DIR *)malloc(sizeof(DIR))) == NULL) {
-		close (fd);
-		return NULL;
-	}
-	/*
+    if(rc == -1 || (dirp = (DIR *)malloc(sizeof(DIR))) == NULL) {
+        close(fd);
+        return NULL;
+    }
+    /*
 	 * If CLSIZE is an exact multiple of DIRBLKSIZ, use a CLSIZE
 	 * buffer that it cluster boundary aligned.
 	 * Hopefully this can be a big win someday by allowing page trades
 	 * to user space to be done by getdirentries()
 	 */
-	dirp->dd_buf = malloc (512);
-	dirp->dd_len = 512;
+    dirp->dd_buf = malloc(512);
+    dirp->dd_len = 512;
 
-	if (dirp->dd_buf == NULL) {
-		free (dirp);
-		close (fd);
-		return NULL;
-	}
-	dirp->dd_fd = fd;
-	dirp->dd_loc = 0;
-	dirp->dd_seek = 0;
-	/*
+    if(dirp->dd_buf == NULL) {
+        free(dirp);
+        close(fd);
+        return NULL;
+    }
+    dirp->dd_fd = fd;
+    dirp->dd_loc = 0;
+    dirp->dd_seek = 0;
+    /*
 	 * Set up seek point for rewinddir.
 	 */
 
 #ifdef HAVE_DD_LOCK
-	/* if we have a locking mechanism, initialize it */
-	__lock_init_recursive(dirp->dd_lock);
+    /* if we have a locking mechanism, initialize it */
+    __lock_init_recursive(dirp->dd_lock);
 #endif
 
-	return dirp;
+    return dirp;
 }
 
 #endif /* ! HAVE_OPENDIR */

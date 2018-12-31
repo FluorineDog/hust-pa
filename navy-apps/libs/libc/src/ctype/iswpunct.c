@@ -65,8 +65,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswpunct (wint_t c)
-{
-  return iswpunct_l (c, 0);
+int iswpunct(wint_t c) {
+    return iswpunct_l(c, 0);
 }

@@ -8,10 +8,8 @@
 
 #ifndef _REENT_ONLY
 
-size_t
-malloc_usable_size (void *ptr)
-{
-  return _malloc_usable_size_r (_REENT, ptr);
+size_t malloc_usable_size(void *ptr) {
+    return _malloc_usable_size_r(_REENT, ptr);
 }
 
 #endif

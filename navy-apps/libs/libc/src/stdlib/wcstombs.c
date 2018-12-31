@@ -47,28 +47,23 @@ effects vary with the locale.
 #include <stdlib.h>
 #include <wchar.h>
 
-size_t
-wcstombs (char          *__restrict s,
-        const wchar_t *__restrict pwcs,
-        size_t         n)
-{
+size_t wcstombs(char *__restrict s, const wchar_t *__restrict pwcs, size_t n) {
 #ifdef _MB_CAPABLE
-  mbstate_t state;
-  state.__count = 0;
-  
-  return _wcstombs_r (_REENT, s, pwcs, n, &state);
-#else /* not _MB_CAPABLE */
-  int count = 0;
-  
-  if (n != 0) {
-    do {
-      if ((*s++ = (char) *pwcs++) == 0)
-	break;
-      count++;
-    } while (--n != 0);
-  }
-  
-  return count;
+    mbstate_t state;
+    state.__count = 0;
+
+    return _wcstombs_r(_REENT, s, pwcs, n, &state);
+#else  /* not _MB_CAPABLE */
+    int count = 0;
+
+    if(n != 0) {
+        do {
+            if((*s++ = (char)*pwcs++) == 0) break;
+            count++;
+        } while(--n != 0);
+    }
+
+    return count;
 #endif /* not _MB_CAPABLE */
 }
 

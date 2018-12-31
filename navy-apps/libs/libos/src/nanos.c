@@ -96,7 +96,7 @@ int _fork() {
     return -1;
 }
 
-pid_t _wait(int * status) {
+pid_t _wait(int *status) {
     status = 0;
     return 0;
 }

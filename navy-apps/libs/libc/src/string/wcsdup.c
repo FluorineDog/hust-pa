@@ -35,22 +35,17 @@ QUICKREF
 #include <stdlib.h>
 #include <wchar.h>
 
-wchar_t *
-_wcsdup_r (struct _reent *p, const wchar_t *str)
-{
-  size_t len = wcslen (str) + 1;
-  wchar_t *copy = _malloc_r (p, len * sizeof (wchar_t));
-  if (copy)
-    wmemcpy (copy, str, len);
-  return copy;
+wchar_t *_wcsdup_r(struct _reent *p, const wchar_t *str) {
+    size_t len = wcslen(str) + 1;
+    wchar_t *copy = _malloc_r(p, len * sizeof(wchar_t));
+    if(copy) wmemcpy(copy, str, len);
+    return copy;
 }
 
 #ifndef _REENT_ONLY
 
-wchar_t *
-wcsdup (const wchar_t *str)
-{
-  return _wcsdup_r (_REENT, str);
+wchar_t *wcsdup(const wchar_t *str) {
+    return _wcsdup_r(_REENT, str);
 }
 
 #endif /* !_REENT_ONLY */

@@ -41,15 +41,13 @@ static char sccsid[] = "@(#)rewinddir.c	5.1 (Berkeley) 5/25/90";
 #include <dirent.h>
 #include <sys/lock.h>
 
-void
-rewinddir (DIR *dirp)
-{
+void rewinddir(DIR *dirp) {
 #ifdef HAVE_DD_LOCK
-	__lock_acquire_recursive(dirp->dd_lock);
+    __lock_acquire_recursive(dirp->dd_lock);
 #endif
-	_seekdir((dirp), 0L);
+    _seekdir((dirp), 0L);
 #ifdef HAVE_DD_LOCK
-	__lock_release_recursive(dirp->dd_lock);
+    __lock_release_recursive(dirp->dd_lock);
 #endif
 }
 

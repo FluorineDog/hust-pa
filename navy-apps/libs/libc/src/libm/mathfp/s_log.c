@@ -19,10 +19,8 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-log (double x)
-{
-  return (logarithm (x, 0));
+double log(double x) {
+    return (logarithm(x, 0));
 }
 
 #endif /* _DOUBLE_IS_32BITS */

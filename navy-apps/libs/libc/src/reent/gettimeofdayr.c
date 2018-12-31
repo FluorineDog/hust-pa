@@ -51,17 +51,13 @@ DESCRIPTION
 	Check libc.a to see if its available on yours.
 */
 
-int
-_gettimeofday_r (struct _reent *ptr,
-     struct timeval *ptimeval,
-     void *ptimezone)
-{
-  int ret;
+int _gettimeofday_r(struct _reent *ptr, struct timeval *ptimeval, void *ptimezone) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _gettimeofday (ptimeval, ptimezone)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _gettimeofday(ptimeval, ptimezone)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

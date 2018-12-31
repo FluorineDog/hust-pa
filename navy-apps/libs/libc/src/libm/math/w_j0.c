@@ -95,102 +95,92 @@ None of the Bessel functions are in ANSI C.
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double j0(double x)		/* wrapper j0 */
+double j0(double x) /* wrapper j0 */
 #else
-	double j0(x)			/* wrapper j0 */
-	double x;
+double j0(x) /* wrapper j0 */
+    double x;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_j0(x);
+    return __ieee754_j0(x);
 #else
-	struct exception exc;
-	double z = __ieee754_j0(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(fabs(x)>X_TLOSS) {
-	    /* j0(|x|>X_TLOSS) */
-            exc.type = TLOSS;
-            exc.name = "j0";
-	    exc.err = 0;
-	    exc.arg1 = exc.arg2 = x;
-            exc.retval = 0.0;
-            if (_LIB_VERSION == _POSIX_)
-               errno = ERANGE;
-            else if (!matherr(&exc)) {
-               errno = ERANGE;
-            }        
-	    if (exc.err != 0)
-	       errno = exc.err;
-            return exc.retval; 
-	} else
-	    return z;
+    struct exception exc;
+    double z = __ieee754_j0(x);
+    if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
+    if(fabs(x) > X_TLOSS) {
+        /* j0(|x|>X_TLOSS) */
+        exc.type = TLOSS;
+        exc.name = "j0";
+        exc.err = 0;
+        exc.arg1 = exc.arg2 = x;
+        exc.retval = 0.0;
+        if(_LIB_VERSION == _POSIX_)
+            errno = ERANGE;
+        else if(!matherr(&exc)) {
+            errno = ERANGE;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    } else
+        return z;
 #endif
 }
 
 #ifdef __STDC__
-	double y0(double x)		/* wrapper y0 */
+double y0(double x) /* wrapper y0 */
 #else
-	double y0(x)			/* wrapper y0 */
-	double x;
+double y0(x) /* wrapper y0 */
+    double x;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_y0(x);
+    return __ieee754_y0(x);
 #else
-	double z;
-	struct exception exc;
-	z = __ieee754_y0(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-        if(x <= 0.0){
-#ifndef HUGE_VAL 
+    double z;
+    struct exception exc;
+    z = __ieee754_y0(x);
+    if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
+    if(x <= 0.0) {
+#ifndef HUGE_VAL
 #define HUGE_VAL inf
-	    double inf = 0.0;
+        double inf = 0.0;
 
-	    SET_HIGH_WORD(inf,0x7ff00000);	/* set inf to infinite */
+        SET_HIGH_WORD(inf, 0x7ff00000); /* set inf to infinite */
 #endif
-	    /* y0(0) = -inf or y0(x<0) = NaN */
-	    exc.type = DOMAIN;	/* should be SING for IEEE y0(0) */
-	    exc.name = "y0";
-	    exc.err = 0;
-	    exc.arg1 = exc.arg2 = x;
-	    if (_LIB_VERSION == _SVID_)
-	       exc.retval = -HUGE;
-	    else
-	       exc.retval = -HUGE_VAL;
-	    if (_LIB_VERSION == _POSIX_)
-	       errno = EDOM;
-	    else if (!matherr(&exc)) {
-	       errno = EDOM;
-	    }
-	    if (exc.err != 0)
-	       errno = exc.err;
-            return exc.retval; 
+        /* y0(0) = -inf or y0(x<0) = NaN */
+        exc.type = DOMAIN; /* should be SING for IEEE y0(0) */
+        exc.name = "y0";
+        exc.err = 0;
+        exc.arg1 = exc.arg2 = x;
+        if(_LIB_VERSION == _SVID_)
+            exc.retval = -HUGE;
+        else
+            exc.retval = -HUGE_VAL;
+        if(_LIB_VERSION == _POSIX_)
+            errno = EDOM;
+        else if(!matherr(&exc)) {
+            errno = EDOM;
         }
-	if(x>X_TLOSS) {
-	    /* y0(x>X_TLOSS) */
-            exc.type = TLOSS;
-            exc.name = "y0";
-	    exc.err = 0;
-	    exc.arg1 = exc.arg2 = x;
-            exc.retval = 0.0;
-            if (_LIB_VERSION == _POSIX_)
-               errno = ERANGE;
-            else if (!matherr(&exc)) {
-               errno = ERANGE;
-            }        
-	    if (exc.err != 0)
-	       errno = exc.err;
-	    return exc.retval; 
-	} else
-	    return z;
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    }
+    if(x > X_TLOSS) {
+        /* y0(x>X_TLOSS) */
+        exc.type = TLOSS;
+        exc.name = "y0";
+        exc.err = 0;
+        exc.arg1 = exc.arg2 = x;
+        exc.retval = 0.0;
+        if(_LIB_VERSION == _POSIX_)
+            errno = ERANGE;
+        else if(!matherr(&exc)) {
+            errno = ERANGE;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    } else
+        return z;
 #endif
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */
-
-
-
-
-
-
-

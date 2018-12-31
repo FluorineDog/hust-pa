@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-nearbyintl (long double x)
-{
-  return nearbyint(x);
+long double nearbyintl(long double x) {
+    return nearbyint(x);
 }
 #endif
-

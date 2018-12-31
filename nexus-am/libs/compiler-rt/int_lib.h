@@ -22,23 +22,25 @@
 
 #if defined(__ELF__)
 #define FNALIAS(alias_name, original_name) \
-  void alias_name() __attribute__((__alias__(#original_name)))
+    void alias_name() __attribute__((__alias__(#original_name)))
 #define COMPILER_RT_ALIAS(aliasee) __attribute__((__alias__(#aliasee)))
 #else
-#define FNALIAS(alias, name) _Pragma("GCC error(\"alias unsupported on this file format\")")
-#define COMPILER_RT_ALIAS(aliasee) _Pragma("GCC error(\"alias unsupported on this file format\")")
+#define FNALIAS(alias, name) \
+    _Pragma("GCC error(\"alias unsupported on this file format\")")
+#define COMPILER_RT_ALIAS(aliasee) \
+    _Pragma("GCC error(\"alias unsupported on this file format\")")
 #endif
 
 /* ABI macro definitions */
 
 #if __ARM_EABI__
-# ifdef COMPILER_RT_ARMHF_TARGET
-#   define COMPILER_RT_ABI
-# else
-#   define COMPILER_RT_ABI __attribute__((__pcs__("aapcs")))
-# endif
+#ifdef COMPILER_RT_ARMHF_TARGET
+#define COMPILER_RT_ABI
 #else
-# define COMPILER_RT_ABI
+#define COMPILER_RT_ABI __attribute__((__pcs__("aapcs")))
+#endif
+#else
+#define COMPILER_RT_ABI
 #endif
 
 #define AEABI_RTABI __attribute__((__pcs__("aapcs")))
@@ -60,15 +62,15 @@
  * Kernel and boot environment can't use normal headers,
  * so use the equivalent system headers.
  */
-#  include <machine/limits.h>
-#  include <sys/stdint.h>
-#  include <sys/types.h>
+#include <machine/limits.h>
+#include <sys/stdint.h>
+#include <sys/types.h>
 #else
 /* Include the standard compiler builtin headers we use functionality from. */
-#  include <limits.h>
-#  include <stdint.h>
-#  include <stdbool.h>
-#  include <float.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <float.h>
 #endif
 
 /* Include the commonly used internal type definitions. */
@@ -96,35 +98,30 @@ COMPILER_RT_ABI tu_int __udivmodti4(tu_int a, tu_int b, tu_int* rem);
 #include <intrin.h>
 
 uint32_t __inline __builtin_ctz(uint32_t value) {
-  unsigned long trailing_zero = 0;
-  if (_BitScanForward(&trailing_zero, value))
-    return trailing_zero;
-  return 32;
+    unsigned long trailing_zero = 0;
+    if(_BitScanForward(&trailing_zero, value)) return trailing_zero;
+    return 32;
 }
 
 uint32_t __inline __builtin_clz(uint32_t value) {
-  unsigned long leading_zero = 0;
-  if (_BitScanReverse(&leading_zero, value))
-    return 31 - leading_zero;
-  return 32;
+    unsigned long leading_zero = 0;
+    if(_BitScanReverse(&leading_zero, value)) return 31 - leading_zero;
+    return 32;
 }
 
 #if defined(_M_ARM) || defined(_M_X64)
 uint32_t __inline __builtin_clzll(uint64_t value) {
-  unsigned long leading_zero = 0;
-  if (_BitScanReverse64(&leading_zero, value))
-    return 63 - leading_zero;
-  return 64;
+    unsigned long leading_zero = 0;
+    if(_BitScanReverse64(&leading_zero, value)) return 63 - leading_zero;
+    return 64;
 }
 #else
 uint32_t __inline __builtin_clzll(uint64_t value) {
-  if (value == 0)
-    return 64;
-  uint32_t msh = (uint32_t)(value >> 32);
-  uint32_t lsh = (uint32_t)(value & 0xFFFFFFFF);
-  if (msh != 0)
-    return __builtin_clz(msh);
-  return 32 + __builtin_clz(lsh);
+    if(value == 0) return 64;
+    uint32_t msh = (uint32_t)(value >> 32);
+    uint32_t lsh = (uint32_t)(value & 0xFFFFFFFF);
+    if(msh != 0) return __builtin_clz(msh);
+    return 32 + __builtin_clz(lsh);
 }
 #endif
 

@@ -41,7 +41,6 @@ PORTABILITY
 No supporting OS subroutines are required.
 */
 
-
 /*
  * Copyright (c) 1990 Regents of the University of California.
  * All rights reserved.
@@ -79,25 +78,21 @@ No supporting OS subroutines are required.
  */
 
 #include <_ansi.h>
-#include <stdlib.h>		/* ldiv_t */
+#include <stdlib.h> /* ldiv_t */
 
-ldiv_t
-ldiv (long num,
-        long denom)
-{
-	ldiv_t r;
+ldiv_t ldiv(long num, long denom) {
+    ldiv_t r;
 
-	/* see div.c for comments */
+    /* see div.c for comments */
 
-	r.quot = num / denom;
-	r.rem = num % denom;
-	if (num >= 0 && r.rem < 0) {
-		++r.quot;
-		r.rem -= denom;
-	}
-	else if (num < 0 && r.rem > 0) {
-		--r.quot;
-		r.rem += denom;
-	}
-	return (r);
+    r.quot = num / denom;
+    r.rem = num % denom;
+    if(num >= 0 && r.rem < 0) {
+        ++r.quot;
+        r.rem -= denom;
+    } else if(num < 0 && r.rem > 0) {
+        --r.quot;
+        r.rem += denom;
+    }
+    return (r);
 }

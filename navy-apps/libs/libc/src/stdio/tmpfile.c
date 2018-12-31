@@ -46,43 +46,33 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<getpid>>,
 #include <sys/stat.h>
 
 #ifndef O_BINARY
-# define O_BINARY 0
+#define O_BINARY 0
 #endif
 
-FILE *
-_tmpfile_r (struct _reent *ptr)
-{
-  FILE *fp;
-  int e;
-  char *f;
-  char buf[L_tmpnam];
-  int fd;
+FILE *_tmpfile_r(struct _reent *ptr) {
+    FILE *fp;
+    int e;
+    char *f;
+    char buf[L_tmpnam];
+    int fd;
 
-  do
-    {
-      if ((f = _tmpnam_r (ptr, buf)) == NULL)
-	return NULL;
-      fd = _open_r (ptr, f, O_RDWR | O_CREAT | O_EXCL | O_BINARY,
-		    S_IRUSR | S_IWUSR);
-    }
-  while (fd < 0 && ptr->_errno == EEXIST);
-  if (fd < 0)
-    return NULL;
-  fp = _fdopen_r (ptr, fd, "wb+");
-  e = ptr->_errno;
-  if (!fp)
-    _close_r (ptr, fd);
-  (void) _remove_r (ptr, f);
-  ptr->_errno = e;
-  return fp;
+    do {
+        if((f = _tmpnam_r(ptr, buf)) == NULL) return NULL;
+        fd = _open_r(ptr, f, O_RDWR | O_CREAT | O_EXCL | O_BINARY, S_IRUSR | S_IWUSR);
+    } while(fd < 0 && ptr->_errno == EEXIST);
+    if(fd < 0) return NULL;
+    fp = _fdopen_r(ptr, fd, "wb+");
+    e = ptr->_errno;
+    if(!fp) _close_r(ptr, fd);
+    (void)_remove_r(ptr, f);
+    ptr->_errno = e;
+    return fp;
 }
 
 #ifndef _REENT_ONLY
 
-FILE *
-tmpfile (void)
-{
-  return _tmpfile_r (_REENT);
+FILE *tmpfile(void) {
+    return _tmpfile_r(_REENT);
 }
 
 #endif

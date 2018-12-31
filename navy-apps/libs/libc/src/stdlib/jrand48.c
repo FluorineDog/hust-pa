@@ -13,18 +13,13 @@
 
 #include "rand48.h"
 
-long
-_jrand48_r (struct _reent *r,
-       unsigned short xseed[3])
-{
-  __dorand48(r, xseed);
-  return ((long) xseed[2] << 16) + (long) xseed[1];
+long _jrand48_r(struct _reent *r, unsigned short xseed[3]) {
+    __dorand48(r, xseed);
+    return ((long)xseed[2] << 16) + (long)xseed[1];
 }
 
 #ifndef _REENT_ONLY
-long
-jrand48 (unsigned short xseed[3])
-{
-  return _jrand48_r (_REENT, xseed);
+long jrand48(unsigned short xseed[3]) {
+    return _jrand48_r(_REENT, xseed);
 }
 #endif /* !_REENT_ONLY */

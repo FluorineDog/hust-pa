@@ -56,16 +56,11 @@ No supporting OS subroutines are required.
 #include <ctype.h>
 
 #undef isgraph
-int
-isgraph (int c)
-{
-	return(__CTYPE_PTR[c+1] & (_P|_U|_L|_N));
+int isgraph(int c) {
+    return (__CTYPE_PTR[c + 1] & (_P | _U | _L | _N));
 }
 
-
 #undef isprint
-int
-isprint (int c)
-{
-	return(__CTYPE_PTR[c+1] & (_P|_U|_L|_N|_B));
+int isprint(int c) {
+    return (__CTYPE_PTR[c + 1] & (_P | _U | _L | _N | _B));
 }

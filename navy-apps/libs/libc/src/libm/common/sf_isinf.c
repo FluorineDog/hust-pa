@@ -12,23 +12,19 @@
 
 #undef isinff
 
-int
-isinff (float x)
-{
-	__int32_t ix;
-	GET_FLOAT_WORD(ix,x);
-	ix &= 0x7fffffff;
-	return FLT_UWORD_IS_INFINITE(ix);
+int isinff(float x) {
+    __int32_t ix;
+    GET_FLOAT_WORD(ix, x);
+    ix &= 0x7fffffff;
+    return FLT_UWORD_IS_INFINITE(ix);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #undef isinf
 
-int
-isinf (double x)
-{
-	return isinff((float) x);
+int isinf(double x) {
+    return isinff((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

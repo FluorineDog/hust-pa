@@ -7,10 +7,8 @@
 #include <complex.h>
 #include "fdlibm.h"
 
-long double
-cimagl (long double complex z)
-{
-  long_double_complex w = { .z = z };
+long double cimagl(long double complex z) {
+    long_double_complex w = {.z = z};
 
-  return IMAG_PART (w);
+    return IMAG_PART(w);
 }

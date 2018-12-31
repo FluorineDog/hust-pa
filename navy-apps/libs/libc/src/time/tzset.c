@@ -61,16 +61,12 @@ Supporting OS subroutine required: None
 #include <time.h>
 #include "local.h"
 
-void
-_tzset_unlocked (void)
-{
-  _tzset_unlocked_r (_REENT);
+void _tzset_unlocked(void) {
+    _tzset_unlocked_r(_REENT);
 }
 
-void
-tzset (void)
-{
-  TZ_LOCK;
-  _tzset_unlocked_r (_REENT);
-  TZ_UNLOCK;
+void tzset(void) {
+    TZ_LOCK;
+    _tzset_unlocked_r(_REENT);
+    TZ_UNLOCK;
 }

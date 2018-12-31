@@ -22,12 +22,12 @@ void hello_fun(void *arg) {
 
 void init_proc() {
     // naive_uload(NULL, "/bin/init");
-    context_kload(&pcb[0], (void* )hello_fun);
+    context_kload(&pcb[0], (void *)hello_fun);
     switch_boot_pcb();
 }
 
 _Context *schedule(_Context *prev) {
-    // WHY? 
+    // WHY?
     current->tf = prev;
     // switch to pcb[0]
     current = &pcb[0];

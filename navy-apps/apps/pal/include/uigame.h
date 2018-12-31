@@ -23,71 +23,34 @@
 #define UIGAME_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include "ui.h"
 
-VOID
-PAL_DrawOpeningMenuBackground(
-   VOID
-);
+VOID PAL_DrawOpeningMenuBackground(VOID);
 
-INT
-PAL_OpeningMenu(
-   VOID
-);
+INT PAL_OpeningMenu(VOID);
 
-INT
-PAL_SaveSlotMenu(
-   WORD        wDefaultSlot
-);
+INT PAL_SaveSlotMenu(WORD wDefaultSlot);
 
-BOOL
-PAL_ConfirmMenu(
-   VOID
-);
+BOOL PAL_ConfirmMenu(VOID);
 
-BOOL
-PAL_SwitchMenu(
-   BOOL      fEnabled
-);
+BOOL PAL_SwitchMenu(BOOL fEnabled);
 
-VOID
-PAL_InGameMagicMenu(
-   VOID
-);
+VOID PAL_InGameMagicMenu(VOID);
 
-VOID
-PAL_InGameMenu(
-   VOID
-);
+VOID PAL_InGameMenu(VOID);
 
-VOID
-PAL_PlayerStatus(
-   VOID
-);
+VOID PAL_PlayerStatus(VOID);
 
-WORD
-PAL_ItemUseMenu(
-   WORD           wItemToUse
-);
+WORD PAL_ItemUseMenu(WORD wItemToUse);
 
-VOID
-PAL_BuyMenu(
-   WORD           wStoreNum
-);
+VOID PAL_BuyMenu(WORD wStoreNum);
 
-VOID
-PAL_SellMenu(
-   VOID
-);
+VOID PAL_SellMenu(VOID);
 
-VOID
-PAL_EquipItemMenu(
-   WORD           wItem
-);
+VOID PAL_EquipItemMenu(WORD wItem);
 
 #ifdef __cplusplus
 }

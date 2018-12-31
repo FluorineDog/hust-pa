@@ -85,102 +85,75 @@ The global pointer <<environ>> is also required.
 /* Try to open the file specified, if it can't be opened then try
    another one.  Return nonzero if successful, otherwise zero.  */
 
-static int
-worker (struct _reent *ptr,
-       char *result,
-       const char *part1,
-       const char *part2,
-       int part3,
-       int *part4)
-{
-  /*  Generate the filename and make sure that there isn't one called
+static int worker(struct _reent *ptr, char *result, const char *part1, const char *part2,
+                  int part3, int *part4) {
+    /*  Generate the filename and make sure that there isn't one called
       it already.  */
 
-  while (1)
-    {
-      int t;
-      _sprintf_r (ptr, result, "%s/%s%x.%x", part1, part2, part3, *part4);
-      (*part4)++;
-      t = _open_r (ptr, result, O_RDONLY, 0);
-      if (t == -1)
-	{
-	  if (ptr->_errno == ENOSYS)
-	    {
-	      result[0] = '\0';
-	      return 0;
-	    }
-	  break;
-	}
-      _close_r (ptr, t);
+    while(1) {
+        int t;
+        _sprintf_r(ptr, result, "%s/%s%x.%x", part1, part2, part3, *part4);
+        (*part4)++;
+        t = _open_r(ptr, result, O_RDONLY, 0);
+        if(t == -1) {
+            if(ptr->_errno == ENOSYS) {
+                result[0] = '\0';
+                return 0;
+            }
+            break;
+        }
+        _close_r(ptr, t);
     }
-  return 1;
+    return 1;
 }
 
-char *
-_tmpnam_r (struct _reent *p,
-       char *s)
-{
-  char *result;
-  int pid;
+char *_tmpnam_r(struct _reent *p, char *s) {
+    char *result;
+    int pid;
 
-  if (s == NULL)
-    {
-      /* ANSI states we must use an internal static buffer if s is NULL */
-      _REENT_CHECK_EMERGENCY(p);
-      result = _REENT_EMERGENCY(p);
+    if(s == NULL) {
+        /* ANSI states we must use an internal static buffer if s is NULL */
+        _REENT_CHECK_EMERGENCY(p);
+        result = _REENT_EMERGENCY(p);
+    } else {
+        result = s;
     }
-  else
-    {
-      result = s;
-    }
-  pid = _getpid_r (p);
+    pid = _getpid_r(p);
 
-  if (worker (p, result, P_tmpdir, "t", pid, &p->_inc))
-    {
-      p->_inc++;
-      return result;
+    if(worker(p, result, P_tmpdir, "t", pid, &p->_inc)) {
+        p->_inc++;
+        return result;
     }
 
-  return NULL;
+    return NULL;
 }
 
-char *
-_tempnam_r (struct _reent *p,
-       const char *dir,
-       const char *pfx)
-{
-  char *filename;
-  int length;
-  const char *prefix = (pfx) ? pfx : "";
-  if (dir == NULL && (dir = getenv ("TMPDIR")) == NULL)
-    dir = P_tmpdir;
+char *_tempnam_r(struct _reent *p, const char *dir, const char *pfx) {
+    char *filename;
+    int length;
+    const char *prefix = (pfx) ? pfx : "";
+    if(dir == NULL && (dir = getenv("TMPDIR")) == NULL) dir = P_tmpdir;
 
-  /* two 8 digit numbers + . / */
-  length = strlen (dir) + strlen (prefix) + (4 * sizeof (int)) + 2 + 1;
+    /* two 8 digit numbers + . / */
+    length = strlen(dir) + strlen(prefix) + (4 * sizeof(int)) + 2 + 1;
 
-  filename = _malloc_r (p, length);
-  if (filename)
-    {
-      if (! worker (p, filename, dir, prefix,
-		    _getpid_r (p) ^ (int) (_POINTER_INT) p, &p->_inc))
-	return NULL;
+    filename = _malloc_r(p, length);
+    if(filename) {
+        if(!worker(p, filename, dir, prefix, _getpid_r(p) ^ (int)(_POINTER_INT)p,
+                   &p->_inc))
+            return NULL;
     }
-  return filename;
+    return filename;
 }
 
 #ifndef _REENT_ONLY
 
-char *
-tempnam (const char *dir,
-       const char *pfx)
-{
-  return _tempnam_r (_REENT, dir, pfx);
+char *tempnam(const char *dir, const char *pfx) {
+    return _tempnam_r(_REENT, dir, pfx);
 }
 
-char *
-tmpnam (char *s)
-{
-  return _tmpnam_r (_REENT, s);
+char *tmpnam(char *s) {
+    return _tmpnam_r(_REENT, s);
 }
 
 #endif

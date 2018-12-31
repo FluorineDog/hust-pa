@@ -34,10 +34,7 @@
 #include "SDL_messagebox.h"
 #endif
 
-void
-trim(
-   char *str
-)
+void trim(char *str)
 /*++
   Purpose:
 
@@ -53,35 +50,28 @@ trim(
 
 --*/
 {
-   int pos = 0;
-   char *dest = str;
+    int pos = 0;
+    char *dest = str;
 
-   //
-   // skip leading blanks
-   //
-   while (str[pos] <= ' ' && str[pos] > 0)
-      pos++;
+    //
+    // skip leading blanks
+    //
+    while(str[pos] <= ' ' && str[pos] > 0) pos++;
 
-   while (str[pos])
-   {
-      *(dest++) = str[pos];
-      pos++;
-   }
+    while(str[pos]) {
+        *(dest++) = str[pos];
+        pos++;
+    }
 
-   *(dest--) = '\0'; // store the null
+    *(dest--) = '\0';    // store the null
 
-   //
-   // remove trailing blanks
-   //
-   while (dest >= str && *dest <= ' ' && *dest > 0)
-      *(dest--) = '\0';
+    //
+    // remove trailing blanks
+    //
+    while(dest >= str && *dest <= ' ' && *dest > 0) *(dest--) = '\0';
 }
 
-char *
-va(
-   const char *format,
-   ...
-)
+char *va(const char *format, ...)
 /*++
   Purpose:
 
@@ -98,14 +88,14 @@ va(
 
 --*/
 {
-   static char string[256];
-   va_list     argptr;
+    static char string[256];
+    va_list argptr;
 
-   va_start(argptr, format);
-   vsprintf(string, format, argptr);
-   va_end(argptr);
+    va_start(argptr, format);
+    vsprintf(string, format, argptr);
+    va_end(argptr);
 
-   return string;
+    return string;
 }
 
 /*
@@ -151,10 +141,7 @@ va(
 //
 static int glSeed = 0;
 
-static void
-lsrand(
-   unsigned int iInitialSeed
-)
+static void lsrand(unsigned int iInitialSeed)
 /*++
   Purpose:
 
@@ -171,16 +158,13 @@ lsrand(
 
 --*/
 {
-   //
-   // fill in the initial seed of the random number generator
-   //
-   glSeed = 1664525L * iInitialSeed + 1013904223L;
+    //
+    // fill in the initial seed of the random number generator
+    //
+    glSeed = 1664525L * iInitialSeed + 1013904223L;
 }
 
-static int
-lrand(
-   void
-)
+static int lrand(void)
 /*++
   Purpose:
 
@@ -198,17 +182,13 @@ lrand(
 
 --*/
 {
-   if (glSeed == 0) // if the random seed isn't initialized...
-      lsrand(SDL_GetTicks()); // initialize it first
-   glSeed = 1664525L * glSeed + 1013904223L; // do some twisted math (infinite suite)
-   return ((glSeed >> 1) + 1073741824L); // and return the result.
+    if(glSeed == 0)                // if the random seed isn't initialized...
+        lsrand(SDL_GetTicks());    // initialize it first
+    glSeed = 1664525L * glSeed + 1013904223L;    // do some twisted math (infinite suite)
+    return ((glSeed >> 1) + 1073741824L);        // and return the result.
 }
 
-int
-RandomLong(
-   int from,
-   int to
-)
+int RandomLong(int from, int to)
 /*++
   Purpose:
 
@@ -227,17 +207,13 @@ RandomLong(
 
 --*/
 {
-   if (to <= from)
-      return from;
+    if(to <= from) return from;
 
-   return from + lrand() / (INT_MAX / (to - from + 1));
+    return from + lrand() / (INT_MAX / (to - from + 1));
 }
 
 FLOAT
-RandomFloat(
-   FLOAT from,
-   FLOAT to
-)
+RandomFloat(FLOAT from, FLOAT to)
 /*++
   Purpose:
 
@@ -256,98 +232,80 @@ RandomFloat(
 
 --*/
 {
-   if (to <= from)
-      return from;
+    if(to <= from) return from;
 
-   return from + lrand() % (to - from + 1);
+    return from + lrand() % (to - from + 1);
 }
 
-void
-UTIL_Delay(
-   unsigned int ms
-)
-{
-   unsigned int t = SDL_GetTicks() + ms;
+void UTIL_Delay(unsigned int ms) {
+    unsigned int t = SDL_GetTicks() + ms;
 
-   SDL_WaitUntil(t);
+    SDL_WaitUntil(t);
 
 #ifdef PAL_HAS_NATIVEMIDI
-   MIDI_CheckLoop();
+    MIDI_CheckLoop();
 #endif
 }
 
-void
-TerminateOnError(
-   const char *fmt,
-   ...
-)
+void TerminateOnError(const char *fmt, ...)
 // This function terminates the game because of an error and
 // prints the message string pointed to by fmt both in the
 // console and in a messagebox.
 {
-   va_list argptr;
-   char string[256];
-   extern VOID PAL_Shutdown(VOID);
+    va_list argptr;
+    char string[256];
+    extern VOID PAL_Shutdown(VOID);
 
-   // concatenate all the arguments in one string
-   va_start(argptr, fmt);
-   vsprintf(string, fmt, argptr);
-   va_end(argptr);
+    // concatenate all the arguments in one string
+    va_start(argptr, fmt);
+    vsprintf(string, fmt, argptr);
+    va_end(argptr);
 
-   fprintf(stderr, "\nFATAL ERROR: %s\n", string);
-   PAL_Shutdown();
-   exit(255);
+    fprintf(stderr, "\nFATAL ERROR: %s\n", string);
+    PAL_Shutdown();
+    exit(255);
 }
 
-void *
-UTIL_malloc(
-   size_t               buffer_size
-)
-{
-   // handy wrapper for operations we always forget, like checking malloc's returned pointer.
+void *UTIL_malloc(size_t buffer_size) {
+    // handy wrapper for operations we always forget, like checking malloc's returned pointer.
 
-   void *buffer;
+    void *buffer;
 
-   // first off, check if buffer size is valid
-   if (buffer_size == 0)
-      TerminateOnError("UTIL_malloc() called with invalid buffer size: %d\n", buffer_size);
+    // first off, check if buffer size is valid
+    if(buffer_size == 0)
+        TerminateOnError("UTIL_malloc() called with invalid buffer size: %d\n",
+                         buffer_size);
 
-   buffer = malloc(buffer_size); // allocate real memory space
+    buffer = malloc(buffer_size);    // allocate real memory space
 
-   // last check, check if malloc call succeeded
-   if (buffer == NULL)
-      TerminateOnError("UTIL_malloc() failure for %d bytes (out of memory?)\n", buffer_size);
+    // last check, check if malloc call succeeded
+    if(buffer == NULL)
+        TerminateOnError("UTIL_malloc() failure for %d bytes (out of memory?)\n",
+                         buffer_size);
 
-   return buffer; // nothing went wrong, so return buffer pointer
+    return buffer;    // nothing went wrong, so return buffer pointer
 }
 
-void *
-UTIL_calloc(
-   size_t               n,
-   size_t               size
-)
-{
-   // handy wrapper for operations we always forget, like checking calloc's returned pointer.
+void *UTIL_calloc(size_t n, size_t size) {
+    // handy wrapper for operations we always forget, like checking calloc's returned pointer.
 
-   void *buffer;
+    void *buffer;
 
-   // first off, check if buffer size is valid
-   if (n == 0 || size == 0)
-      TerminateOnError ("UTIL_calloc() called with invalid parameters\n");
+    // first off, check if buffer size is valid
+    if(n == 0 || size == 0)
+        TerminateOnError("UTIL_calloc() called with invalid parameters\n");
 
-   buffer = calloc(n, size); // allocate real memory space
+    buffer = calloc(n, size);    // allocate real memory space
 
-   // last check, check if malloc call succeeded
-   if (buffer == NULL)
-      TerminateOnError("UTIL_calloc() failure for %d bytes (out of memory?)\n", size * n);
+    // last check, check if malloc call succeeded
+    if(buffer == NULL)
+        TerminateOnError("UTIL_calloc() failure for %d bytes (out of memory?)\n",
+                         size * n);
 
-   return buffer; // nothing went wrong, so return buffer pointer
+    return buffer;    // nothing went wrong, so return buffer pointer
 }
 
-FILE *
-UTIL_OpenRequiredFile(
-   LPCSTR            lpszFileName
-)
+FILE *UTIL_OpenRequiredFile(LPCSTR lpszFileName)
 /*++
   Purpose:
 
@@ -363,44 +321,37 @@ UTIL_OpenRequiredFile(
 
 --*/
 {
-   FILE         *fp;
+    FILE *fp;
 
-   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+    fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
 
 #ifndef _WIN32
-   if (fp == NULL)
-   {
-	  //
-	  // try converting the filename to upper-case.
-	  //
-	  char *pBuf = strdup(lpszFileName);
-	  char *p = pBuf;
-	  while (*p)
-	  {
-		 if (*p >= 'a' && *p <= 'z')
-		 {
-			*p -= 'a' - 'A';
-		 }
-		 p++;
-	  }
+    if(fp == NULL) {
+        //
+        // try converting the filename to upper-case.
+        //
+        char *pBuf = strdup(lpszFileName);
+        char *p = pBuf;
+        while(*p) {
+            if(*p >= 'a' && *p <= 'z') {
+                *p -= 'a' - 'A';
+            }
+            p++;
+        }
 
-	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
-	  free(pBuf);
-   }
+        fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
+        free(pBuf);
+    }
 #endif
 
-   if (fp == NULL)
-   {
-      TerminateOnError("File not found: %s!\n", lpszFileName);
-   }
+    if(fp == NULL) {
+        TerminateOnError("File not found: %s!\n", lpszFileName);
+    }
 
-   return fp;
+    return fp;
 }
 
-FILE *
-UTIL_OpenFile(
-   LPCSTR            lpszFileName
-)
+FILE *UTIL_OpenFile(LPCSTR lpszFileName)
 /*++
   Purpose:
 
@@ -416,39 +367,33 @@ UTIL_OpenFile(
 
 --*/
 {
-   FILE         *fp;
+    FILE *fp;
 
-   fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
+    fp = fopen(va("%s%s", PAL_PREFIX, lpszFileName), "rb");
 
 #ifndef _WIN32
-   if (fp == NULL)
-   {
-	  //
-	  // try converting the filename to upper-case.
-	  //
-	  char *pBuf = strdup(lpszFileName);
-	  char *p = pBuf;
-	  while (*p)
-	  {
-		 if (*p >= 'a' && *p <= 'z')
-		 {
-			*p -= 'a' - 'A';
-		 }
-		 p++;
-	  }
+    if(fp == NULL) {
+        //
+        // try converting the filename to upper-case.
+        //
+        char *pBuf = strdup(lpszFileName);
+        char *p = pBuf;
+        while(*p) {
+            if(*p >= 'a' && *p <= 'z') {
+                *p -= 'a' - 'A';
+            }
+            p++;
+        }
 
-	  fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
-	  free(pBuf);
-   }
+        fp = fopen(va("%s%s", PAL_PREFIX, pBuf), "rb");
+        free(pBuf);
+    }
 #endif
 
-   return fp;
+    return fp;
 }
 
-VOID
-UTIL_CloseFile(
-   FILE             *fp
-)
+VOID UTIL_CloseFile(FILE *fp)
 /*++
   Purpose:
 
@@ -464,38 +409,29 @@ UTIL_CloseFile(
 
 --*/
 {
-   if (fp != NULL)
-   {
-      fclose(fp);
-   }
+    if(fp != NULL) {
+        fclose(fp);
+    }
 }
 
 #ifdef ENABLE_LOG
 
 static FILE *pLogFile = NULL;
 
-FILE *
-UTIL_OpenLog(
-   VOID
-)
-{
-	/*
+FILE *UTIL_OpenLog(VOID) {
+    /*
    if ((pLogFile = fopen(_PATH_LOG, "a+")) == NULL)
    {
       return NULL;
    }
    */
-	pLogFile = stdout;
+    pLogFile = stdout;
 
-   return pLogFile;
+    return pLogFile;
 }
 
-VOID
-UTIL_CloseLog(
-   VOID
-)
-{
-	/*
+VOID UTIL_CloseLog(VOID) {
+    /*
    if (pLogFile != NULL)
    {
       fclose(pLogFile);
@@ -503,38 +439,31 @@ UTIL_CloseLog(
    */
 }
 
-VOID
-UTIL_WriteLog(
-   int             Priority,
-   const char     *Fmt,
-   ...
-)
-{
-   va_list       vaa;
-//   time_t        lTime;
-//   struct tm    *curTime;
-   char          szDateBuf[260];
+VOID UTIL_WriteLog(int Priority, const char *Fmt, ...) {
+    va_list vaa;
+    //   time_t        lTime;
+    //   struct tm    *curTime;
+    char szDateBuf[260];
 
-//   time(&lTime);
+    //   time(&lTime);
 
-   if ((Priority < LOG_EMERG) || (Priority >= LOG_LAST_PRIORITY))
-   {
-      return;
-   }
+    if((Priority < LOG_EMERG) || (Priority >= LOG_LAST_PRIORITY)) {
+        return;
+    }
 
- //  curTime = localtime(&lTime);
- //  strftime(szDateBuf, 128, "%Y-%m-%d   %H:%M:%S", curTime);
- //  szDateBuf[strlen(szDateBuf) - 1] = '\0'; //remove the
-   szDataBuf[0] = '\0';
+    //  curTime = localtime(&lTime);
+    //  strftime(szDateBuf, 128, "%Y-%m-%d   %H:%M:%S", curTime);
+    //  szDateBuf[strlen(szDateBuf) - 1] = '\0'; //remove the
+    szDataBuf[0] = '\0';
 
-   va_start(vaa,Fmt);
+    va_start(vaa, Fmt);
 
-   fprintf(pLogFile, "[%s]", szDateBuf);
-   vfprintf(pLogFile, Fmt, vaa);
-   fprintf(pLogFile, "\n");
-   fflush(pLogFile);
+    fprintf(pLogFile, "[%s]", szDateBuf);
+    vfprintf(pLogFile, Fmt, vaa);
+    fprintf(pLogFile, "\n");
+    fflush(pLogFile);
 
-   va_end(vaa);
+    va_end(vaa);
 }
 
 #endif

@@ -37,28 +37,22 @@ PORTABILITY
 #include <stdlib.h>
 #include "setlocale.h"
 
-void
-_freelocale_r (struct _reent *p, struct __locale_t *locobj)
-{
-  /* Nothing to do on !_MB_CAPABLE targets. */
+void _freelocale_r(struct _reent *p, struct __locale_t *locobj) {
+    /* Nothing to do on !_MB_CAPABLE targets. */
 #ifdef _MB_CAPABLE
-  /* Sanity check.  The "C" locale is static, don't try to free it. */
-  if (!locobj || locobj == __get_C_locale () || locobj == LC_GLOBAL_LOCALE)
-    return;
+    /* Sanity check.  The "C" locale is static, don't try to free it. */
+    if(!locobj || locobj == __get_C_locale() || locobj == LC_GLOBAL_LOCALE) return;
 #ifdef __HAVE_LOCALE_INFO__
-  for (int i = 1; i < _LC_LAST; ++i)
-    if (locobj->lc_cat[i].buf)
-      {
-	_free_r (p, (void *) locobj->lc_cat[i].ptr);
-	_free_r (p, locobj->lc_cat[i].buf);
-      }
+    for(int i = 1; i < _LC_LAST; ++i)
+        if(locobj->lc_cat[i].buf) {
+            _free_r(p, (void *)locobj->lc_cat[i].ptr);
+            _free_r(p, locobj->lc_cat[i].buf);
+        }
 #endif /* __HAVE_LOCALE_INFO__ */
-  _free_r (p, locobj);
+    _free_r(p, locobj);
 #endif /* _MB_CAPABLE */
 }
 
-void
-freelocale (struct __locale_t *locobj)
-{
-  _freelocale_r (_REENT, locobj);
+void freelocale(struct __locale_t *locobj) {
+    _freelocale_r(_REENT, locobj);
 }

@@ -33,19 +33,14 @@
 
 #undef getwc_unlocked
 
-wint_t
-_getwc_unlocked_r (struct _reent *ptr,
-	FILE *fp)
-{
-  return _fgetwc_unlocked_r (ptr, fp);
+wint_t _getwc_unlocked_r(struct _reent *ptr, FILE *fp) {
+    return _fgetwc_unlocked_r(ptr, fp);
 }
 
 /*
  * Synonym for fgetwc_unlocked(). The only difference is that getwc(), if it is
  * a macro, may evaluate `fp' more than once.
  */
-wint_t
-getwc_unlocked (FILE *fp)
-{
-  return fgetwc_unlocked(fp);
+wint_t getwc_unlocked(FILE *fp) {
+    return fgetwc_unlocked(fp);
 }

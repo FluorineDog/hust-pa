@@ -19,35 +19,31 @@
 #include <errno.h>
 
 #ifdef __STDC__
-	double tgamma(double x)
+double tgamma(double x)
 #else
-	double tgamma(x)
-	double x;
+double tgamma(x) double x;
 #endif
 {
-        double y;
-	int local_signgam;
-	y = gamma_r(x,&local_signgam);
-	if (local_signgam < 0) y = -y;
+    double y;
+    int local_signgam;
+    y = gamma_r(x, &local_signgam);
+    if(local_signgam < 0) y = -y;
 #ifdef _IEEE_LIBM
-	return y;
+    return y;
 #else
-	if(_LIB_VERSION == _IEEE_) return y;
+    if(_LIB_VERSION == _IEEE_) return y;
 
-	if(!finite(y)&&finite(x)) {
-	  if(floor(x)==x&&x<=0.0)
-            {
-              /* tgamma pole */
-              errno = EDOM;
-              return HUGE_VAL;
-            }
-	  else
-            {
-              /* tgamma overflow */
-              errno = ERANGE;
-              return HUGE_VAL;
-            }
-	}
-	return y;
+    if(!finite(y) && finite(x)) {
+        if(floor(x) == x && x <= 0.0) {
+            /* tgamma pole */
+            errno = EDOM;
+            return HUGE_VAL;
+        } else {
+            /* tgamma overflow */
+            errno = ERANGE;
+            return HUGE_VAL;
+        }
+    }
+    return y;
 #endif
 }

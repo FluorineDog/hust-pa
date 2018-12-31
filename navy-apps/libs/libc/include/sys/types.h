@@ -25,16 +25,16 @@
    for backward compatibility with BSD code.  The uintN_t standard types should
    be preferred in new code. */
 #if ___int8_t_defined
-typedef __uint8_t	u_int8_t;
+typedef __uint8_t u_int8_t;
 #endif
 #if ___int16_t_defined
-typedef __uint16_t	u_int16_t;
-#endif 
+typedef __uint16_t u_int16_t;
+#endif
 #if ___int32_t_defined
-typedef __uint32_t	u_int32_t;
+typedef __uint32_t u_int32_t;
 #endif
 #if ___int64_t_defined
-typedef __uint64_t	u_int64_t;
+typedef __uint64_t u_int64_t;
 #endif
 typedef int register_t;
 #define __BIT_TYPES_DEFINED__ 1
@@ -48,9 +48,9 @@ typedef int register_t;
 
 /* deprecated */
 #if ___int64_t_defined
-typedef	__uint64_t	u_quad_t;
-typedef	__int64_t	quad_t;
-typedef	quad_t *	qaddr_t;
+typedef __uint64_t u_quad_t;
+typedef __int64_t quad_t;
+typedef quad_t* qaddr_t;
 #endif
 
 #endif /* __rtems__ || __XMK__ */
@@ -66,17 +66,17 @@ typedef	quad_t *	qaddr_t;
 #if __BSD_VISIBLE
 #include <machine/endian.h>
 #include <sys/select.h>
-#  define	physadr		physadr_t
-#  define	quad		quad_t
+#define physadr physadr_t
+#define quad quad_t
 
 #ifndef _IN_ADDR_T_DECLARED
-typedef	__uint32_t	in_addr_t;	/* base type for internet address */
-#define	_IN_ADDR_T_DECLARED
+typedef __uint32_t in_addr_t; /* base type for internet address */
+#define _IN_ADDR_T_DECLARED
 #endif
 
 #ifndef _IN_PORT_T_DECLARED
-typedef	__uint16_t	in_port_t;
-#define	_IN_PORT_T_DECLARED
+typedef __uint16_t in_port_t;
+#define _IN_PORT_T_DECLARED
 #endif
 #endif /* __BSD_VISIBLE */
 
@@ -84,80 +84,80 @@ typedef	__uint16_t	in_port_t;
 #ifndef _BSDTYPES_DEFINED
 /* also defined in mingw/gmon.h and in w32api/winsock[2].h */
 #ifndef __u_char_defined
-typedef	unsigned char	u_char;
+typedef unsigned char u_char;
 #define __u_char_defined
 #endif
 #ifndef __u_short_defined
-typedef	unsigned short	u_short;
+typedef unsigned short u_short;
 #define __u_short_defined
 #endif
 #ifndef __u_int_defined
-typedef	unsigned int	u_int;
+typedef unsigned int u_int;
 #define __u_int_defined
 #endif
 #ifndef __u_long_defined
-typedef	unsigned long	u_long;
+typedef unsigned long u_long;
 #define __u_long_defined
 #endif
 #define _BSDTYPES_DEFINED
 #endif
-#endif	/*__BSD_VISIBLE || __CYGWIN__ */
+#endif /*__BSD_VISIBLE || __CYGWIN__ */
 
 #if __MISC_VISIBLE
-typedef	unsigned short	ushort;		/* System V compatibility */
-typedef	unsigned int	uint;		/* System V compatibility */
-typedef	unsigned long	ulong;		/* System V compatibility */
+typedef unsigned short ushort; /* System V compatibility */
+typedef unsigned int uint;     /* System V compatibility */
+typedef unsigned long ulong;   /* System V compatibility */
 #endif
 
 #ifndef _BLKCNT_T_DECLARED
-typedef	__blkcnt_t	blkcnt_t;
-#define	_BLKCNT_T_DECLARED
+typedef __blkcnt_t blkcnt_t;
+#define _BLKCNT_T_DECLARED
 #endif
 
 #ifndef _BLKSIZE_T_DECLARED
-typedef	__blksize_t	blksize_t;
-#define	_BLKSIZE_T_DECLARED
+typedef __blksize_t blksize_t;
+#define _BLKSIZE_T_DECLARED
 #endif
 
 #if !defined(__clock_t_defined) && !defined(_CLOCK_T_DECLARED)
-typedef	_CLOCK_T_	clock_t;
-#define	__clock_t_defined
-#define	_CLOCK_T_DECLARED
+typedef _CLOCK_T_ clock_t;
+#define __clock_t_defined
+#define _CLOCK_T_DECLARED
 #endif
 
 #if !defined(__time_t_defined) && !defined(_TIME_T_DECLARED)
-typedef	_TIME_T_	time_t;
-#define	__time_t_defined
-#define	_TIME_T_DECLARED
+typedef _TIME_T_ time_t;
+#define __time_t_defined
+#define _TIME_T_DECLARED
 #endif
 
 #ifndef __daddr_t_defined
-typedef	long	daddr_t;
+typedef long daddr_t;
 #define __daddr_t_defined
 #endif
 #ifndef __caddr_t_defined
-typedef	char *	caddr_t;
+typedef char* caddr_t;
 #define __caddr_t_defined
 #endif
 
-#ifndef _FSBLKCNT_T_DECLARED		/* for statvfs() */
-typedef	__fsblkcnt_t	fsblkcnt_t;
-typedef	__fsfilcnt_t	fsfilcnt_t;
-#define	_FSBLKCNT_T_DECLARED
+#ifndef _FSBLKCNT_T_DECLARED /* for statvfs() */
+typedef __fsblkcnt_t fsblkcnt_t;
+typedef __fsfilcnt_t fsfilcnt_t;
+#define _FSBLKCNT_T_DECLARED
 #endif
 
 #ifndef _ID_T_DECLARED
-typedef	__id_t		id_t;		/* can hold a uid_t or pid_t */
-#define	_ID_T_DECLARED
+typedef __id_t id_t; /* can hold a uid_t or pid_t */
+#define _ID_T_DECLARED
 #endif
 
 #ifndef _INO_T_DECLARED
-typedef	__ino_t		ino_t;		/* inode number */
-#define	_INO_T_DECLARED
+typedef __ino_t ino_t; /* inode number */
+#define _INO_T_DECLARED
 #endif
 
 #if defined(__i386__) && (defined(GO32) || defined(__MSDOS__))
-typedef	char *		addr_t;
+typedef char* addr_t;
 typedef unsigned long vm_offset_t;
 typedef unsigned long vm_size_t;
 #endif /* __i386__ && (GO32 || __MSDOS__) */
@@ -170,77 +170,77 @@ typedef unsigned long vm_size_t;
  */
 
 #ifndef _OFF_T_DECLARED
-typedef	__off_t		off_t;		/* file offset */
-#define	_OFF_T_DECLARED
+typedef __off_t off_t; /* file offset */
+#define _OFF_T_DECLARED
 #endif
 #ifndef _DEV_T_DECLARED
-typedef	__dev_t		dev_t;		/* device number or struct cdev */
-#define	_DEV_T_DECLARED
+typedef __dev_t dev_t; /* device number or struct cdev */
+#define _DEV_T_DECLARED
 #endif
 #ifndef _UID_T_DECLARED
-typedef	__uid_t		uid_t;		/* user id */
-#define	_UID_T_DECLARED
+typedef __uid_t uid_t; /* user id */
+#define _UID_T_DECLARED
 #endif
 #ifndef _GID_T_DECLARED
-typedef	__gid_t		gid_t;		/* group id */
-#define	_GID_T_DECLARED
+typedef __gid_t gid_t; /* group id */
+#define _GID_T_DECLARED
 #endif
 
 #ifndef _PID_T_DECLARED
-typedef	__pid_t		pid_t;		/* process id */
-#define	_PID_T_DECLARED
+typedef __pid_t pid_t; /* process id */
+#define _PID_T_DECLARED
 #endif
 
 #ifndef _KEY_T_DECLARED
-typedef	__key_t		key_t;		/* IPC key */
-#define	_KEY_T_DECLARED
+typedef __key_t key_t; /* IPC key */
+#define _KEY_T_DECLARED
 #endif
 
 #ifndef _SSIZE_T_DECLARED
 typedef _ssize_t ssize_t;
-#define	_SSIZE_T_DECLARED
+#define _SSIZE_T_DECLARED
 #endif
 
 #ifndef _MODE_T_DECLARED
-typedef	__mode_t	mode_t;		/* permissions */
-#define	_MODE_T_DECLARED
+typedef __mode_t mode_t; /* permissions */
+#define _MODE_T_DECLARED
 #endif
 
 #ifndef _NLINK_T_DECLARED
-typedef	__nlink_t	nlink_t;	/* link count */
-#define	_NLINK_T_DECLARED
+typedef __nlink_t nlink_t; /* link count */
+#define _NLINK_T_DECLARED
 #endif
 
 #if !defined(__clockid_t_defined) && !defined(_CLOCKID_T_DECLARED)
-typedef	__clockid_t	clockid_t;
-#define	__clockid_t_defined
-#define	_CLOCKID_T_DECLARED
+typedef __clockid_t clockid_t;
+#define __clockid_t_defined
+#define _CLOCKID_T_DECLARED
 #endif
 
 #if !defined(__timer_t_defined) && !defined(_TIMER_T_DECLARED)
-typedef	__timer_t	timer_t;
-#define	__timer_t_defined
-#define	_TIMER_T_DECLARED
+typedef __timer_t timer_t;
+#define __timer_t_defined
+#define _TIMER_T_DECLARED
 #endif
 
 #ifndef _USECONDS_T_DECLARED
-typedef	__useconds_t	useconds_t;	/* microseconds (unsigned) */
-#define	_USECONDS_T_DECLARED
+typedef __useconds_t useconds_t; /* microseconds (unsigned) */
+#define _USECONDS_T_DECLARED
 #endif
 
 #ifndef _SUSECONDS_T_DECLARED
-typedef	__suseconds_t	suseconds_t;
-#define	_SUSECONDS_T_DECLARED
+typedef __suseconds_t suseconds_t;
+#define _SUSECONDS_T_DECLARED
 #endif
 
-typedef	__int64_t	sbintime_t;
+typedef __int64_t sbintime_t;
 
 #include <sys/features.h>
 #include <sys/_pthreadtypes.h>
 #include <machine/types.h>
 
-#endif  /* !__need_inttypes */
+#endif /* !__need_inttypes */
 
 #undef __need_inttypes
 
-#endif	/* _SYS_TYPES_H */
+#endif /* _SYS_TYPES_H */

@@ -42,115 +42,86 @@ PORTABILITY
 
 #ifndef _DOUBLE_IS_32BITS
 
-double pow (double x, double y)
-{
-  double d, k, t, r = 1.0;
-  int n, sign, exponent_is_even_int = 0;
-  __uint32_t px;
+double pow(double x, double y) {
+    double d, k, t, r = 1.0;
+    int n, sign, exponent_is_even_int = 0;
+    __uint32_t px;
 
-  GET_HIGH_WORD (px, x);
+    GET_HIGH_WORD(px, x);
 
-  k = modf (y, &d);
+    k = modf(y, &d);
 
-  if (k == 0.0)
-    {
-      /* Exponent y is an integer. */
-      if (modf (ldexp (y, -1), &t))
-        {
-          /* y is odd. */
-          exponent_is_even_int = 0;
-        }
-      else
-        {
-          /* y is even. */
-          exponent_is_even_int = 1;
+    if(k == 0.0) {
+        /* Exponent y is an integer. */
+        if(modf(ldexp(y, -1), &t)) {
+            /* y is odd. */
+            exponent_is_even_int = 0;
+        } else {
+            /* y is even. */
+            exponent_is_even_int = 1;
         }
     }
 
-  if (x == 0.0)
-    {
-      if (y <= 0.0)
-        errno = EDOM;
-    }
-  else if ((t = y * log (fabs (x))) >= BIGX) 
-    {
-      errno = ERANGE;
-      if (px & 0x80000000) 
-        {
-          /* x is negative. */
-          if (k) 
-            {
-              /* y is not an integer. */
-              errno = EDOM;
-              x = 0.0;
-            }
-          else if (exponent_is_even_int)
+    if(x == 0.0) {
+        if(y <= 0.0) errno = EDOM;
+    } else if((t = y * log(fabs(x))) >= BIGX) {
+        errno = ERANGE;
+        if(px & 0x80000000) {
+            /* x is negative. */
+            if(k) {
+                /* y is not an integer. */
+                errno = EDOM;
+                x = 0.0;
+            } else if(exponent_is_even_int)
+                x = z_infinity.d;
+            else
+                x = -z_infinity.d;
+        } else {
             x = z_infinity.d;
-          else
-            x = -z_infinity.d;
         }
-      else
-        {
-          x = z_infinity.d;
-        }
-    }
-  else if (t < SMALLX)
-    {
-      errno = ERANGE;
-      x = 0.0;
-    }
-  else 
-    {
-      if ( !k && fabs(d) <= 32767 ) 
-        {
-          n = (int) d;
+    } else if(t < SMALLX) {
+        errno = ERANGE;
+        x = 0.0;
+    } else {
+        if(!k && fabs(d) <= 32767) {
+            n = (int)d;
 
-          if ((sign = (n < 0)))
-            n = -n;
+            if((sign = (n < 0))) n = -n;
 
-          while ( n > 0 ) 
-            {
-              if ((unsigned int) n % 2) 
-                r *= x;
-              x *= x;
-              n = (unsigned int) n / 2;
+            while(n > 0) {
+                if((unsigned int)n % 2) r *= x;
+                x *= x;
+                n = (unsigned int)n / 2;
             }
 
-          if (sign)
-            r = 1.0 / r;
+            if(sign) r = 1.0 / r;
 
-          return r;
-        }
-      else 
-        {
-          if ( px & 0x80000000 ) 
-            {
-              /* x is negative. */
-              if ( k ) 
-                {
-                  /* y is not an integer. */
-                  errno = EDOM;
-                  return 0.0;
+            return r;
+        } else {
+            if(px & 0x80000000) {
+                /* x is negative. */
+                if(k) {
+                    /* y is not an integer. */
+                    errno = EDOM;
+                    return 0.0;
                 }
             }
 
-          x = exp (t);
+            x = exp(t);
 
-          if (!exponent_is_even_int)
-            {
-              if (px & 0x80000000)
-                {
-                  /* y is an odd integer, and x is negative,
+            if(!exponent_is_even_int) {
+                if(px & 0x80000000) {
+                    /* y is an odd integer, and x is negative,
                      so the result is negative. */
-                  GET_HIGH_WORD (px, x);
-                  px |= 0x80000000;
-                  SET_HIGH_WORD (x, px);
+                    GET_HIGH_WORD(px, x);
+                    px |= 0x80000000;
+                    SET_HIGH_WORD(x, px);
                 }
             }
         }
     }
 
-  return x;
+    return x;
 }
 
 #endif _DOUBLE_IS_32BITS

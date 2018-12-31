@@ -64,28 +64,24 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include <math.h>
 #include "cephes_subr.h"
 
-double complex
-ctan(double complex z)
-{
-	double complex w;
-	double d;
+double complex ctan(double complex z) {
+    double complex w;
+    double d;
 
-	d = cos(2.0 * creal(z)) + cosh(2.0 * cimag(z));
+    d = cos(2.0 * creal(z)) + cosh(2.0 * cimag(z));
 
-	if (fabs(d) < 0.25)
-		d = _ctans(z);
+    if(fabs(d) < 0.25) d = _ctans(z);
 
-	if (d == 0.0) {
-		/* mtherr ("ctan", OVERFLOW); */
-		w = HUGE_VAL + HUGE_VAL * I;
-		return w;
-	}
+    if(d == 0.0) {
+        /* mtherr ("ctan", OVERFLOW); */
+        w = HUGE_VAL + HUGE_VAL * I;
+        return w;
+    }
 
-	w = sin(2.0 * creal(z)) / d + (sinh(2.0 * cimag(z)) / d) * I;
-	return w;
+    w = sin(2.0 * creal(z)) / d + (sinh(2.0 * cimag(z)) / d) * I;
+    return w;
 }

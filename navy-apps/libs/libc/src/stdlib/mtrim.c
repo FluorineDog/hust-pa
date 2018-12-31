@@ -8,10 +8,8 @@
 
 #ifndef _REENT_ONLY
 
-int
-malloc_trim (size_t pad)
-{
-  return _malloc_trim_r (_REENT, pad);
+int malloc_trim(size_t pad) {
+    return _malloc_trim_r(_REENT, pad);
 }
 
 #endif

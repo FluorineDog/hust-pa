@@ -43,50 +43,38 @@
 /*
  *  ttyname_r() - POSIX 1003.1b 4.7.2 - Determine Terminal Device Name
  */
-int
- ttyname_r (int fd,
-	char   *name,
-	size_t  namesize)
-{
-  struct stat sb;
-  struct dirent *dirp;
-  DIR *dp;
-  struct stat dsb;
-  char buf[TTYNAME_BUFSIZE];
+int ttyname_r(int fd, char *name, size_t namesize) {
+    struct stat sb;
+    struct dirent *dirp;
+    DIR *dp;
+    struct stat dsb;
+    char buf[TTYNAME_BUFSIZE];
 
-  /* Must be a terminal. */
-  if (!isatty(fd))
-    return ENOTTY;
+    /* Must be a terminal. */
+    if(!isatty(fd)) return ENOTTY;
 
-  /* Must be a character device. */
-  if (fstat (fd, &sb) || !S_ISCHR (sb.st_mode))
-    return ENOTTY;
+    /* Must be a character device. */
+    if(fstat(fd, &sb) || !S_ISCHR(sb.st_mode)) return ENOTTY;
 
-  if ((dp = opendir (_PATH_DEV)) == NULL)
-    return EBADF;
+    if((dp = opendir(_PATH_DEV)) == NULL) return EBADF;
 
-  strcpy(buf, _PATH_DEV);
-  while ((dirp = readdir (dp)) != NULL)
-    {
-      if (dirp->d_ino != sb.st_ino)
-	continue;
-      strcpy (buf + sizeof (_PATH_DEV) - 1, dirp->d_name);
-      if (stat (buf, &dsb) || sb.st_dev != dsb.st_dev ||
-	  sb.st_ino != dsb.st_ino)
-	continue;
-      (void) closedir (dp);
-      if(strlen(buf) < namesize)  /* < to account for terminating null */
-	{
-	strcpy(name, buf);
-	return 0;
-	}
-      else
-	{
-	return ERANGE;
-	}
+    strcpy(buf, _PATH_DEV);
+    while((dirp = readdir(dp)) != NULL) {
+        if(dirp->d_ino != sb.st_ino) continue;
+        strcpy(buf + sizeof(_PATH_DEV) - 1, dirp->d_name);
+        if(stat(buf, &dsb) || sb.st_dev != dsb.st_dev || sb.st_ino != dsb.st_ino)
+            continue;
+        (void)closedir(dp);
+        if(strlen(buf) < namesize) /* < to account for terminating null */
+        {
+            strcpy(name, buf);
+            return 0;
+        } else {
+            return ERANGE;
+        }
     }
-  (void) closedir (dp);
-  return EBADF;
+    (void)closedir(dp);
+    return EBADF;
 }
 
 #endif /* !_NO_TTYNAME  */

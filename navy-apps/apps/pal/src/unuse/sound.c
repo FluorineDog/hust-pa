@@ -33,26 +33,22 @@
 #include "libmad/music_mad.h"
 #endif
 
-BOOL         g_fNoSound = FALSE;
-BOOL         g_fNoMusic = FALSE;
+BOOL g_fNoSound = FALSE;
+BOOL g_fNoMusic = FALSE;
 
 #ifdef PAL_HAS_NATIVEMIDI
-BOOL         g_fUseMidi = FALSE;
+BOOL g_fUseMidi = FALSE;
 #endif
 
 #ifdef __SYMBIAN32__
-INT          g_iVolume  = SDL_MIX_MAXVOLUME * 0.1;
+INT g_iVolume = SDL_MIX_MAXVOLUME * 0.1;
 #endif
 
 #ifdef PAL_CLASSIC
-int          g_iCurrChannel = 0;
+int g_iCurrChannel = 0;
 #endif
 
-
-INT
-SOUND_OpenAudio(
-   VOID
-)
+INT SOUND_OpenAudio(VOID)
 /*++
   Purpose:
 
@@ -68,13 +64,10 @@ SOUND_OpenAudio(
 
 --*/
 {
-   return 0;
+    return 0;
 }
 
-VOID
-SOUND_CloseAudio(
-   VOID
-)
+VOID SOUND_CloseAudio(VOID)
 /*++
   Purpose:
 
@@ -90,14 +83,10 @@ SOUND_CloseAudio(
 
 --*/
 {
-	return;
+    return;
 }
 
-VOID
-SOUND_PlayChannel(
-   INT    iSoundNum,
-   INT    iChannel
-)
+VOID SOUND_PlayChannel(INT iSoundNum, INT iChannel)
 /*++
   Purpose:
 
@@ -115,23 +104,14 @@ SOUND_PlayChannel(
 
 --*/
 {
-	return;
+    return;
 }
 
-VOID
-PAL_PlayMUS(
-   INT       iNumRIX,
-   BOOL      fLoop,
-   FLOAT     flFadeTime
-)
-{
-	return;
+VOID PAL_PlayMUS(INT iNumRIX, BOOL fLoop, FLOAT flFadeTime) {
+    return;
 }
 
-BOOL
-SOUND_PlayCDA(
-   INT    iNumTrack
-)
+BOOL SOUND_PlayCDA(INT iNumTrack)
 /*++
   Purpose:
 
@@ -147,5 +127,5 @@ SOUND_PlayCDA(
 
 --*/
 {
-   return FALSE;
+    return FALSE;
 }

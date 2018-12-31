@@ -55,8 +55,6 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <stdio.h>
 #include "local.h"
 
-int
-setlinebuf (FILE * fp)
-{
-  return (setvbuf (fp, (char *) NULL, _IOLBF, (size_t) 0));
+int setlinebuf(FILE *fp) {
+    return (setvbuf(fp, (char *)NULL, _IOLBF, (size_t)0));
 }

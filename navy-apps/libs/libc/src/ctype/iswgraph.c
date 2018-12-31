@@ -65,8 +65,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswgraph (wint_t c)
-{
-  return iswgraph_l (c, 0);
+int iswgraph(wint_t c) {
+    return iswgraph_l(c, 0);
 }

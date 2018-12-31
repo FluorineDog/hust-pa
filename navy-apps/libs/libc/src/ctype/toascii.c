@@ -40,9 +40,6 @@ No supporting OS subroutines are required.
 #include <ctype.h>
 #undef toascii
 
-int
-toascii (int c)
-{
-  return (c)&0177;
+int toascii(int c) {
+    return (c)&0177;
 }
-

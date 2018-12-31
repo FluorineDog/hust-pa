@@ -8,13 +8,9 @@
 #include "fdlibm.h"
 
 struct complex {
-	double x;
-	double y;
+    double x;
+    double y;
 };
 
-double
-cabs(z)
-	struct complex z;
-{
-	return hypot(z.x, z.y);
-}
+double cabs(z) struct complex z;
+{ return hypot(z.x, z.y); }

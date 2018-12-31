@@ -17,7 +17,7 @@
 
 /* If NO_EXEC is defined, we don't need these functions.  */
 
-#if defined (REENTRANT_SYSCALLS_PROVIDED) || defined (NO_EXEC)
+#if defined(REENTRANT_SYSCALLS_PROVIDED) || defined(NO_EXEC)
 
 int _dummy_exec_syscalls = 1;
 
@@ -44,20 +44,14 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_execve_r (struct _reent *ptr,
-     const char *name,
-     char *const argv[],
-     char *const env[])
-{
-  int ret;
+int _execve_r(struct _reent *ptr, const char *name, char *const argv[],
+              char *const env[]) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _execve (name, argv, env)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _execve(name, argv, env)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
-
 
 /*
 NEWPAGE
@@ -79,15 +73,12 @@ DESCRIPTION
 
 #ifndef NO_FORK
 
-int
-_fork_r (struct _reent *ptr)
-{
-  int ret;
+int _fork_r(struct _reent *ptr) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _fork ()) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _fork()) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif
@@ -110,16 +101,12 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_wait_r (struct _reent *ptr,
-     int *status)
-{
-  int ret;
+int _wait_r(struct _reent *ptr, int *status) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _wait (status)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _wait(status)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

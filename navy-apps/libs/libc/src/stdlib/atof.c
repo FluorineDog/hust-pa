@@ -52,12 +52,9 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 <<lseek>>, <<read>>, <<sbrk>>, <<write>>.
 */
 
-
 #include <stdlib.h>
 #include <_ansi.h>
 
-double
-atof (const char *s)
-{
-  return strtod (s, NULL);
+double atof(const char *s) {
+    return strtod(s, NULL);
 }

@@ -3,12 +3,10 @@
 #include <wctype.h>
 #include "local.h"
 
-wint_t
-towupper_l (wint_t c, struct __locale_t *locale)
-{
+wint_t towupper_l(wint_t c, struct __locale_t *locale) {
 #ifdef _MB_CAPABLE
-  return towctrans_l (c, WCT_TOUPPER, locale);
+    return towctrans_l(c, WCT_TOUPPER, locale);
 #else
-  return towupper (c);
+    return towupper(c);
 #endif /* _MB_CAPABLE */
 }

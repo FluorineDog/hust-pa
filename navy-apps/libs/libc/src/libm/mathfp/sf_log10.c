@@ -17,17 +17,14 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-log10f (float x)
-{
-  return (logarithmf (x, 1));
+float log10f(float x) {
+    return (logarithmf(x, 1));
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-double log10 (double x)
-{
-  return (double) log10f ((float) x);
+double log10(double x) {
+    return (double)log10f((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

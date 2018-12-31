@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-coshl (long double x)
-{
-  return cosh(x);
+long double coshl(long double x) {
+    return cosh(x);
 }
 #endif
-

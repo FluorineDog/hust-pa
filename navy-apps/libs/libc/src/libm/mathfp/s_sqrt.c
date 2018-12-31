@@ -61,63 +61,51 @@ PORTABILITY
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-sqrt (double x)
-{
-  double f, y;
-  int exp, i, odd;
+double sqrt(double x) {
+    double f, y;
+    int exp, i, odd;
 
-  /* Check for special values. */
-  switch (numtest (x))
-    {
-      case NAN:
+    /* Check for special values. */
+    switch(numtest(x)) {
+        case NAN: errno = EDOM; return (x);
+        case INF:
+            if(ispos(x)) {
+                errno = EDOM;
+                return (z_notanum.d);
+            } else {
+                errno = ERANGE;
+                return (z_infinity.d);
+            }
+    }
+
+    /* Initial checks are performed here. */
+    if(x == 0.0) return (0.0);
+    if(x < 0) {
         errno = EDOM;
-        return (x);
-      case INF:
-        if (ispos (x))
-          {
-            errno = EDOM;
-            return (z_notanum.d);
-          }
-        else
-          {
-            errno = ERANGE;
-            return (z_infinity.d);
-          }
+        return (z_notanum.d);
     }
 
-  /* Initial checks are performed here. */
-  if (x == 0.0)
-    return (0.0);
-  if (x < 0)
-    {
-      errno = EDOM;
-      return (z_notanum.d);
+    /* Find the exponent and mantissa for the form x = f * 2^exp. */
+    f = frexp(x, &exp);
+
+    odd = exp & 1;
+
+    /* Get the initial approximation. */
+    y = 0.41731 + 0.59016 * f;
+
+    f /= 2.0;
+    /* Calculate the remaining iterations. */
+    for(i = 0; i < 3; ++i) y = y / 2.0 + f / y;
+
+    /* Calculate the final value. */
+    if(odd) {
+        y *= __SQRT_HALF;
+        exp++;
     }
+    exp >>= 1;
+    y = ldexp(y, exp);
 
-  /* Find the exponent and mantissa for the form x = f * 2^exp. */
-  f = frexp (x, &exp);
-
-  odd = exp & 1;
-
-  /* Get the initial approximation. */
-  y = 0.41731 + 0.59016 * f;
-
-  f /= 2.0;
-  /* Calculate the remaining iterations. */
-  for (i = 0; i < 3; ++i)
-    y = y / 2.0 + f / y;
-
-  /* Calculate the final value. */
-  if (odd)
-    {
-      y *= __SQRT_HALF;
-      exp++;
-    }
-  exp >>= 1;
-  y = ldexp (y, exp);
-
-  return (y);
+    return (y);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

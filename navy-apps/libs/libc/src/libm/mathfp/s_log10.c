@@ -44,16 +44,13 @@ PORTABILITY
 
 */
 
-
 #include "fdlibm.h"
 #include "zmath.h"
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-log10 (double x)
-{
-  return (logarithm (x, 1));
+double log10(double x) {
+    return (logarithm(x, 1));
 }
 
 #endif /* _DOUBLE_IS_32BITS */

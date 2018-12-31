@@ -82,27 +82,21 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 #include <errno.h>
 #include "local.h"
 
-long
-_ftell_r (struct _reent *ptr,
-       register FILE * fp)
-{
-  _fpos_t pos;
+long _ftell_r(struct _reent *ptr, register FILE *fp) {
+    _fpos_t pos;
 
-  pos = _ftello_r (ptr, fp);
-  if ((long)pos != pos)
-    {
-      pos = -1;
-      ptr->_errno = EOVERFLOW;
+    pos = _ftello_r(ptr, fp);
+    if((long)pos != pos) {
+        pos = -1;
+        ptr->_errno = EOVERFLOW;
     }
-  return (long)pos;
+    return (long)pos;
 }
 
 #ifndef _REENT_ONLY
 
-long
-ftell (register FILE * fp)
-{
-  return _ftell_r (_REENT, fp);
+long ftell(register FILE *fp) {
+    return _ftell_r(_REENT, fp);
 }
 
 #endif /* !_REENT_ONLY */

@@ -46,33 +46,27 @@ extern char *__gets(char *);
 #define __gets gets
 #endif
 
-char *
-__gets_chk(char * __restrict buf, size_t slen)
-{
-	char *abuf;
-	size_t len;
+char *__gets_chk(char *__restrict buf, size_t slen) {
+    char *abuf;
+    size_t len;
 
-	if (slen >= (size_t)INT_MAX)
-		return __gets(buf);
+    if(slen >= (size_t)INT_MAX) return __gets(buf);
 
-	if ((abuf = malloc(slen + 1)) == NULL)
-		return __gets(buf);
+    if((abuf = malloc(slen + 1)) == NULL) return __gets(buf);
 
-	if (fgets(abuf, (int)(slen + 1), stdin) == NULL) {
-		free(abuf);
-		return NULL;
-	}
+    if(fgets(abuf, (int)(slen + 1), stdin) == NULL) {
+        free(abuf);
+        return NULL;
+    }
 
-	len = strlen(abuf);
-	if (len > 0 && abuf[len - 1] == '\n')
-		--len;
+    len = strlen(abuf);
+    if(len > 0 && abuf[len - 1] == '\n') --len;
 
-	if (len >= slen)
-		__chk_fail();
+    if(len >= slen) __chk_fail();
 
-	(void)memcpy(buf, abuf, len);
+    (void)memcpy(buf, abuf, len);
 
-	buf[len] = '\0';
-	free(abuf);
-	return buf;
+    buf[len] = '\0';
+    free(abuf);
+    return buf;
 }

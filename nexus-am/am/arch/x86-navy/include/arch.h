@@ -7,7 +7,6 @@
 #define false 0
 #define true 1
 
-struct _Context {
-};
+struct _Context {};
 
 #endif

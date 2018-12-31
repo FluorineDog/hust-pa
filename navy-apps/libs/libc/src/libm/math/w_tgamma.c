@@ -20,28 +20,27 @@
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double tgamma(double x)
+double tgamma(double x)
 #else
-	double tgamma(x)
-	double x;
+double tgamma(x) double x;
 #endif
 {
-        double y;
-	int local_signgam;
-	y = __ieee754_gamma_r(x,&local_signgam);
-	if (local_signgam < 0) y = -y;
+    double y;
+    int local_signgam;
+    y = __ieee754_gamma_r(x, &local_signgam);
+    if(local_signgam < 0) y = -y;
 #ifdef _IEEE_LIBM
-	return y;
+    return y;
 #else
-	if(_LIB_VERSION == _IEEE_) return y;
+    if(_LIB_VERSION == _IEEE_) return y;
 
-	if(!finite(y)&&finite(x)) {
-	  if(floor(x)==x&&x<=0.0)
-	    return __kernel_standard(x,x,41); /* tgamma pole */
-	  else
-	    return __kernel_standard(x,x,40); /* tgamma overflow */
-	}
-	return y;
+    if(!finite(y) && finite(x)) {
+        if(floor(x) == x && x <= 0.0)
+            return __kernel_standard(x, x, 41); /* tgamma pole */
+        else
+            return __kernel_standard(x, x, 40); /* tgamma overflow */
+    }
+    return y;
 #endif
 }
 

@@ -7,10 +7,8 @@
 #include <reent.h>
 #include <unistd.h>
 
-int
-fork (void)
-{
-  return _fork_r (_REENT);
+int fork(void) {
+    return _fork_r(_REENT);
 }
 
 #endif

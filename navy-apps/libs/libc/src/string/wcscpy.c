@@ -56,19 +56,15 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wchar.h>
 
-wchar_t *
-wcscpy (wchar_t *__restrict s1,
-	const wchar_t *__restrict s2)
-{
-  wchar_t *p;
-  const wchar_t *q;
+wchar_t *wcscpy(wchar_t *__restrict s1, const wchar_t *__restrict s2) {
+    wchar_t *p;
+    const wchar_t *q;
 
-  *s1 = '\0';
-  p = s1;
-  q = s2;
-  while (*q)
-    *p++ = *q++;
-  *p = '\0';
+    *s1 = '\0';
+    p = s1;
+    q = s2;
+    while(*q) *p++ = *q++;
+    *p = '\0';
 
-  return s1;
+    return s1;
 }

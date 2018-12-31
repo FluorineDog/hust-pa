@@ -74,7 +74,6 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include <math.h>
 
@@ -82,15 +81,13 @@ QUICKREF
 __weak_alias(casin, _casin)
 #endif
 
-double complex
-casin(double complex z)
-{
-	double complex w;
-	double complex ca, ct, zz, z2;
-	double x, y;
+    double complex casin(double complex z) {
+    double complex w;
+    double complex ca, ct, zz, z2;
+    double x, y;
 
-	x = creal(z);
-	y = cimag(z);
+    x = creal(z);
+    y = cimag(z);
 
 #if 0 /* MD: test is incorrect, casin(>1) is defined */
 	if (y == 0.0) {
@@ -106,8 +103,8 @@ casin(double complex z)
 	}
 #endif
 
-/* Power series expansion */
-/*
+    /* Power series expansion */
+    /*
 b = cabs(z);
 if( b < 0.125 )
 {
@@ -146,20 +143,19 @@ return;
 }
 */
 
+    ca = x + y * I;
+    ct = ca * I;
+    /* sqrt( 1 - z*z) */
+    /* cmul( &ca, &ca, &zz ) */
+    /*x * x  -  y * y */
+    zz = (x - y) * (x + y) + (2.0 * x * y) * I;
 
-	ca = x + y * I;
-	ct = ca * I;
-	/* sqrt( 1 - z*z) */
-	/* cmul( &ca, &ca, &zz ) */
-	/*x * x  -  y * y */
-	zz = (x - y) * (x + y) + (2.0 * x * y) * I;
+    zz = 1.0 - creal(zz) - cimag(zz) * I;
+    z2 = csqrt(zz);
 
-	zz = 1.0 - creal(zz) - cimag(zz) * I;
-	z2 = csqrt(zz);
-
-	zz = ct + z2;
-	zz = clog(zz);
-	/* multiply by 1/i = -i */
-	w = zz * (-1.0 * I);
-	return w;
+    zz = ct + z2;
+    zz = clog(zz);
+    /* multiply by 1/i = -i */
+    w = zz * (-1.0 * I);
+    return w;
 }

@@ -30,34 +30,24 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #ifndef _REENT_ONLY
 
-int
-vasiprintf (char **strp,
-       const char *fmt,
-       va_list ap)
-{
-  return _vasiprintf_r (_REENT, strp, fmt, ap);
+int vasiprintf(char **strp, const char *fmt, va_list ap) {
+    return _vasiprintf_r(_REENT, strp, fmt, ap);
 }
 
 #endif /* !_REENT_ONLY */
 
-int
-_vasiprintf_r (struct _reent *ptr,
-       char **strp,
-       const char *fmt,
-       va_list ap)
-{
-  int ret;
-  FILE f;
+int _vasiprintf_r(struct _reent *ptr, char **strp, const char *fmt, va_list ap) {
+    int ret;
+    FILE f;
 
-  f._flags = __SWR | __SSTR | __SMBF ;
-  f._bf._base = f._p = NULL;
-  f._bf._size = f._w = 0;
-  f._file = -1;  /* No file. */
-  ret = _svfiprintf_r (ptr, &f, fmt, ap);
-  if (ret >= 0)
-    {
-      *f._p = 0;
-      *strp = (char *) f._bf._base;
+    f._flags = __SWR | __SSTR | __SMBF;
+    f._bf._base = f._p = NULL;
+    f._bf._size = f._w = 0;
+    f._file = -1; /* No file. */
+    ret = _svfiprintf_r(ptr, &f, fmt, ap);
+    if(ret >= 0) {
+        *f._p = 0;
+        *strp = (char *)f._bf._base;
     }
-  return ret;
+    return ret;
 }

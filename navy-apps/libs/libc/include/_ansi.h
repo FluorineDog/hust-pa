@@ -4,8 +4,8 @@
    "comment out" the non-ANSI parts of the ANSI header files (non-ANSI header
    files aren't affected).  */
 
-#ifndef	_ANSIDECL_H_
-#define	_ANSIDECL_H_
+#ifndef _ANSIDECL_H_
+#define _ANSIDECL_H_
 
 #include <newlib.h>
 #include <sys/config.h>
@@ -15,14 +15,18 @@
 #ifdef __cplusplus
 #if !(defined(_BEGIN_STD_C) && defined(_END_STD_C))
 #ifdef _HAVE_STD_CXX
-#define _BEGIN_STD_C namespace std { extern "C" {
-#define _END_STD_C  } }
+#define _BEGIN_STD_C \
+    namespace std {  \
+    extern "C" {
+#define _END_STD_C \
+    }              \
+    }
 #else
 #define _BEGIN_STD_C extern "C" {
-#define _END_STD_C  }
+#define _END_STD_C }
 #endif
-#if __GNUC_PREREQ (3, 3)
-#define _NOTHROW __attribute__ ((__nothrow__))
+#if __GNUC_PREREQ(3, 3)
+#define _NOTHROW __attribute__((__nothrow__))
 #else
 #define _NOTHROW throw()
 #endif
@@ -40,7 +44,7 @@
 /* Support gcc's __attribute__ facility.  */
 
 #ifdef __GNUC__
-#define _ATTRIBUTE(attrs) __attribute__ (attrs)
+#define _ATTRIBUTE(attrs) __attribute__(attrs)
 #else
 #define _ATTRIBUTE(attrs)
 #endif
@@ -62,16 +66,16 @@
   as the Gnu C 'extern inline'.  */
 #if defined(__GNUC__) && !defined(__GNUC_STDC_INLINE__)
 /* We're using GCC, but without the new C99-compatible behaviour.  */
-#define _ELIDABLE_INLINE extern __inline__ _ATTRIBUTE ((__always_inline__))
+#define _ELIDABLE_INLINE extern __inline__ _ATTRIBUTE((__always_inline__))
 #else
 /* We're using GCC in C99 mode, or an unknown compiler which
   we just have to hope obeys the C99 semantics of inline.  */
 #define _ELIDABLE_INLINE static __inline__
 #endif
 
-#if __GNUC_PREREQ (3, 1)
-#define _NOINLINE		__attribute__ ((__noinline__))
-#define _NOINLINE_STATIC	_NOINLINE static
+#if __GNUC_PREREQ(3, 1)
+#define _NOINLINE __attribute__((__noinline__))
+#define _NOINLINE_STATIC _NOINLINE static
 #else
 /* On non-GNU compilers and GCC prior to version 3.1 the compiler can't be
    trusted not to inline if it is static. */

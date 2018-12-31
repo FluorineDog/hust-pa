@@ -78,17 +78,14 @@ No supporting OS subroutines are required.
  */
 
 #include <_ansi.h>
-#include <stdlib.h>		/* div_t */
+#include <stdlib.h> /* div_t */
 
-div_t
-div (int num,
-	int denom)
-{
-	div_t r;
+div_t div(int num, int denom) {
+    div_t r;
 
-	r.quot = num / denom;
-	r.rem = num % denom;
-	/*
+    r.quot = num / denom;
+    r.rem = num % denom;
+    /*
 	 * The ANSI standard says that |r.quot| <= |n/d|, where
 	 * n/d is to be computed in infinite precision.  In other
 	 * words, we should always truncate the quotient towards
@@ -114,13 +111,12 @@ div (int num,
 	 * In this case, to get the right answer, subtract 1 from r.quot and
 	 * add denom to r.rem.
 	 */
-	if (num >= 0 && r.rem < 0) {
-		++r.quot;
-		r.rem -= denom;
-	}
-	else if (num < 0 && r.rem > 0) {
-		--r.quot;
-		r.rem += denom;
-	}
-	return (r);
+    if(num >= 0 && r.rem < 0) {
+        ++r.quot;
+        r.rem -= denom;
+    } else if(num < 0 && r.rem > 0) {
+        --r.quot;
+        r.rem += denom;
+    }
+    return (r);
 }

@@ -11,9 +11,9 @@ float
 #ifdef __STDC__
 dremf(float x, float y)
 #else
-dremf(x, y)
-	float x, y;
+    dremf(x, y) float x,
+    y;
 #endif
 {
-	return remainderf(x, y);
+    return remainderf(x, y);
 }

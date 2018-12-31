@@ -50,19 +50,17 @@
  * INFINITY + I * copysign(0.0, cimag(z))
  */
 
-float complex
-cprojf(float complex z)
-{
-	float_complex w = { .z = z };
+float complex cprojf(float complex z) {
+    float_complex w = {.z = z};
 
-	if (isinf(crealf(z)) || isinf(cimagf(z))) {
+    if(isinf(crealf(z)) || isinf(cimagf(z))) {
 #ifdef __INFINITY
-		REAL_PART(w) = __INFINITY;
+        REAL_PART(w) = __INFINITY;
 #else
-		REAL_PART(w) = INFINITY;
+        REAL_PART(w) = INFINITY;
 #endif
-		IMAG_PART(w) = copysignf(0.0, cimagf(z));
-	}
+        IMAG_PART(w) = copysignf(0.0, cimagf(z));
+    }
 
-	return (w.z);
+    return (w.z);
 }

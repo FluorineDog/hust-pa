@@ -5,16 +5,13 @@
 #include "local.h"
 #include "categories.h"
 
-int
-iswblank_l (wint_t c, struct __locale_t *locale)
-{
+int iswblank_l(wint_t c, struct __locale_t *locale) {
 #ifdef _MB_CAPABLE
-  c = _jp2uc_l (c, locale);
-  enum category cat = category (c);
-  // exclude "<noBreak>"?
-  return cat == CAT_Zs
-      || c == '\t';
+    c = _jp2uc_l(c, locale);
+    enum category cat = category(c);
+    // exclude "<noBreak>"?
+    return cat == CAT_Zs || c == '\t';
 #else
-  return c < 0x100 ? isblank (c) : 0;
+    return c < 0x100 ? isblank(c) : 0;
 #endif /* _MB_CAPABLE */
 }

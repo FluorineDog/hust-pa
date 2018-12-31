@@ -24,13 +24,13 @@ size_t video_write(uintptr_t reg, const void *buf, size_t size) {
     switch(reg) {
         case _DEVREG_VIDEO_FBCTL: {
             _FBCtlReg *ctl = (_FBCtlReg *)buf;
-            
+
             // int size = screen_width() * screen_height();
             int W = screen_width();
-            uint32_t* base = fb + ctl->y * W + ctl->x;
-            for(int dy = 0; dy < ctl->h; ++dy){
-                for(int dx = 0; dx < ctl->w; ++dx){
-                    base[dy * W + dx] = ctl->pixels[dy * ctl->w + dx]; 
+            uint32_t *base = fb + ctl->y * W + ctl->x;
+            for(int dy = 0; dy < ctl->h; ++dy) {
+                for(int dx = 0; dx < ctl->w; ++dx) {
+                    base[dy * W + dx] = ctl->pixels[dy * ctl->w + dx];
                 }
             }
             if(ctl->sync) {
@@ -41,9 +41,9 @@ size_t video_write(uintptr_t reg, const void *buf, size_t size) {
         case _DEVREG_VIDEO_FBCTL_LINE: {
             _FBCtlReg *ctl = (_FBCtlReg *)buf;
             // int size = screen_width() * screen_height();
-            uint32_t* base = fb + ctl->line_offset_beg;
-            for(int d = 0; d < ctl->length; ++d){
-                base[d] = ctl->pixels[d]; 
+            uint32_t *base = fb + ctl->line_offset_beg;
+            for(int d = 0; d < ctl->length; ++d) {
+                base[d] = ctl->pixels[d];
             }
             if(ctl->sync) {
                 // do nothing, hardware syncs.

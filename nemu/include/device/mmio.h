@@ -3,11 +3,10 @@
 
 #include "common.h"
 #include <fstream>
-using std::ofstream;
 using std::ifstream;
+using std::ofstream;
 
-typedef void(*mmio_callback_t)(paddr_t paddr, int len, bool is_write);
-
+typedef void (*mmio_callback_t)(paddr_t paddr, int len, bool is_write);
 
 void* add_mmio_map(paddr_t paddr, int len, mmio_callback_t callback);
 int is_mmio(paddr_t paddr);

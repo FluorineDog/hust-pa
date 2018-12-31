@@ -88,19 +88,17 @@ QUICKREF
  *
  * INFINITY + I * copysign(0.0, cimag(z))
  */
-double complex
-cproj(double complex z)
-{
-	double_complex w = { .z = z };
+double complex cproj(double complex z) {
+    double_complex w = {.z = z};
 
-	if (isinf(creal(z)) || isinf(cimag(z))) {
+    if(isinf(creal(z)) || isinf(cimag(z))) {
 #ifdef __INFINITY
-		REAL_PART(w) = __INFINITY;
+        REAL_PART(w) = __INFINITY;
 #else
-		REAL_PART(w) = INFINITY;
+        REAL_PART(w) = INFINITY;
 #endif
-		IMAG_PART(w) = copysign(0.0, cimag(z));
-	}
+        IMAG_PART(w) = copysign(0.0, cimag(z));
+    }
 
-	return (w.z);
+    return (w.z);
 }

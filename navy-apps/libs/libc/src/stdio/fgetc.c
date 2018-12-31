@@ -84,36 +84,30 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <stdio.h>
 #include "local.h"
 
-int
-_fgetc_r (struct _reent * ptr,
-       FILE * fp)
-{
-  int result;
-  CHECK_INIT(ptr, fp);
-  _newlib_flockfile_start (fp);
-  result = __sgetc_r (ptr, fp);
-  _newlib_flockfile_end (fp);
-  return result;
+int _fgetc_r(struct _reent *ptr, FILE *fp) {
+    int result;
+    CHECK_INIT(ptr, fp);
+    _newlib_flockfile_start(fp);
+    result = __sgetc_r(ptr, fp);
+    _newlib_flockfile_end(fp);
+    return result;
 }
 
 #ifndef _REENT_ONLY
 
-int
-fgetc (FILE * fp)
-{
+int fgetc(FILE *fp) {
 #if !defined(PREFER_SIZE_OVER_SPEED) && !defined(__OPTIMIZE_SIZE__)
-  int result;
-  struct _reent *reent = _REENT;
+    int result;
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT(reent, fp);
-  _newlib_flockfile_start (fp);
-  result = __sgetc_r (reent, fp);
-  _newlib_flockfile_end (fp);
-  return result;
+    CHECK_INIT(reent, fp);
+    _newlib_flockfile_start(fp);
+    result = __sgetc_r(reent, fp);
+    _newlib_flockfile_end(fp);
+    return result;
 #else
-  return _fgetc_r (_REENT, fp);
+    return _fgetc_r(_REENT, fp);
 #endif
 }
 
 #endif /* !_REENT_ONLY */
-

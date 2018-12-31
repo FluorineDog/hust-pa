@@ -57,18 +57,18 @@ static char sccsid[] = "@(#)telldir.c	5.9 (Berkeley) 2/23/91";
  * associated with that return value.
  */
 struct ddloc {
-	struct	ddloc *loc_next;/* next structure in list */
-	long	loc_index;	/* key associated with structure */
-	long	loc_seek;	/* magic cookie returned by getdirentries */
-	long	loc_loc;	/* offset of entry in buffer */
-	DIR    *loc_dirp;       /* DIR pointer */
+    struct ddloc *loc_next; /* next structure in list */
+    long loc_index;         /* key associated with structure */
+    long loc_seek;          /* magic cookie returned by getdirentries */
+    long loc_loc;           /* offset of entry in buffer */
+    DIR *loc_dirp;          /* DIR pointer */
 };
 
-#define	NDIRHASH	32	/* Num of hash lists, must be a power of 2 */
-#define	LOCHASH(i)	((i)&(NDIRHASH-1))
+#define NDIRHASH 32 /* Num of hash lists, must be a power of 2 */
+#define LOCHASH(i) ((i) & (NDIRHASH - 1))
 
-static long	dd_loccnt = 1;	/* Index of entry for sequential readdir's */
-static struct	ddloc *dd_hash[NDIRHASH];   /* Hash list heads for ddlocs */
+static long dd_loccnt = 1;              /* Index of entry for sequential readdir's */
+static struct ddloc *dd_hash[NDIRHASH]; /* Hash list heads for ddlocs */
 
 #if !defined(__SINGLE_THREAD__) && defined(HAVE_DD_LOCK)
 __LOCK_INIT(static, __dd_hash_mutex);
@@ -80,35 +80,32 @@ __LOCK_INIT(static, __dd_hash_mutex);
 
 #if !defined(_ELIX_LEVEL) || (_ELIX_LEVEL >= 2)
 
-long
-telldir (DIR *dirp)
-{
-	register int index;
-	register struct ddloc *lp;
+long telldir(DIR *dirp) {
+    register int index;
+    register struct ddloc *lp;
 
-	if ((lp = (struct ddloc *)malloc(sizeof(struct ddloc))) == NULL)
-		return (-1);
+    if((lp = (struct ddloc *)malloc(sizeof(struct ddloc))) == NULL) return (-1);
 
 #ifdef HAVE_DD_LOCK
-	__lock_acquire_recursive(dirp->dd_lock);
+    __lock_acquire_recursive(dirp->dd_lock);
 #ifndef __SINGLE_THREAD__
-	__lock_acquire(__dd_hash_mutex);
+    __lock_acquire(__dd_hash_mutex);
 #endif
 #endif
-	index = dd_loccnt++;
-	lp->loc_index = index;
-	lp->loc_seek = dirp->dd_seek;
-	lp->loc_loc = dirp->dd_loc;
-	lp->loc_dirp = dirp;
-	lp->loc_next = dd_hash[LOCHASH(index)];
-	dd_hash[LOCHASH(index)] = lp;
+    index = dd_loccnt++;
+    lp->loc_index = index;
+    lp->loc_seek = dirp->dd_seek;
+    lp->loc_loc = dirp->dd_loc;
+    lp->loc_dirp = dirp;
+    lp->loc_next = dd_hash[LOCHASH(index)];
+    dd_hash[LOCHASH(index)] = lp;
 #ifdef HAVE_DD_LOCK
 #ifndef __SINGLE_THREAD__
-	__lock_release(__dd_hash_mutex);
+    __lock_release(__dd_hash_mutex);
 #endif
-	__lock_release_recursive(dirp->dd_lock);
+    __lock_release_recursive(dirp->dd_lock);
 #endif
-	return (index);
+    return (index);
 }
 
 #endif /* !_ELIX_LEVEL || _ELIX_LEVEL >= 2 */
@@ -117,92 +114,82 @@ telldir (DIR *dirp)
  * seek to an entry in a directory.
  * Only values returned by "telldir" should be passed to seekdir.
  */
-void
-_seekdir (register DIR *dirp,
-	long loc)
-{
-	register struct ddloc *lp;
-	register struct ddloc **prevlp;
-	struct dirent *dp;
+void _seekdir(register DIR *dirp, long loc) {
+    register struct ddloc *lp;
+    register struct ddloc **prevlp;
+    struct dirent *dp;
 
 #if !defined(__SINGLE_THREAD__) && defined(HAVE_DD_LOCK)
-	__lock_acquire(__dd_hash_mutex);
+    __lock_acquire(__dd_hash_mutex);
 #endif
-	if (loc != 0) {
-		prevlp = &dd_hash[LOCHASH(loc)];
-		lp = *prevlp;
-		while (lp != NULL) {
-			if (lp->loc_index == loc)
-				break;
-			prevlp = &lp->loc_next;
-			lp = lp->loc_next;
-		}
-		if (lp == NULL) {
+    if(loc != 0) {
+        prevlp = &dd_hash[LOCHASH(loc)];
+        lp = *prevlp;
+        while(lp != NULL) {
+            if(lp->loc_index == loc) break;
+            prevlp = &lp->loc_next;
+            lp = lp->loc_next;
+        }
+        if(lp == NULL) {
 #if !defined(__SINGLE_THREAD__) && defined(HAVE_DD_LOCK)
-			__lock_release(__dd_hash_mutex);
+            __lock_release(__dd_hash_mutex);
 #endif
-			return;
-		}
-		if (lp->loc_loc == dirp->dd_loc && lp->loc_seek == dirp->dd_seek)
-			goto found;
-		(void) lseek(dirp->dd_fd, lp->loc_seek, 0);
-		dirp->dd_seek = lp->loc_seek;
-		dirp->dd_loc = 0;
-		while (dirp->dd_loc < lp->loc_loc) {
-			dp = readdir(dirp);
-			if (dp == NULL)
-				break;
-		}
-found:
+            return;
+        }
+        if(lp->loc_loc == dirp->dd_loc && lp->loc_seek == dirp->dd_seek) goto found;
+        (void)lseek(dirp->dd_fd, lp->loc_seek, 0);
+        dirp->dd_seek = lp->loc_seek;
+        dirp->dd_loc = 0;
+        while(dirp->dd_loc < lp->loc_loc) {
+            dp = readdir(dirp);
+            if(dp == NULL) break;
+        }
+    found:
 #ifdef SINGLEUSE
-		*prevlp = lp->loc_next;
-		free((caddr_t)lp);
+        *prevlp = lp->loc_next;
+        free((caddr_t)lp);
 #endif
-	} else {
-		// loc 0 means rewinding
-		(void) lseek(dirp->dd_fd, 0, 0);
-		dirp->dd_seek = 0;
-		dirp->dd_loc = 0;
-	}
+    } else {
+        // loc 0 means rewinding
+        (void)lseek(dirp->dd_fd, 0, 0);
+        dirp->dd_seek = 0;
+        dirp->dd_loc = 0;
+    }
 #if !defined(__SINGLE_THREAD__) && defined(HAVE_DD_LOCK)
-	__lock_release(__dd_hash_mutex);
+    __lock_release(__dd_hash_mutex);
 #endif
 }
 
 /* clean out any hash entries from a closed directory */
-void
-_cleanupdir (register DIR *dirp)
-{
-	int i;
+void _cleanupdir(register DIR *dirp) {
+    int i;
 
 #if !defined(__SINGLE_THREAD__) && defined(HAVE_DD_LOCK)
-	__lock_acquire(__dd_hash_mutex);
+    __lock_acquire(__dd_hash_mutex);
 #endif
-	for (i = 0; i < NDIRHASH; ++i) {
-		struct ddloc head;
-		register struct ddloc *lp;
-		register struct ddloc *prevlp;
+    for(i = 0; i < NDIRHASH; ++i) {
+        struct ddloc head;
+        register struct ddloc *lp;
+        register struct ddloc *prevlp;
 
-		lp = dd_hash[i];
-		head.loc_next = lp;
-		prevlp = &head;
-		while (lp != NULL) {
-			struct ddloc *nextlp;
+        lp = dd_hash[i];
+        head.loc_next = lp;
+        prevlp = &head;
+        while(lp != NULL) {
+            struct ddloc *nextlp;
 
-			nextlp = lp->loc_next;
-			if (lp->loc_dirp == dirp) {
-				prevlp->loc_next = nextlp;
-				free((caddr_t)lp);
-			}
-			else
-				prevlp = lp;
-			lp = nextlp;
-		}
-		dd_hash[i] = head.loc_next;
-	}
+            nextlp = lp->loc_next;
+            if(lp->loc_dirp == dirp) {
+                prevlp->loc_next = nextlp;
+                free((caddr_t)lp);
+            } else
+                prevlp = lp;
+            lp = nextlp;
+        }
+        dd_hash[i] = head.loc_next;
+    }
 #if !defined(__SINGLE_THREAD__) && defined(HAVE_DD_LOCK)
-	__lock_release(__dd_hash_mutex);
+    __lock_release(__dd_hash_mutex);
 #endif
-
 }
 #endif /* ! HAVE_OPENDIR */

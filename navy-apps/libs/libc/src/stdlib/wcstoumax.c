@@ -57,101 +57,88 @@ __FBSDID("$FreeBSD: head/lib/libc/locale/wcstoumax.c 314436 2017-02-28 23:42:47Z
 /*
  *Reentrant version of wcstoumax.
  */
-static uintmax_t
-_wcstoumax_l(struct _reent *rptr,const wchar_t * __restrict nptr,
-	     wchar_t ** __restrict endptr, int base, locale_t loc)
-{
-	const wchar_t *s = nptr;
-	uintmax_t acc;
-	wchar_t c;
-	uintmax_t cutoff;
-	int neg = 0, any, cutlim;
+static uintmax_t _wcstoumax_l(struct _reent *rptr, const wchar_t *__restrict nptr,
+                              wchar_t **__restrict endptr, int base, locale_t loc) {
+    const wchar_t *s = nptr;
+    uintmax_t acc;
+    wchar_t c;
+    uintmax_t cutoff;
+    int neg = 0, any, cutlim;
 
-	/*
+    /*
 	 * See strtoimax for comments as to the logic used.
 	 */
-	do {
-		c = *s++;
-	} while (iswspace_l(c, loc));
-	if (c == L'-') {
-		neg = 1;
-		c = *s++;
-	} else {
-		neg = 0;
-		if (c == L'+')
-			c = *s++;
-	}
-	if ((base == 0 || base == 16) &&
-	    c == L'0' && (*s == L'x' || *s == L'X')) {
-		c = s[1];
-		s += 2;
-		base = 16;
-	}
-	if (base == 0)
-		base = c == L'0' ? 8 : 10;
-	acc = any = 0;
-	if (base < 2 || base > 36)
-		goto noconv;
+    do {
+        c = *s++;
+    } while(iswspace_l(c, loc));
+    if(c == L'-') {
+        neg = 1;
+        c = *s++;
+    } else {
+        neg = 0;
+        if(c == L'+') c = *s++;
+    }
+    if((base == 0 || base == 16) && c == L'0' && (*s == L'x' || *s == L'X')) {
+        c = s[1];
+        s += 2;
+        base = 16;
+    }
+    if(base == 0) base = c == L'0' ? 8 : 10;
+    acc = any = 0;
+    if(base < 2 || base > 36) goto noconv;
 
-	cutoff = UINTMAX_MAX / base;
-	cutlim = UINTMAX_MAX % base;
-	for ( ; ; c = *s++) {
+    cutoff = UINTMAX_MAX / base;
+    cutlim = UINTMAX_MAX % base;
+    for(;; c = *s++) {
 #ifdef notyet
-		if (iswdigit_l(c, loc))
-			c = digittoint_l(c, loc);
-		else
+        if(iswdigit_l(c, loc))
+            c = digittoint_l(c, loc);
+        else
 #endif
-		if (c >= L'0' && c <= L'9')
-			c -= L'0';
-		else if (c >= L'A' && c <= L'Z')
-			c -= L'A' - 10;
-		else if (c >= L'a' && c <= L'z')
-			c -= L'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
-			any = -1;
-		else {
-			any = 1;
-			acc *= base;
-			acc += c;
-		}
-	}
-	if (any < 0) {
-		acc = UINTMAX_MAX;
-		rptr->_errno = ERANGE;
-	} else if (!any) {
-noconv:
-		rptr->_errno = EINVAL;
-	} else if (neg)
-		acc = -acc;
-	if (endptr != NULL)
-		*endptr = (wchar_t *)(any ? s - 1 : nptr);
-	return (acc);
+            if(c >= L'0' && c <= L'9')
+            c -= L'0';
+        else if(c >= L'A' && c <= L'Z')
+            c -= L'A' - 10;
+        else if(c >= L'a' && c <= L'z')
+            c -= L'a' - 10;
+        else
+            break;
+        if(c >= base) break;
+        if(any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
+            any = -1;
+        else {
+            any = 1;
+            acc *= base;
+            acc += c;
+        }
+    }
+    if(any < 0) {
+        acc = UINTMAX_MAX;
+        rptr->_errno = ERANGE;
+    } else if(!any) {
+    noconv:
+        rptr->_errno = EINVAL;
+    } else if(neg)
+        acc = -acc;
+    if(endptr != NULL) *endptr = (wchar_t *)(any ? s - 1 : nptr);
+    return (acc);
 }
 
-uintmax_t
-_wcstoumax_r(struct _reent *rptr, const wchar_t *__restrict nptr,
-	     wchar_t **__restrict endptr, int base)
-{
-	return _wcstoumax_l(rptr, nptr, endptr, base, __get_current_locale());
+uintmax_t _wcstoumax_r(struct _reent *rptr, const wchar_t *__restrict nptr,
+                       wchar_t **__restrict endptr, int base) {
+    return _wcstoumax_l(rptr, nptr, endptr, base, __get_current_locale());
 }
 
 #ifndef _REENT_ONLY
 
-uintmax_t
-wcstoumax_l(const wchar_t * __restrict nptr, wchar_t ** __restrict endptr,
-	    int base, locale_t loc)
-{
-	return _wcstoumax_l(_REENT, nptr, endptr, base, loc);
+uintmax_t wcstoumax_l(const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
+                      int base, locale_t loc) {
+    return _wcstoumax_l(_REENT, nptr, endptr, base, loc);
 }
 
-uintmax_t
-wcstoumax(const wchar_t* __restrict nptr, wchar_t** __restrict endptr, int base)
-{
-	return _wcstoumax_l(_REENT, nptr, endptr, base, __get_current_locale());
+uintmax_t wcstoumax(const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
+                    int base) {
+    return _wcstoumax_l(_REENT, nptr, endptr, base, __get_current_locale());
 }
 
 #endif

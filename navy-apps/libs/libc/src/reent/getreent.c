@@ -13,10 +13,8 @@ int _dummy_getreent;
 #undef __getreent
 #endif
 
-struct _reent *
-__getreent (void)
-{
-  return _impure_ptr;
+struct _reent* __getreent(void) {
+    return _impure_ptr;
 }
 
 #endif

@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-fmaxl (long double x, long double y)
-{
-  return fmax(x, y);
+long double fmaxl(long double x, long double y) {
+    return fmax(x, y);
 }
 #endif
-

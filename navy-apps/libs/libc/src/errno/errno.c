@@ -7,10 +7,8 @@
 
 #ifndef _REENT_ONLY
 
-int *
-__errno ()
-{
-  return &_REENT->_errno;
+int* __errno() {
+    return &_REENT->_errno;
 }
 
 #endif

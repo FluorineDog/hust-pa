@@ -39,28 +39,21 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_rename_r (struct _reent *ptr,
-     const char *old,
-     const char *new)
-{
-  int ret = 0;
+int _rename_r(struct _reent *ptr, const char *old, const char *new) {
+    int ret = 0;
 
 #ifdef HAVE_RENAME
-  errno = 0;
-  if ((ret = _rename (old, new)) == -1 && errno != 0)
-    ptr->_errno = errno;
+    errno = 0;
+    if((ret = _rename(old, new)) == -1 && errno != 0) ptr->_errno = errno;
 #else
-  if (_link_r (ptr, old, new) == -1)
-    return -1;
+    if(_link_r(ptr, old, new) == -1) return -1;
 
-  if (_unlink_r (ptr, old) == -1)
-    {
-      /* ??? Should we unlink new? (rhetorical question) */
-      return -1;
+    if(_unlink_r(ptr, old) == -1) {
+        /* ??? Should we unlink new? (rhetorical question) */
+        return -1;
     }
 #endif
-  return ret;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

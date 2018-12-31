@@ -35,8 +35,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswupper (wint_t c)
-{
-  return iswupper_l (c, 0);
+int iswupper(wint_t c) {
+    return iswupper_l(c, 0);
 }

@@ -21,53 +21,52 @@
 #include <errno.h>
 
 #ifdef __STDC__
-	float fmodf(float x, float y)	/* wrapper fmodf */
+float fmodf(float x, float y) /* wrapper fmodf */
 #else
-	float fmodf(x,y)		/* wrapper fmodf */
-	float x,y;
+float fmodf(x, y) /* wrapper fmodf */
+    float x,
+    y;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_fmodf(x,y);
+    return __ieee754_fmodf(x, y);
 #else
-	float z;
-	struct exception exc;
-	z = __ieee754_fmodf(x,y);
-	if(_LIB_VERSION == _IEEE_ ||isnan(y)||isnan(x)) return z;
-	if(y==(float)0.0) {
-            /* fmodf(x,0) */
-            exc.type = DOMAIN;
-            exc.name = "fmodf";
-	    exc.err = 0;
-	    exc.arg1 = (double)x;
-	    exc.arg2 = (double)y;
-            if (_LIB_VERSION == _SVID_)
-               exc.retval = x;
-	    else
-	       exc.retval = 0.0/0.0;
-            if (_LIB_VERSION == _POSIX_)
-               errno = EDOM;
-            else if (!matherr(&exc)) {
-                  errno = EDOM;
-            }
-	    if (exc.err != 0)
-	       errno = exc.err;
-            return (float)exc.retval; 
-	} else
-	    return z;
+    float z;
+    struct exception exc;
+    z = __ieee754_fmodf(x, y);
+    if(_LIB_VERSION == _IEEE_ || isnan(y) || isnan(x)) return z;
+    if(y == (float)0.0) {
+        /* fmodf(x,0) */
+        exc.type = DOMAIN;
+        exc.name = "fmodf";
+        exc.err = 0;
+        exc.arg1 = (double)x;
+        exc.arg2 = (double)y;
+        if(_LIB_VERSION == _SVID_)
+            exc.retval = x;
+        else
+            exc.retval = 0.0 / 0.0;
+        if(_LIB_VERSION == _POSIX_)
+            errno = EDOM;
+        else if(!matherr(&exc)) {
+            errno = EDOM;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return (float)exc.retval;
+    } else
+        return z;
 #endif
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double fmod(double x, double y)
+double fmod(double x, double y)
 #else
-	double fmod(x,y)
-	double x,y;
+double fmod(x, y) double x, y;
 #endif
 {
-	return (double) fmodf((float) x, (float) y);
+    return (double)fmodf((float)x, (float)y);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

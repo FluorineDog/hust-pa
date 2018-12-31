@@ -31,9 +31,7 @@
 
 #undef feof_unlocked
 
-int
-feof_unlocked (FILE * fp)
-{
-  CHECK_INIT(_REENT, fp);
-  return __sfeof (fp);
+int feof_unlocked(FILE* fp) {
+    CHECK_INIT(_REENT, fp);
+    return __sfeof(fp);
 }

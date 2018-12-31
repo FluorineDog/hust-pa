@@ -5,8 +5,8 @@
  * Public domain.
  */
 
-#ifndef	_COMPLEX_H
-#define	_COMPLEX_H
+#ifndef _COMPLEX_H
+#define _COMPLEX_H
 
 #define complex _Complex
 #define _Complex_I 1.0fi
@@ -86,9 +86,9 @@ long double complex clogl(long double complex);
    float cabsf(float complex) __RENAME(__c99_cabsf);
    #endif
 */
-long double cabsl(long double complex) ;
-double cabs(double complex) ;
-float cabsf(float complex) ;
+long double cabsl(long double complex);
+double cabs(double complex);
+float cabsf(float complex);
 
 /* 7.3.8.2 The cpow functions */
 double complex cpow(double complex, double complex);
@@ -100,7 +100,7 @@ float complex csqrtf(float complex);
 long double complex csqrtl(long double complex);
 
 /* 7.3.9 Manipulation functions */
-/* 7.3.9.1 The carg functions */ 
+/* 7.3.9.1 The carg functions */
 double carg(double complex);
 float cargf(float complex);
 long double cargl(long double complex);
@@ -150,4 +150,4 @@ long double complex clog10l(long double complex);
 
 __END_DECLS
 
-#endif	/* ! _COMPLEX_H */
+#endif /* ! _COMPLEX_H */

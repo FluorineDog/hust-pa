@@ -39,18 +39,14 @@ __RCSID("$NetBSD: stpncpy_chk.c,v 1.3 2015/05/09 15:42:21 christos Exp $");
 #undef stpncpy
 
 #if !__GNUC_PREREQ__(4, 8)
-char *__stpncpy_chk(char * __restrict, const char * __restrict, size_t, size_t);
+char *__stpncpy_chk(char *__restrict, const char *__restrict, size_t, size_t);
 #endif
 
-char *
-__stpncpy_chk(char * __restrict dst, const char * __restrict src, size_t len,
-    size_t slen)
-{
-	if (len > slen)
-		__chk_fail();
+char *__stpncpy_chk(char *__restrict dst, const char *__restrict src, size_t len,
+                    size_t slen) {
+    if(len > slen) __chk_fail();
 
-	if (__ssp_overlap(src, dst, len))
-		__chk_fail();
+    if(__ssp_overlap(src, dst, len)) __chk_fail();
 
-	return stpncpy(dst, src, len);
+    return stpncpy(dst, src, len);
 }

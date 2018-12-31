@@ -39,12 +39,8 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <ctype.h>
 
-
-
 #undef isascii
 
-int 
-isascii (int c)
-{
-	return c >= 0 && c< 128;
+int isascii(int c) {
+    return c >= 0 && c < 128;
 }

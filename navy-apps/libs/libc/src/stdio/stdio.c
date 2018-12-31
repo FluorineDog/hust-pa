@@ -30,115 +30,87 @@
  */
 
 _READ_WRITE_RETURN_TYPE
-__sread (struct _reent *ptr,
-       void *cookie,
-       char *buf,
-       _READ_WRITE_BUFSIZE_TYPE n)
-{
-  register FILE *fp = (FILE *) cookie;
-  register ssize_t ret;
+__sread(struct _reent *ptr, void *cookie, char *buf, _READ_WRITE_BUFSIZE_TYPE n) {
+    register FILE *fp = (FILE *)cookie;
+    register ssize_t ret;
 
 #ifdef __SCLE
-  int oldmode = 0;
-  if (fp->_flags & __SCLE)
-    oldmode = setmode (fp->_file, O_BINARY);
+    int oldmode = 0;
+    if(fp->_flags & __SCLE) oldmode = setmode(fp->_file, O_BINARY);
 #endif
 
-  ret = _read_r (ptr, fp->_file, buf, n);
+    ret = _read_r(ptr, fp->_file, buf, n);
 
 #ifdef __SCLE
-  if (oldmode)
-    setmode (fp->_file, oldmode);
+    if(oldmode) setmode(fp->_file, oldmode);
 #endif
 
-  /* If the read succeeded, update the current offset.  */
+    /* If the read succeeded, update the current offset.  */
 
-  if (ret >= 0)
-    fp->_offset += ret;
-  else
-    fp->_flags &= ~__SOFF;	/* paranoia */
-  return ret;
+    if(ret >= 0)
+        fp->_offset += ret;
+    else
+        fp->_flags &= ~__SOFF; /* paranoia */
+    return ret;
 }
 
 /* Dummy function used in sscanf/swscanf. */
 _READ_WRITE_RETURN_TYPE
-__seofread (struct _reent *_ptr,
-       void *cookie,
-       char *buf,
-       _READ_WRITE_BUFSIZE_TYPE len)
-{
-  return 0;
+__seofread(struct _reent *_ptr, void *cookie, char *buf, _READ_WRITE_BUFSIZE_TYPE len) {
+    return 0;
 }
 
 _READ_WRITE_RETURN_TYPE
-__swrite (struct _reent *ptr,
-       void *cookie,
-       char const *buf,
-       _READ_WRITE_BUFSIZE_TYPE n)
-{
-  register FILE *fp = (FILE *) cookie;
-  ssize_t w;
+__swrite(struct _reent *ptr, void *cookie, char const *buf, _READ_WRITE_BUFSIZE_TYPE n) {
+    register FILE *fp = (FILE *)cookie;
+    ssize_t w;
 #ifdef __SCLE
-  int oldmode=0;
+    int oldmode = 0;
 #endif
 
-  if (fp->_flags & __SAPP)
-    _lseek_r (ptr, fp->_file, (_off_t) 0, SEEK_END);
-  fp->_flags &= ~__SOFF;	/* in case O_APPEND mode is set */
+    if(fp->_flags & __SAPP) _lseek_r(ptr, fp->_file, (_off_t)0, SEEK_END);
+    fp->_flags &= ~__SOFF; /* in case O_APPEND mode is set */
 
 #ifdef __SCLE
-  if (fp->_flags & __SCLE)
-    oldmode = setmode (fp->_file, O_BINARY);
+    if(fp->_flags & __SCLE) oldmode = setmode(fp->_file, O_BINARY);
 #endif
 
-  w = _write_r (ptr, fp->_file, buf, n);
+    w = _write_r(ptr, fp->_file, buf, n);
 
 #ifdef __SCLE
-  if (oldmode)
-    setmode (fp->_file, oldmode);
+    if(oldmode) setmode(fp->_file, oldmode);
 #endif
 
-  return w;
+    return w;
 }
 
-_fpos_t
-__sseek (struct _reent *ptr,
-       void *cookie,
-       _fpos_t offset,
-       int whence)
-{
-  register FILE *fp = (FILE *) cookie;
-  register _off_t ret;
+_fpos_t __sseek(struct _reent *ptr, void *cookie, _fpos_t offset, int whence) {
+    register FILE *fp = (FILE *)cookie;
+    register _off_t ret;
 
-  ret = _lseek_r (ptr, fp->_file, (_off_t) offset, whence);
-  if (ret == -1L)
-    fp->_flags &= ~__SOFF;
-  else
-    {
-      fp->_flags |= __SOFF;
-      fp->_offset = ret;
+    ret = _lseek_r(ptr, fp->_file, (_off_t)offset, whence);
+    if(ret == -1L)
+        fp->_flags &= ~__SOFF;
+    else {
+        fp->_flags |= __SOFF;
+        fp->_offset = ret;
     }
-  return ret;
+    return ret;
 }
 
-int
-__sclose (struct _reent *ptr,
-       void *cookie)
-{
-  FILE *fp = (FILE *) cookie;
+int __sclose(struct _reent *ptr, void *cookie) {
+    FILE *fp = (FILE *)cookie;
 
-  return _close_r (ptr, fp->_file);
+    return _close_r(ptr, fp->_file);
 }
 
 #ifdef __SCLE
-int
-__stextmode (int fd)
-{
+int __stextmode(int fd) {
 #ifdef __CYGWIN__
-  extern int _cygwin_istext_for_stdio (int);
-  return _cygwin_istext_for_stdio (fd);
+    extern int _cygwin_istext_for_stdio(int);
+    return _cygwin_istext_for_stdio(fd);
 #else
-  return 0;
+    return 0;
 #endif
 }
 #endif

@@ -8,16 +8,12 @@
 
 #ifndef _REENT_ONLY
 
-void *
-valloc (size_t nbytes)
-{
-  return _valloc_r (_REENT, nbytes);
+void* valloc(size_t nbytes) {
+    return _valloc_r(_REENT, nbytes);
 }
 
-void *
-pvalloc (size_t nbytes)
-{
-  return _pvalloc_r (_REENT, nbytes);
+void* pvalloc(size_t nbytes) {
+    return _pvalloc_r(_REENT, nbytes);
 }
 
 #endif

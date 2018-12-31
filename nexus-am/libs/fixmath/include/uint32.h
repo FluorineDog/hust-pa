@@ -2,8 +2,7 @@
 #define __libfixmath_uint32_h__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include <stdint.h>

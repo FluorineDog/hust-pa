@@ -45,20 +45,18 @@ __RCSID("$NetBSD: cprojl.c,v 1.7 2014/10/10 00:48:18 christos Exp $");
  *
  * INFINITY + I * copysign(0.0, cimag(z))
  */
-long double complex
-cprojl(long double complex z)
-{
-	long_double_complex w = { .z = z };
+long double complex cprojl(long double complex z) {
+    long_double_complex w = {.z = z};
 
-	/*CONSTCOND*/
-	if (isinf(creall(z)) || isinf(cimagl(z))) {
+    /*CONSTCOND*/
+    if(isinf(creall(z)) || isinf(cimagl(z))) {
 #ifdef __INFINITY
-		REAL_PART(w) = HUGE_VAL;
+        REAL_PART(w) = HUGE_VAL;
 #else
-		REAL_PART(w) = INFINITY;
+        REAL_PART(w) = INFINITY;
 #endif
-		IMAG_PART(w) = copysignl(0.0L, cimagl(z));
-	}
+        IMAG_PART(w) = copysignl(0.0L, cimagl(z));
+    }
 
-	return (w.z);
+    return (w.z);
 }

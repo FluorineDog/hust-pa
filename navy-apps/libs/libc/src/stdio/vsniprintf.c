@@ -31,40 +31,27 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #ifndef _REENT_ONLY
 
-int
-vsniprintf (char *str,
-       size_t size,
-       const char *fmt,
-       va_list ap)
-{
-  return _vsniprintf_r (_REENT, str, size, fmt, ap);
+int vsniprintf(char *str, size_t size, const char *fmt, va_list ap) {
+    return _vsniprintf_r(_REENT, str, size, fmt, ap);
 }
 
 #endif /* !_REENT_ONLY */
 
-int
-_vsniprintf_r (struct _reent *ptr,
-       char *str,
-       size_t size,
-       const char *fmt,
-       va_list ap)
-{
-  int ret;
-  FILE f;
+int _vsniprintf_r(struct _reent *ptr, char *str, size_t size, const char *fmt,
+                  va_list ap) {
+    int ret;
+    FILE f;
 
-  if (size > INT_MAX)
-    {
-      ptr->_errno = EOVERFLOW;
-      return EOF;
+    if(size > INT_MAX) {
+        ptr->_errno = EOVERFLOW;
+        return EOF;
     }
-  f._flags = __SWR | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._w = (size > 0 ? size - 1 : 0);
-  f._file = -1;  /* No file. */
-  ret = _svfiprintf_r (ptr, &f, fmt, ap);
-  if (ret < EOF)
-    ptr->_errno = EOVERFLOW;
-  if (size > 0)
-    *f._p = 0;
-  return ret;
+    f._flags = __SWR | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._w = (size > 0 ? size - 1 : 0);
+    f._file = -1; /* No file. */
+    ret = _svfiprintf_r(ptr, &f, fmt, ap);
+    if(ret < EOF) ptr->_errno = EOVERFLOW;
+    if(size > 0) *f._p = 0;
+    return ret;
 }

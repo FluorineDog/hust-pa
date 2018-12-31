@@ -42,10 +42,7 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <ctype.h>
 
-
 #undef ispunct
-int
-ispunct (int c)
-{
-	return(__CTYPE_PTR[c+1] & _P);
+int ispunct(int c) {
+    return (__CTYPE_PTR[c + 1] & _P);
 }

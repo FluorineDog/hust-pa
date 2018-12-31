@@ -42,32 +42,25 @@ effects vary with the locale.
 #include <wchar.h>
 #include "local.h"
 
-int
-mblen (const char *s,
-        size_t n)
-{
+int mblen(const char *s, size_t n) {
 #ifdef _MB_CAPABLE
-  int retval = 0;
-  struct _reent *reent = _REENT;
-  mbstate_t *state;
-  
-  _REENT_CHECK_MISC(reent);
-  state = &(_REENT_MBLEN_STATE(reent));
-  retval = __MBTOWC (reent, NULL, s, n, state);
-  if (retval < 0)
-    {
-      state->__count = 0;
-      return -1;
-    }
-  else
-    return retval;
-  
-#else /* not _MB_CAPABLE */
-  if (s == NULL || *s == '\0')
-    return 0;
-  if (n == 0)
-    return -1;
-  return 1;
+    int retval = 0;
+    struct _reent *reent = _REENT;
+    mbstate_t *state;
+
+    _REENT_CHECK_MISC(reent);
+    state = &(_REENT_MBLEN_STATE(reent));
+    retval = __MBTOWC(reent, NULL, s, n, state);
+    if(retval < 0) {
+        state->__count = 0;
+        return -1;
+    } else
+        return retval;
+
+#else  /* not _MB_CAPABLE */
+    if(s == NULL || *s == '\0') return 0;
+    if(n == 0) return -1;
+    return 1;
 #endif /* not _MB_CAPABLE */
 }
 

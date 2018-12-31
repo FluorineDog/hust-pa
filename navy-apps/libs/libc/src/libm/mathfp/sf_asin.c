@@ -17,17 +17,14 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-asinf (float x)
-{
-  return (asinef (x, 0));
+float asinf(float x) {
+    return (asinef(x, 0));
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-double asin (double x)
-{
-  return (double) asinef ((float) x, 0);
+double asin(double x) {
+    return (double)asinef((float)x, 0);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

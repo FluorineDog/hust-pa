@@ -59,50 +59,39 @@ No supporting OS subroutines are required.
 
 /* Discard I/O from a single file.  */
 
-int
-_fpurge_r (struct _reent *ptr,
-       register FILE * fp)
-{
-  int t;
+int _fpurge_r(struct _reent *ptr, register FILE *fp) {
+    int t;
 
-  CHECK_INIT (ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  _newlib_flockfile_start (fp);
+    _newlib_flockfile_start(fp);
 
-  t = fp->_flags;
-  if (!t)
-    {
-      ptr->_errno = EBADF;
-      _newlib_flockfile_exit (fp);
-      return EOF;
+    t = fp->_flags;
+    if(!t) {
+        ptr->_errno = EBADF;
+        _newlib_flockfile_exit(fp);
+        return EOF;
     }
-  fp->_p = fp->_bf._base;
-  if ((t & __SWR) == 0)
-    {
-      fp->_r = 0;
-      if (HASUB (fp))
-	FREEUB (ptr, fp);
-    }
-  else
-    fp->_w = t & (__SLBF | __SNBF) ? 0 : fp->_bf._size;
-  _newlib_flockfile_end (fp);
-  return 0;
+    fp->_p = fp->_bf._base;
+    if((t & __SWR) == 0) {
+        fp->_r = 0;
+        if(HASUB(fp)) FREEUB(ptr, fp);
+    } else
+        fp->_w = t & (__SLBF | __SNBF) ? 0 : fp->_bf._size;
+    _newlib_flockfile_end(fp);
+    return 0;
 }
 
 #ifndef _REENT_ONLY
 
-int
-fpurge (register FILE * fp)
-{
-  return _fpurge_r (_REENT, fp);
+int fpurge(register FILE *fp) {
+    return _fpurge_r(_REENT, fp);
 }
 
 #ifndef __rtems__
 
-void
-__fpurge (register FILE * fp)
-{
-  _fpurge_r (_REENT, fp);
+void __fpurge(register FILE *fp) {
+    _fpurge_r(_REENT, fp);
 }
 
 #endif

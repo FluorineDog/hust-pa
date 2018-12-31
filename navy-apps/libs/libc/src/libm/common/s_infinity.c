@@ -38,12 +38,11 @@ QUICKREF
 
 #ifndef _DOUBLE_IS_32BITS
 
-	double infinity()
-{
-	double x;
+double infinity() {
+    double x;
 
-	INSERT_WORDS(x,0x7ff00000,0);
-	return x;
+    INSERT_WORDS(x, 0x7ff00000, 0);
+    return x;
 }
 
 #endif /* _DOUBLE_IS_32BITS */

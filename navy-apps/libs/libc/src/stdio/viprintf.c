@@ -100,23 +100,16 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 
 #ifndef _REENT_ONLY
 
-int
-viprintf (const char *fmt,
-       va_list ap)
-{
-  struct _reent *reent = _REENT;
+int viprintf(const char *fmt, va_list ap) {
+    struct _reent *reent = _REENT;
 
-  _REENT_SMALL_CHECK_INIT (reent);
-  return _vfiprintf_r (reent, _stdout_r (reent), fmt, ap);
+    _REENT_SMALL_CHECK_INIT(reent);
+    return _vfiprintf_r(reent, _stdout_r(reent), fmt, ap);
 }
 
 #endif /* !_REENT_ONLY */
 
-int
-_viprintf_r (struct _reent *ptr,
-       const char *fmt,
-       va_list ap)
-{
-  _REENT_SMALL_CHECK_INIT (ptr);
-  return _vfiprintf_r (ptr, _stdout_r (ptr), fmt, ap);
+int _viprintf_r(struct _reent *ptr, const char *fmt, va_list ap) {
+    _REENT_SMALL_CHECK_INIT(ptr);
+    return _vfiprintf_r(ptr, _stdout_r(ptr), fmt, ap);
 }

@@ -28,107 +28,59 @@
 //#define ENABLE_LOG 1
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-void
-trim(
-   char *str
-);
+void trim(char *str);
 
-char *va(
-   const char *format,
-   ...
-);
+char *va(const char *format, ...);
 
-int
-RandomLong(
-   int from,
-   int to
-);
+int RandomLong(int from, int to);
 
 FLOAT
-RandomFloat(
-   FLOAT from,
-   FLOAT to
-);
+RandomFloat(FLOAT from, FLOAT to);
 
-void
-UTIL_Delay(
-   unsigned int ms
-);
+void UTIL_Delay(unsigned int ms);
 
-void
-TerminateOnError(
-   const char *fmt,
-   ...
-);
+void TerminateOnError(const char *fmt, ...);
 
-void *
-UTIL_malloc(
-   size_t               buffer_size
-);
+void *UTIL_malloc(size_t buffer_size);
 
-void *
-UTIL_calloc(
-   size_t               n,
-   size_t               size
-);
+void *UTIL_calloc(size_t n, size_t size);
 
-FILE *
-UTIL_OpenRequiredFile(
-   LPCSTR               lpszFileName
-);
+FILE *UTIL_OpenRequiredFile(LPCSTR lpszFileName);
 
-FILE *
-UTIL_OpenFile(
-   LPCSTR               lpszFileName
-);
+FILE *UTIL_OpenFile(LPCSTR lpszFileName);
 
-VOID
-UTIL_CloseFile(
-   FILE                *fp
-);
+VOID UTIL_CloseFile(FILE *fp);
 
-#define _PATH_LOG           PAL_PREFIX "log.txt"
-#define LOG_EMERG           0 /* system is unusable */
-#define LOG_ALERT           1 /* action must be taken immediately */
-#define LOG_CRIT            2 /* critical conditions */
-#define LOG_ERR             3 /* error conditions */
-#define LOG_WARNING         4 /* warning conditions */
-#define LOG_NOTICE          5 /* normal but significant condition */
-#define LOG_INFO            6 /* informational */
-#define LOG_DEBUG           7 /* debug-level messages */
-#define LOG_LAST_PRIORITY   8 /* last level */
+#define _PATH_LOG PAL_PREFIX "log.txt"
+#define LOG_EMERG 0         /* system is unusable */
+#define LOG_ALERT 1         /* action must be taken immediately */
+#define LOG_CRIT 2          /* critical conditions */
+#define LOG_ERR 3           /* error conditions */
+#define LOG_WARNING 4       /* warning conditions */
+#define LOG_NOTICE 5        /* normal but significant condition */
+#define LOG_INFO 6          /* informational */
+#define LOG_DEBUG 7         /* debug-level messages */
+#define LOG_LAST_PRIORITY 8 /* last level */
 
 #ifdef ENABLE_LOG
 
-FILE *
-UTIL_OpenLog(
-   VOID
-);
+FILE *UTIL_OpenLog(VOID);
 
-VOID
-UTIL_CloseLog(
-   VOID
-);
+VOID UTIL_CloseLog(VOID);
 
-VOID
-UTIL_WriteLog(
-   int             Priority,
-   const char     *Fmt,
-   ...
-);
+VOID UTIL_WriteLog(int Priority, const char *Fmt, ...);
 
 #else
 
-#define UTIL_OpenLog()       ((void)(0))
-#define UTIL_CloseLog()      ((void)(0))
+#define UTIL_OpenLog() ((void)(0))
+#define UTIL_CloseLog() ((void)(0))
 #ifdef _MSC_VER
 __forceinline VOID UTIL_WriteLog(int i, const char *p, ...) {}
 #else
-#define UTIL_WriteLog(...)   ((void)(0))
+#define UTIL_WriteLog(...) ((void)(0))
 #endif
 
 #endif

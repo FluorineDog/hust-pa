@@ -2,7 +2,6 @@
 	This file contains configuration constants required to execute on different platforms
 */
 
-
 #ifndef CORE_PORTME_H
 #define CORE_PORTME_H
 
@@ -17,7 +16,7 @@
 /* Configuration : HAS_FLOAT 
 	Define to 1 if the platform supports floating point.
 */
-#ifndef HAS_FLOAT 
+#ifndef HAS_FLOAT
 #define HAS_FLOAT 0
 #endif
 /* Configuration : HAS_TIME_H
@@ -55,18 +54,18 @@ typedef uint32_t CORE_TICKS;
 /* Definitions : COMPILER_VERSION, COMPILER_FLAGS, MEM_LOCATION
 	Initialize these strings per platform
 */
-#ifndef COMPILER_VERSION 
- #ifdef __GNUC__
- #define COMPILER_VERSION "GCC"__VERSION__
- #else
- #define COMPILER_VERSION "Please put compiler version here (e.g. gcc 4.1)"
- #endif
+#ifndef COMPILER_VERSION
+#ifdef __GNUC__
+#define COMPILER_VERSION "GCC"__VERSION__
+#else
+#define COMPILER_VERSION "Please put compiler version here (e.g. gcc 4.1)"
 #endif
-#ifndef COMPILER_FLAGS 
- #define COMPILER_FLAGS 
 #endif
-#ifndef MEM_LOCATION 
- #define MEM_LOCATION "STACK"
+#ifndef COMPILER_FLAGS
+#define COMPILER_FLAGS
+#endif
+#ifndef MEM_LOCATION
+#define MEM_LOCATION "STACK"
 #endif
 
 /* Data Types :
@@ -86,7 +85,7 @@ typedef size_t ee_size_t;
 /* align_mem :
 	This macro is used to align an offset to point to a 32b value. It is used in the Matrix algorithm to initialize the input memory blocks.
 */
-#define align_mem(x) (void *)(4 + (((unsigned long)(x) - 1) & ~3))
+#define align_mem(x) (void *)(4 + (((unsigned long)(x)-1) & ~3))
 
 /* Configuration : SEED_METHOD
 	Defines method to get seed values that cannot be computed at compile time.
@@ -144,7 +143,7 @@ typedef size_t ee_size_t;
 	Note : 
 	This flag only matters if MULTITHREAD has been defined to a value greater then 1.
 */
-#ifndef MAIN_HAS_NOARGC 
+#ifndef MAIN_HAS_NOARGC
 #define MAIN_HAS_NOARGC 0
 #endif
 
@@ -165,7 +164,7 @@ typedef size_t ee_size_t;
 extern ee_u32 default_num_contexts;
 
 typedef struct CORE_PORTABLE_S {
-	ee_u8	portable_id;
+    ee_u8 portable_id;
 } core_portable;
 
 /* target specific init/fini */
@@ -173,14 +172,13 @@ void portable_init(core_portable *p, int *argc, char *argv[]);
 void portable_fini(core_portable *p);
 
 #if !defined(PROFILE_RUN) && !defined(PERFORMANCE_RUN) && !defined(VALIDATION_RUN)
-#if (TOTAL_DATA_SIZE==1200)
+#if(TOTAL_DATA_SIZE == 1200)
 #define PROFILE_RUN 1
-#elif (TOTAL_DATA_SIZE==2000)
+#elif(TOTAL_DATA_SIZE == 2000)
 #define PERFORMANCE_RUN 1
 #else
 #define VALIDATION_RUN 1
 #endif
 #endif
-
 
 #endif /* CORE_PORTME_H */

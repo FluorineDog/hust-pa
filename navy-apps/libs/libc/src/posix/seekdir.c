@@ -45,16 +45,13 @@ static char sccsid[] = "@(#)seekdir.c	5.7 (Berkeley) 6/1/90";
  * Seek to an entry in a directory.
  * _seekdir is in telldir.c so that it can share opaque data structures.
  */
-void
-seekdir (DIR *dirp,
-	long loc)
-{
+void seekdir(DIR *dirp, long loc) {
 #ifdef HAVE_DD_LOCK
-	__lock_acquire_recursive(dirp->dd_lock);
+    __lock_acquire_recursive(dirp->dd_lock);
 #endif
-	_seekdir(dirp, loc);
+    _seekdir(dirp, loc);
 #ifdef HAVE_DD_LOCK
-	__lock_release_recursive(dirp->dd_lock);
+    __lock_release_recursive(dirp->dd_lock);
 #endif
 }
 

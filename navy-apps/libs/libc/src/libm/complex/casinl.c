@@ -36,15 +36,13 @@
 __weak_alias(casinl, _casinl)
 #endif
 
-long double complex
-casinl(long double complex z)
-{
-	long double complex w;
-	long double complex ca, ct, zz, z2;
-	long double x, y;
+    long double complex casinl(long double complex z) {
+    long double complex w;
+    long double complex ca, ct, zz, z2;
+    long double x, y;
 
-	x = creall(z);
-	y = cimagl(z);
+    x = creall(z);
+    y = cimagl(z);
 
 #if 0 /* MD: test is incorrect, casin(>1) is defined */
 	if (y == 0.0L) {
@@ -60,8 +58,8 @@ casinl(long double complex z)
 	}
 #endif
 
-/* Power series expansion */
-/*
+    /* Power series expansion */
+    /*
 b = cabsl(z);
 if( b < 0.125L )
 {
@@ -100,21 +98,19 @@ return;
 }
 */
 
+    ca = x + y * I;
+    ct = ca * I;
+    /* sqrtl( 1 - z*z) */
+    /* cmull( &ca, &ca, &zz ) */
+    /*x * x  -  y * y */
+    zz = (x - y) * (x + y) + (2.0L * x * y) * I;
 
-	ca = x + y * I;
-	ct = ca * I;
-	/* sqrtl( 1 - z*z) */
-	/* cmull( &ca, &ca, &zz ) */
-	/*x * x  -  y * y */
-	zz = (x - y) * (x + y) + (2.0L * x * y) * I;
+    zz = 1.0L - creall(zz) - cimagl(zz) * I;
+    z2 = csqrtl(zz);
 
-	zz = 1.0L - creall(zz) - cimagl(zz) * I;
-	z2 = csqrtl(zz);
-
-	zz = ct + z2;
-	zz = clogl(zz);
-	/* multiply by 1/i = -i */
-	w = zz * (-1.0L * I);
-	return w;
+    zz = ct + z2;
+    zz = clogl(zz);
+    /* multiply by 1/i = -i */
+    w = zz * (-1.0L * I);
+    return w;
 }
-

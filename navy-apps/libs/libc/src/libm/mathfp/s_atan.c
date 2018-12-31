@@ -53,21 +53,14 @@ PORTABILITY
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-atan (double x)
-{
-  switch (numtest (x))
-    {
-      case NAN:
-        errno = EDOM;
-        return (x);
-      case INF:
-        /* this should check to see if neg NaN or pos NaN... */
-        return (__PI_OVER_TWO);
-      case 0:
-        return (0.0);
-      default:
-        return (atangent (x, 0, 0, 0));
+double atan(double x) {
+    switch(numtest(x)) {
+        case NAN: errno = EDOM; return (x);
+        case INF:
+            /* this should check to see if neg NaN or pos NaN... */
+            return (__PI_OVER_TWO);
+        case 0: return (0.0);
+        default: return (atangent(x, 0, 0, 0));
     }
 }
 

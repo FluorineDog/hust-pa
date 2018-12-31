@@ -86,19 +86,14 @@ PORTABILITY
 
 #undef putwchar
 
-wint_t
-_putwchar_r (struct _reent *ptr,
-	wchar_t wc)
-{
-  return _fputwc_r (ptr, wc, stdout);
+wint_t _putwchar_r(struct _reent *ptr, wchar_t wc) {
+    return _fputwc_r(ptr, wc, stdout);
 }
 
 /*
  * Synonym for fputwc(wc, stdout).
  */
-wint_t
-putwchar (wchar_t wc)
-{
-  _REENT_SMALL_CHECK_INIT (_REENT);
-  return fputwc (wc, stdout);
+wint_t putwchar(wchar_t wc) {
+    _REENT_SMALL_CHECK_INIT(_REENT);
+    return fputwc(wc, stdout);
 }

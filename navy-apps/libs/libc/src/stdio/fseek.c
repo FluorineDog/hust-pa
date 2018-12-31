@@ -80,23 +80,14 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <errno.h>
 #include "local.h"
 
-int
-_fseek_r (struct _reent *ptr,
-       register FILE *fp,
-       long offset,
-       int whence)
-{
-  return _fseeko_r (ptr, fp, offset, whence);
+int _fseek_r(struct _reent *ptr, register FILE *fp, long offset, int whence) {
+    return _fseeko_r(ptr, fp, offset, whence);
 }
 
 #ifndef _REENT_ONLY
 
-int
-fseek (register FILE *fp,
-       long offset,
-       int whence)
-{
-  return _fseek_r (_REENT, fp, offset, whence);
+int fseek(register FILE *fp, long offset, int whence) {
+    return _fseek_r(_REENT, fp, offset, whence);
 }
 
 #endif /* !_REENT_ONLY */

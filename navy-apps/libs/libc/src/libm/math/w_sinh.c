@@ -11,7 +11,6 @@
  * ====================================================
  */
 
-
 /*
 FUNCTION
         <<sinh>>, <<sinhf>>---hyperbolic sine
@@ -67,45 +66,44 @@ QUICKREF
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double sinh(double x)		/* wrapper sinh */
+double sinh(double x) /* wrapper sinh */
 #else
-	double sinh(x)			/* wrapper sinh */
-	double x;
+double sinh(x) /* wrapper sinh */
+    double x;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_sinh(x);
+    return __ieee754_sinh(x);
 #else
-	double z; 
-	struct exception exc;
-	z = __ieee754_sinh(x);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if(!finite(z)&&finite(x)) {
-	    /* sinh(finite) overflow */
-#ifndef HUGE_VAL 
+    double z;
+    struct exception exc;
+    z = __ieee754_sinh(x);
+    if(_LIB_VERSION == _IEEE_) return z;
+    if(!finite(z) && finite(x)) {
+        /* sinh(finite) overflow */
+#ifndef HUGE_VAL
 #define HUGE_VAL inf
-	    double inf = 0.0;
-	    
-	    SET_HIGH_WORD(inf,0x7ff00000);	/* set inf to infinite */
+        double inf = 0.0;
+
+        SET_HIGH_WORD(inf, 0x7ff00000); /* set inf to infinite */
 #endif
-	    exc.type = OVERFLOW;
-	    exc.name = "sinh";
-	    exc.err = 0;
-	    exc.arg1 = exc.arg2 = x;
-	    if (_LIB_VERSION == _SVID_)
-	       exc.retval = ( (x>0.0) ? HUGE : -HUGE);
-	    else
-	       exc.retval = ( (x>0.0) ? HUGE_VAL : -HUGE_VAL);
-	    if (_LIB_VERSION == _POSIX_)
-	       errno = ERANGE;
-	    else if (!matherr(&exc)) {
-	       errno = ERANGE;
-	    }
-	    if (exc.err != 0)
-	       errno = exc.err;
-            return exc.retval;
-	} else
-	    return z;
+        exc.type = OVERFLOW;
+        exc.name = "sinh";
+        exc.err = 0;
+        exc.arg1 = exc.arg2 = x;
+        if(_LIB_VERSION == _SVID_)
+            exc.retval = ((x > 0.0) ? HUGE : -HUGE);
+        else
+            exc.retval = ((x > 0.0) ? HUGE_VAL : -HUGE_VAL);
+        if(_LIB_VERSION == _POSIX_)
+            errno = ERANGE;
+        else if(!matherr(&exc)) {
+            errno = ERANGE;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    } else
+        return z;
 #endif
 }
 

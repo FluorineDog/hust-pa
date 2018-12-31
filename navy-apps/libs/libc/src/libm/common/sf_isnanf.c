@@ -15,21 +15,17 @@
 
 #include "fdlibm.h"
 
-int
-__isnanf (float x)
-{
-	__int32_t ix;
-	GET_FLOAT_WORD(ix,x);
-	ix &= 0x7fffffff;
-	return FLT_UWORD_IS_NAN(ix);
+int __isnanf(float x) {
+    __int32_t ix;
+    GET_FLOAT_WORD(ix, x);
+    ix &= 0x7fffffff;
+    return FLT_UWORD_IS_NAN(ix);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-int
-__isnand (double x)
-{
-	return __isnanf((float) x);
+int __isnand(double x) {
+    return __isnanf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

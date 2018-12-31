@@ -38,11 +38,7 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <ctype.h>
 
-
-
 #undef isblank
-int
-isblank (int c)
-{
-	return ((__CTYPE_PTR[c+1] & _B) || (c == '\t'));
+int isblank(int c) {
+    return ((__CTYPE_PTR[c + 1] & _B) || (c == '\t'));
 }

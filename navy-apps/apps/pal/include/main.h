@@ -53,9 +53,6 @@
 #include "midi.h"
 #endif
 
-VOID
-PAL_Shutdown(
-   VOID
-);
+VOID PAL_Shutdown(VOID);
 
 #endif

@@ -85,58 +85,48 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 /*
  * Write the given string to the given file.
  */
-int
-_fputs_r (struct _reent * ptr,
-       char const *__restrict s,
-       FILE *__restrict fp)
-{
+int _fputs_r(struct _reent *ptr, char const *__restrict s, FILE *__restrict fp) {
 #ifdef _FVWRITE_IN_STREAMIO
-  int result;
-  struct __suio uio;
-  struct __siov iov;
+    int result;
+    struct __suio uio;
+    struct __siov iov;
 
-  iov.iov_base = s;
-  iov.iov_len = uio.uio_resid = strlen (s);
-  uio.uio_iov = &iov;
-  uio.uio_iovcnt = 1;
+    iov.iov_base = s;
+    iov.iov_len = uio.uio_resid = strlen(s);
+    uio.uio_iov = &iov;
+    uio.uio_iovcnt = 1;
 
-  CHECK_INIT(ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, -1);
-  result = __sfvwrite_r (ptr, fp, &uio);
-  _newlib_flockfile_end (fp);
-  return result;
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, -1);
+    result = __sfvwrite_r(ptr, fp, &uio);
+    _newlib_flockfile_end(fp);
+    return result;
 #else
-  const char *p = s;
+    const char *p = s;
 
-  CHECK_INIT(ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, -1);
-  /* Make sure we can write.  */
-  if (cantwrite (ptr, fp))
-    goto error;
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, -1);
+    /* Make sure we can write.  */
+    if(cantwrite(ptr, fp)) goto error;
 
-  while (*p)
-    {
-      if (__sputc_r (ptr, *p++, fp) == EOF)
-	goto error;
+    while(*p) {
+        if(__sputc_r(ptr, *p++, fp) == EOF) goto error;
     }
-  _newlib_flockfile_exit (fp);
-  return 0;
+    _newlib_flockfile_exit(fp);
+    return 0;
 
 error:
-  _newlib_flockfile_end (fp);
-  return EOF;
+    _newlib_flockfile_end(fp);
+    return EOF;
 #endif
 }
 
 #ifndef _REENT_ONLY
-int
-fputs (char const *__restrict s,
-       FILE *__restrict fp)
-{
-  return _fputs_r (_REENT, s, fp);
+int fputs(char const *__restrict s, FILE *__restrict fp) {
+    return _fputs_r(_REENT, s, fp);
 }
 #endif /* !_REENT_ONLY */

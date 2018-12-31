@@ -30,30 +30,21 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #ifndef _REENT_ONLY
 
-int
-vsiprintf (char *str,
-       const char *fmt,
-       va_list ap)
-{
-  return _vsiprintf_r (_REENT, str, fmt, ap);
+int vsiprintf(char *str, const char *fmt, va_list ap) {
+    return _vsiprintf_r(_REENT, str, fmt, ap);
 }
 
 #endif /* !_REENT_ONLY */
 
-int
-_vsiprintf_r (struct _reent *ptr,
-       char *str,
-       const char *fmt,
-       va_list ap)
-{
-  int ret;
-  FILE f;
+int _vsiprintf_r(struct _reent *ptr, char *str, const char *fmt, va_list ap) {
+    int ret;
+    FILE f;
 
-  f._flags = __SWR | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._w = INT_MAX;
-  f._file = -1;  /* No file. */
-  ret = _svfiprintf_r (ptr, &f, fmt, ap);
-  *f._p = 0;
-  return ret;
+    f._flags = __SWR | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._w = INT_MAX;
+    f._file = -1; /* No file. */
+    ret = _svfiprintf_r(ptr, &f, fmt, ap);
+    *f._p = 0;
+    return ret;
 }

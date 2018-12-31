@@ -64,20 +64,17 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include <math.h>
 
-double complex
-ctanh(double complex z)
-{
-	double complex w;
-	double x, y, d;
+double complex ctanh(double complex z) {
+    double complex w;
+    double x, y, d;
 
-	x = creal(z);
-	y = cimag(z);
-	d = cosh(2.0 * x) + cos(2.0 * y);
-	w = sinh(2.0 * x) / d  +  (sin(2.0 * y) / d) * I;
+    x = creal(z);
+    y = cimag(z);
+    d = cosh(2.0 * x) + cos(2.0 * y);
+    w = sinh(2.0 * x) / d + (sin(2.0 * y) / d) * I;
 
-	return w;
+    return w;
 }

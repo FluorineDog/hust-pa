@@ -4,8 +4,8 @@
 #include <common.h>
 
 #define FPS 60
-#define W   256
-#define H   240
+#define W 256
+#define H 240
 
 extern byte canvas[H][W];
 

@@ -3,8 +3,6 @@
 #include <reent.h>
 #include <unistd.h>
 
-int
-getpid (void)
-{
-  return _getpid_r (_REENT);
+int getpid(void) {
+    return _getpid_r(_REENT);
 }

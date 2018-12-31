@@ -51,20 +51,15 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 #include <reent.h>
 #include <stdio.h>
 
-void
-_rewind_r (struct _reent * ptr,
-       register FILE * fp)
-{
-  (void) _fseek_r (ptr, fp, 0L, SEEK_SET);
-  clearerr (fp);
+void _rewind_r(struct _reent* ptr, register FILE* fp) {
+    (void)_fseek_r(ptr, fp, 0L, SEEK_SET);
+    clearerr(fp);
 }
 
 #ifndef _REENT_ONLY
 
-void
-rewind (register FILE * fp)
-{
-  _rewind_r (_REENT, fp);
+void rewind(register FILE* fp) {
+    _rewind_r(_REENT, fp);
 }
 
 #endif /* !_REENT_ONLY */

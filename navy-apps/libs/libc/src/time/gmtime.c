@@ -49,13 +49,11 @@ ANSI C requires <<gmtime>>.
 
 #ifndef _REENT_ONLY
 
-struct tm *
-gmtime (const time_t * tim_p)
-{
-  struct _reent *reent = _REENT;
+struct tm *gmtime(const time_t *tim_p) {
+    struct _reent *reent = _REENT;
 
-  _REENT_CHECK_TM(reent);
-  return gmtime_r (tim_p, (struct tm *)_REENT_TM(reent));
+    _REENT_CHECK_TM(reent);
+    return gmtime_r(tim_p, (struct tm *)_REENT_TM(reent));
 }
 
 #endif

@@ -17,17 +17,13 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-atan2f (float v,
-        float u)
-{
-  return (atangentf (0.0, v, u, 1));
+float atan2f(float v, float u) {
+    return (atangentf(0.0, v, u, 1));
 }
 
 #ifdef _DOUBLE_IS_32BITS
-double atan2 (double v, double u)
-{
-  return (double) atangentf (0.0, (float) v, (float) u, 1);
+double atan2(double v, double u) {
+    return (double)atangentf(0.0, (float)v, (float)u, 1);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

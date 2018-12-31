@@ -19,13 +19,9 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-void
-sincos (double x,
-        double *sinx,
-        double *cosx)
-{
-  *sinx = sin (x);
-  *cosx = cos (x);
+void sincos(double x, double *sinx, double *cosx) {
+    *sinx = sin(x);
+    *cosx = cos(x);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

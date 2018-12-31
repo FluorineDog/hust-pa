@@ -39,8 +39,6 @@ QUICKREF
 
 #include <string.h>
 
-int
-strcoll_l (const char *a, const char *b, struct __locale_t *locale)
-{
-  return strcmp (a, b);
+int strcoll_l(const char *a, const char *b, struct __locale_t *locale) {
+    return strcmp(a, b);
 }

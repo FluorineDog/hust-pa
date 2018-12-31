@@ -11,10 +11,8 @@
 #include <complex.h>
 #include "fdlibm.h"
 
-float
-cimagf(float complex z)
-{
-	float_complex w = { .z = z };
+float cimagf(float complex z) {
+    float_complex w = {.z = z};
 
-	return (IMAG_PART(w));
+    return (IMAG_PART(w));
 }

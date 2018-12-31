@@ -20,16 +20,15 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-int ispos (double x)
-{
-  __uint32_t hx;
+int ispos(double x) {
+    __uint32_t hx;
 
-  GET_HIGH_WORD (hx, x);
+    GET_HIGH_WORD(hx, x);
 
-  if (hx & 0x80000000)
-    return (0);
-  else
-    return (1);
+    if(hx & 0x80000000)
+        return (0);
+    else
+        return (1);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

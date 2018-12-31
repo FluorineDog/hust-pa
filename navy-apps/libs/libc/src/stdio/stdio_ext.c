@@ -61,46 +61,32 @@ No supporting OS subroutines are required.
 
 /* Subroutine versions of the inline or macro functions. */
 
-size_t
-__fbufsize (FILE * fp)
-{
-  return (size_t) fp->_bf._size;
+size_t __fbufsize(FILE* fp) {
+    return (size_t)fp->_bf._size;
 }
 
-size_t
-__fpending (FILE * fp)
-{
-  return fp->_p - fp->_bf._base;
+size_t __fpending(FILE* fp) {
+    return fp->_p - fp->_bf._base;
 }
 
-int
-__flbf (FILE * fp)
-{
-  return (fp->_flags & __SLBF) != 0;
+int __flbf(FILE* fp) {
+    return (fp->_flags & __SLBF) != 0;
 }
 
-int
-__freadable (FILE * fp)
-{
-  return (fp->_flags & (__SRD | __SRW)) != 0;
+int __freadable(FILE* fp) {
+    return (fp->_flags & (__SRD | __SRW)) != 0;
 }
 
-int
-__fwritable (FILE * fp)
-{
-  return (fp->_flags & (__SWR | __SRW)) != 0;
+int __fwritable(FILE* fp) {
+    return (fp->_flags & (__SWR | __SRW)) != 0;
 }
 
-int
-__freading (FILE * fp)
-{
-  return (fp->_flags & __SRD) != 0;
+int __freading(FILE* fp) {
+    return (fp->_flags & __SRD) != 0;
 }
 
-int
-__fwriting (FILE * fp)
-{
-  return (fp->_flags & __SWR) != 0;
+int __fwriting(FILE* fp) {
+    return (fp->_flags & __SWR) != 0;
 }
 
 #endif /* __rtems__ */

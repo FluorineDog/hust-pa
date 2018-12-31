@@ -32,9 +32,7 @@
 
 #undef ferror_unlocked
 
-int
-ferror_unlocked (FILE * fp)
-{
-  CHECK_INIT(_REENT, fp);
-  return __sferror (fp);
+int ferror_unlocked(FILE* fp) {
+    CHECK_INIT(_REENT, fp);
+    return __sferror(fp);
 }

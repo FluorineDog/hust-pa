@@ -64,18 +64,15 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include <math.h>
 
-double complex
-ccosh(double complex z)
-{
-	double complex w;
-	double x, y;
+double complex ccosh(double complex z) {
+    double complex w;
+    double x, y;
 
-	x = creal(z);
-	y = cimag(z);
-	w = cosh(x) * cos(y) + (sinh(x) * sin(y)) * I;
-	return w;
+    x = creal(z);
+    y = cimag(z);
+    w = cosh(x) * cos(y) + (sinh(x) * sin(y)) * I;
+    return w;
 }

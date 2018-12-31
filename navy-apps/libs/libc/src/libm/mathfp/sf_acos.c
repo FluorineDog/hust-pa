@@ -17,16 +17,13 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-acosf (float x)
-{
-  return (asinef (x, 1));
+float acosf(float x) {
+    return (asinef(x, 1));
 }
 
 #ifdef _DOUBLE_IS_32BITS
-double acos (double x)
-{
-  return (double) asinef ((float) x, 1);
+double acos(double x) {
+    return (double)asinef((float)x, 1);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

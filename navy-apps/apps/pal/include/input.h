@@ -26,63 +26,44 @@
 #include "palcommon.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-typedef struct tagPALINPUTSTATE
-{
-   PALDIRECTION           dir, prevdir;
-   DWORD                  dwKeyPress;
+typedef struct tagPALINPUTSTATE {
+    PALDIRECTION dir, prevdir;
+    DWORD dwKeyPress;
 } PALINPUTSTATE;
 
 extern volatile PALINPUTSTATE g_InputState;
 
-enum PALKEY
-{
-   kKeyMenu        = (1 << 0),
-   kKeySearch      = (1 << 1),
-   kKeyDown        = (1 << 2),
-   kKeyLeft        = (1 << 3),
-   kKeyUp          = (1 << 4),
-   kKeyRight       = (1 << 5),
-   kKeyPgUp        = (1 << 6),
-   kKeyPgDn        = (1 << 7),
-   kKeyRepeat      = (1 << 8),
-   kKeyAuto        = (1 << 9),
-   kKeyDefend      = (1 << 10),
-   kKeyUseItem     = (1 << 11),
-   kKeyThrowItem   = (1 << 12),
-   kKeyFlee        = (1 << 13),
-   kKeyStatus      = (1 << 14),
-   kKeyForce       = (1 << 15),
+enum PALKEY {
+    kKeyMenu = (1 << 0),
+    kKeySearch = (1 << 1),
+    kKeyDown = (1 << 2),
+    kKeyLeft = (1 << 3),
+    kKeyUp = (1 << 4),
+    kKeyRight = (1 << 5),
+    kKeyPgUp = (1 << 6),
+    kKeyPgDn = (1 << 7),
+    kKeyRepeat = (1 << 8),
+    kKeyAuto = (1 << 9),
+    kKeyDefend = (1 << 10),
+    kKeyUseItem = (1 << 11),
+    kKeyThrowItem = (1 << 12),
+    kKeyFlee = (1 << 13),
+    kKeyStatus = (1 << 14),
+    kKeyForce = (1 << 15),
 };
 
-VOID
-PAL_ClearKeyState(
-   VOID
-);
+VOID PAL_ClearKeyState(VOID);
 
-VOID
-PAL_InitInput(
-   VOID
-);
+VOID PAL_InitInput(VOID);
 
-VOID
-PAL_ProcessEvent(
-   VOID
-);
+VOID PAL_ProcessEvent(VOID);
 
-VOID
-PAL_ShutdownInput(
-   VOID
-);
+VOID PAL_ShutdownInput(VOID);
 
-int
-PAL_PollEvent(
-   SDL_Event *event
-);
-
+int PAL_PollEvent(SDL_Event *event);
 
 extern BOOL g_fUseJoystick;
 

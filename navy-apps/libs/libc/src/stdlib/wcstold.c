@@ -37,53 +37,46 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "local.h"
 #include "../locale/setlocale.h"
 
-long double
-wcstold_l (const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
-	   locale_t loc)
-{
+long double wcstold_l(const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
+                      locale_t loc) {
 #ifdef _LDBL_EQ_DBL
-/* On platforms where long double is as wide as double.  */
-  return wcstod_l(nptr, endptr, loc);
+    /* On platforms where long double is as wide as double.  */
+    return wcstod_l(nptr, endptr, loc);
 
-#else /* This is a duplicate of the code in wcstod.c, but converted to long double.  */
+#else  /* This is a duplicate of the code in wcstod.c, but converted to long double.  */
 
-  static const mbstate_t initial;
-  mbstate_t mbs;
-  long double val;
-  char *buf, *end;
-  const wchar_t *wcp;
-  size_t len;
+    static const mbstate_t initial;
+    mbstate_t mbs;
+    long double val;
+    char *buf, *end;
+    const wchar_t *wcp;
+    size_t len;
 
-  while (iswspace (*nptr))
-    nptr++;
+    while(iswspace(*nptr)) nptr++;
 
-  /* Convert the supplied numeric wide char string to multibyte.  */
-  wcp = nptr;
-  mbs = initial;
-  if ((len = _wcsnrtombs_l (_REENT, NULL, &wcp, (size_t) -1, 0, &mbs, loc))
-      == (size_t) -1)
-    {
-      if (endptr != NULL)
-	*endptr = (wchar_t *) nptr;
-      return 0.0L;
+    /* Convert the supplied numeric wide char string to multibyte.  */
+    wcp = nptr;
+    mbs = initial;
+    if((len = _wcsnrtombs_l(_REENT, NULL, &wcp, (size_t)-1, 0, &mbs, loc)) ==
+       (size_t)-1) {
+        if(endptr != NULL) *endptr = (wchar_t *)nptr;
+        return 0.0L;
     }
 
-  if ((buf = malloc (len + 1)) == NULL)
-    return 0.0L;
+    if((buf = malloc(len + 1)) == NULL) return 0.0L;
 
-  mbs = initial;
-  _wcsnrtombs_l (_REENT, buf, &wcp, (size_t) -1, len + 1, &mbs, loc);
+    mbs = initial;
+    _wcsnrtombs_l(_REENT, buf, &wcp, (size_t)-1, len + 1, &mbs, loc);
 
-  val = strtold_l (buf, &end, loc);
+    val = strtold_l(buf, &end, loc);
 
-  /* We only know where the number ended in the _multibyte_
+    /* We only know where the number ended in the _multibyte_
      representation of the string. If the caller wants to know
      where it ended, count multibyte characters to find the
      corresponding position in the wide char string.  */
 
-  if (endptr != NULL)
-    {
-      /* The only valid multibyte char in a float converted by
+    if(endptr != NULL) {
+        /* The only valid multibyte char in a float converted by
 	 strtold/wcstold is the radix char.  What we do here is,
 	 figure out if the radix char was in the valid leading
 	 float sequence in the incoming string.  If so, the
@@ -93,31 +86,27 @@ wcstold_l (const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
 	 just one byte long.  The resulting difference (end - buf)
 	 is then equivalent to the number of valid wide characters
 	 in the input string.  */
-      len = strlen (__localeconv_l (loc)->decimal_point);
-      if (len > 1)
-	{
-	  char *d = strstr (buf, __localeconv_l (loc)->decimal_point);
+        len = strlen(__localeconv_l(loc)->decimal_point);
+        if(len > 1) {
+            char *d = strstr(buf, __localeconv_l(loc)->decimal_point);
 
-	  if (d && d < end)
-	    end -= len - 1;
-	}
+            if(d && d < end) end -= len - 1;
+        }
 
-      *endptr = (wchar_t *) nptr + (end - buf);
+        *endptr = (wchar_t *)nptr + (end - buf);
     }
 
-  free (buf);
+    free(buf);
 
-  return val;
+    return val;
 #endif /* _LDBL_EQ_DBL */
 }
 
-long double
-wcstold (const wchar_t *__restrict nptr, wchar_t **__restrict endptr)
-{
+long double wcstold(const wchar_t *__restrict nptr, wchar_t **__restrict endptr) {
 #ifdef _LDBL_EQ_DBL
-/* On platforms where long double is as wide as double.  */
-  return wcstod_l(nptr, endptr, __get_current_locale ());
+    /* On platforms where long double is as wide as double.  */
+    return wcstod_l(nptr, endptr, __get_current_locale());
 #else
-  return wcstold_l(nptr, endptr, __get_current_locale ());
+    return wcstold_l(nptr, endptr, __get_current_locale());
 #endif
 }

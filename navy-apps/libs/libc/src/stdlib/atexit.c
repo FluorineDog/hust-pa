@@ -52,8 +52,6 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
  * Register a function to be performed at exit.
  */
 
-int
-atexit (void (*fn) (void))
-{
-  return __register_exitproc (__et_atexit, fn, NULL, NULL);
+int atexit(void (*fn)(void)) {
+    return __register_exitproc(__et_atexit, fn, NULL, NULL);
 }

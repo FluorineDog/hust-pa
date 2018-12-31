@@ -24,34 +24,30 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-int 
-numtest (double x)
-{
-  __uint32_t hx, lx;
-  int exp;
+int numtest(double x) {
+    __uint32_t hx, lx;
+    int exp;
 
-  EXTRACT_WORDS (hx, lx, x);
+    EXTRACT_WORDS(hx, lx, x);
 
-  exp = (hx & 0x7ff00000) >> 20;
+    exp = (hx & 0x7ff00000) >> 20;
 
-  /* Check for a zero input. */
-  if (x == 0.0)
-    {
-      return (0);
+    /* Check for a zero input. */
+    if(x == 0.0) {
+        return (0);
     }
 
-  /* Check for not a number or infinity. */
-  if (exp == 0x7ff)
-    {
-      if(hx & 0xf0000 || lx)
-        return (NAN);
-      else
-        return (INF);
+    /* Check for not a number or infinity. */
+    if(exp == 0x7ff) {
+        if(hx & 0xf0000 || lx)
+            return (NAN);
+        else
+            return (INF);
     }
-     
-  /* Otherwise it's a finite value. */ 
-  else
-    return (NUM);
+
+    /* Otherwise it's a finite value. */
+    else
+        return (NUM);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

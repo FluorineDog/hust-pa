@@ -32,27 +32,21 @@
 
 #ifndef _REENT_ONLY
 
-int
-vswscanf (const wchar_t *__restrict str, const wchar_t * __restrict fmt,
-  va_list ap)
-{
-  return _vswscanf_r (_REENT, str, fmt, ap);
+int vswscanf(const wchar_t *__restrict str, const wchar_t *__restrict fmt, va_list ap) {
+    return _vswscanf_r(_REENT, str, fmt, ap);
 }
 
 #endif /* !_REENT_ONLY */
 
-int
-_vswscanf_r (struct _reent *ptr, const wchar_t *str, const wchar_t *fmt,
-	     va_list ap)
-{
-  FILE f;
+int _vswscanf_r(struct _reent *ptr, const wchar_t *str, const wchar_t *fmt, va_list ap) {
+    FILE f;
 
-  f._flags = __SRD | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._r = wcslen (str) * sizeof (wchar_t);
-  f._read = __seofread;
-  f._ub._base = NULL;
-  f._lb._base = NULL;
-  f._file = -1;  /* No file. */
-  return __ssvfwscanf_r (ptr, &f, fmt, ap);
+    f._flags = __SRD | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._r = wcslen(str) * sizeof(wchar_t);
+    f._read = __seofread;
+    f._ub._base = NULL;
+    f._lb._base = NULL;
+    f._file = -1; /* No file. */
+    return __ssvfwscanf_r(ptr, &f, fmt, ap);
 }

@@ -29,9 +29,6 @@ in all implementations.
 
 #include <time.h>
 
-double
-difftime (time_t tim1,
-	time_t tim2)
-{
-  return (double)(tim1 - tim2);
+double difftime(time_t tim1, time_t tim2) {
+    return (double)(tim1 - tim2);
 }

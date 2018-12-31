@@ -73,43 +73,36 @@ static char ***p_environ = &environ;
  *	This routine *should* be a static; don't use it.
  */
 
-char *
-_findenv_r (struct _reent *reent_ptr,
-	register const char *name,
-	int *offset)
-{
-  register int len;
-  register char **p;
-  const char *c;
+char *_findenv_r(struct _reent *reent_ptr, register const char *name, int *offset) {
+    register int len;
+    register char **p;
+    const char *c;
 
-  ENV_LOCK;
+    ENV_LOCK;
 
-  /* In some embedded systems, this does not get set.  This protects
+    /* In some embedded systems, this does not get set.  This protects
      newlib from dereferencing a bad pointer.  */
-  if (!*p_environ)
-    {
-      ENV_UNLOCK;
-      return NULL;
+    if(!*p_environ) {
+        ENV_UNLOCK;
+        return NULL;
     }
 
-  c = name;
-  while (*c && *c != '=')  c++;
- 
-  /* Identifiers may not contain an '=', so cannot match if does */
-  if(*c != '=')
-    {
-    len = c - name;
-    for (p = *p_environ; *p; ++p)
-      if (!strncmp (*p, name, len))
-        if (*(c = *p + len) == '=')
-	{
-	  *offset = p - *p_environ;
-	  ENV_UNLOCK;
-	  return (char *) (++c);
-	}
+    c = name;
+    while(*c && *c != '=') c++;
+
+    /* Identifiers may not contain an '=', so cannot match if does */
+    if(*c != '=') {
+        len = c - name;
+        for(p = *p_environ; *p; ++p)
+            if(!strncmp(*p, name, len))
+                if(*(c = *p + len) == '=') {
+                    *offset = p - *p_environ;
+                    ENV_UNLOCK;
+                    return (char *)(++c);
+                }
     }
-  ENV_UNLOCK;
-  return NULL;
+    ENV_UNLOCK;
+    return NULL;
 }
 
 /*
@@ -117,11 +110,8 @@ _findenv_r (struct _reent *reent_ptr,
  *	Returns ptr to value associated with name, if any, else NULL.
  */
 
-char *
-_getenv_r (struct _reent *reent_ptr,
-	const char *name)
-{
-  int offset;
+char *_getenv_r(struct _reent *reent_ptr, const char *name) {
+    int offset;
 
-  return _findenv_r (reent_ptr, name, &offset);
+    return _findenv_r(reent_ptr, name, &offset);
 }

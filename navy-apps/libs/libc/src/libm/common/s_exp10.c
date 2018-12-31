@@ -60,13 +60,13 @@ PORTABILITY
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double exp10(double x)		/* wrapper exp10 */
+double exp10(double x) /* wrapper exp10 */
 #else
-	double exp10(x)			/* wrapper exp10 */
-	double x;
+double exp10(x) /* wrapper exp10 */
+    double x;
 #endif
 {
-  return pow(10.0, x);
+    return pow(10.0, x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

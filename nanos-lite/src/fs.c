@@ -15,7 +15,6 @@ typedef struct {
     int file_lock;
 } Finfo;
 
-
 size_t invalid_read(void *buf, size_t offset, size_t len) {
     panic("should not reach here");
     return 0;
@@ -59,7 +58,7 @@ size_t vfs_read(int fd, void *buf, size_t size) {
         size = remaining;
     }
     int delta = h->read(buf, offset, size);
-    assert(size == delta || h->size == (size_t) -1);
+    assert(size == delta || h->size == (size_t)-1);
     if(delta < 0) {
         panic("wtf");
         return delta;
@@ -140,7 +139,7 @@ ssize_t vfs_lseek(int fd, ssize_t offset, int whence) {
     return new;
 }
 
-void vfs_set_size(int fd, size_t size){
+void vfs_set_size(int fd, size_t size) {
     assert(0 <= size);
     assert(0 <= fd && fd < FD_FILES_BEGIN);
     file_table[fd].size = size;

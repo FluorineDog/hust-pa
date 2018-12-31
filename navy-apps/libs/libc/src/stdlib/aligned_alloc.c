@@ -26,13 +26,11 @@
 
 #include <stdlib.h>
 
-void *
-aligned_alloc(size_t alignment, size_t size)
-{
-	void *p;
-	int error;
+void *aligned_alloc(size_t alignment, size_t size) {
+    void *p;
+    int error;
 
-	error = posix_memalign(&p, alignment, size);
+    error = posix_memalign(&p, alignment, size);
 
-	return (error == 0 ? p : NULL);
+    return (error == 0 ? p : NULL);
 }

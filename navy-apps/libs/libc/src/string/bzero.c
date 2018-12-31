@@ -26,9 +26,6 @@ Neither ANSI C nor the System V Interface Definition (Issue 2) require
 
 #include <string.h>
 
-void
-bzero(void *b, size_t length)
-{
-
-	memset(b, 0, length);
+void bzero(void *b, size_t length) {
+    memset(b, 0, length);
 }

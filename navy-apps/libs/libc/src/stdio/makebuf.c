@@ -34,92 +34,78 @@
  * optimization) right after the _fstat() that finds the buffer size.
  */
 
-void
-__smakebuf_r (struct _reent *ptr,
-       register FILE *fp)
-{
-  register void *p;
-  int flags;
-  size_t size;
-  int couldbetty;
+void __smakebuf_r(struct _reent *ptr, register FILE *fp) {
+    register void *p;
+    int flags;
+    size_t size;
+    int couldbetty;
 
-  if (fp->_flags & __SNBF)
-    {
-      fp->_bf._base = fp->_p = fp->_nbuf;
-      fp->_bf._size = 1;
-      return;
+    if(fp->_flags & __SNBF) {
+        fp->_bf._base = fp->_p = fp->_nbuf;
+        fp->_bf._size = 1;
+        return;
     }
-  flags = __swhatbuf_r (ptr, fp, &size, &couldbetty);
-  if ((p = _malloc_r (ptr, size)) == NULL)
-    {
-      if (!(fp->_flags & __SSTR))
-	{
-	  fp->_flags = (fp->_flags & ~__SLBF) | __SNBF;
-	  fp->_bf._base = fp->_p = fp->_nbuf;
-	  fp->_bf._size = 1;
-	}
-    }
-  else
-    {
-      ptr->__cleanup = _cleanup_r;
-      fp->_flags |= __SMBF;
-      fp->_bf._base = fp->_p = (unsigned char *) p;
-      fp->_bf._size = size;
-      if (couldbetty && _isatty_r (ptr, fp->_file))
-	fp->_flags = (fp->_flags & ~__SNBF) | __SLBF;
-      fp->_flags |= flags;
+    flags = __swhatbuf_r(ptr, fp, &size, &couldbetty);
+    if((p = _malloc_r(ptr, size)) == NULL) {
+        if(!(fp->_flags & __SSTR)) {
+            fp->_flags = (fp->_flags & ~__SLBF) | __SNBF;
+            fp->_bf._base = fp->_p = fp->_nbuf;
+            fp->_bf._size = 1;
+        }
+    } else {
+        ptr->__cleanup = _cleanup_r;
+        fp->_flags |= __SMBF;
+        fp->_bf._base = fp->_p = (unsigned char *)p;
+        fp->_bf._size = size;
+        if(couldbetty && _isatty_r(ptr, fp->_file))
+            fp->_flags = (fp->_flags & ~__SNBF) | __SLBF;
+        fp->_flags |= flags;
     }
 }
 
 /*
  * Internal routine to determine `proper' buffering for a file.
  */
-int
-__swhatbuf_r (struct _reent *ptr,
-	FILE *fp,
-	size_t *bufsize,
-	int *couldbetty)
-{
+int __swhatbuf_r(struct _reent *ptr, FILE *fp, size_t *bufsize, int *couldbetty) {
 #ifdef _FSEEK_OPTIMIZATION
-  const int snpt = __SNPT;
+    const int snpt = __SNPT;
 #else
-  const int snpt = 0;
+    const int snpt = 0;
 #endif
 
 #ifdef __USE_INTERNAL_STAT64
-  struct stat64 st;
+    struct stat64 st;
 
-  if (fp->_file < 0 || _fstat64_r (ptr, fp->_file, &st) < 0)
+    if(fp->_file < 0 || _fstat64_r(ptr, fp->_file, &st) < 0)
 #else
-  struct stat st;
+    struct stat st;
 
-  if (fp->_file < 0 || _fstat_r (ptr, fp->_file, &st) < 0)
+    if(fp->_file < 0 || _fstat_r(ptr, fp->_file, &st) < 0)
 #endif
     {
-      *couldbetty = 0;
-      /* Check if we are be called by asprintf family for initial buffer.  */
-      if (fp->_flags & __SMBF)
-        *bufsize = _DEFAULT_ASPRINTF_BUFSIZE;
-      else
-        *bufsize = BUFSIZ;
-      return (0);
+        *couldbetty = 0;
+        /* Check if we are be called by asprintf family for initial buffer.  */
+        if(fp->_flags & __SMBF)
+            *bufsize = _DEFAULT_ASPRINTF_BUFSIZE;
+        else
+            *bufsize = BUFSIZ;
+        return (0);
     }
 
-  /* could be a tty iff it is a character device */
-  *couldbetty = S_ISCHR(st.st_mode);
+    /* could be a tty iff it is a character device */
+    *couldbetty = S_ISCHR(st.st_mode);
 #ifdef HAVE_BLKSIZE
-  if (st.st_blksize > 0)
-    {
-      /*
+    if(st.st_blksize > 0) {
+        /*
        * Optimise fseek() only if it is a regular file.  (The test for
        * __sseek is mainly paranoia.)  It is safe to set _blksize
        * unconditionally; it will only be used if __SOPT is also set.
        */
-      *bufsize = st.st_blksize;
-      fp->_blksize = st.st_blksize;
-      return ((st.st_mode & S_IFMT) == S_IFREG ?  __SOPT : snpt);
+        *bufsize = st.st_blksize;
+        fp->_blksize = st.st_blksize;
+        return ((st.st_mode & S_IFMT) == S_IFREG ? __SOPT : snpt);
     }
 #endif
-  *bufsize = BUFSIZ;
-  return (snpt);
+    *bufsize = BUFSIZ;
+    return (snpt);
 }

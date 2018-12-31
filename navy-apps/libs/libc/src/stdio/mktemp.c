@@ -138,235 +138,174 @@ Supporting OS subroutines required: <<getpid>>, <<mkdir>>, <<open>>, <<stat>>.
 #include <stdio.h>
 #include <ctype.h>
 
-static int
-_gettemp (struct _reent *ptr,
-       char *path,
-       register int *doopen,
-       int domkdir,
-       size_t suffixlen,
-       int flags)
-{
-  register char *start, *trv;
-  char *end;
+static int _gettemp(struct _reent *ptr, char *path, register int *doopen, int domkdir,
+                    size_t suffixlen, int flags) {
+    register char *start, *trv;
+    char *end;
 #ifdef __USE_INTERNAL_STAT64
-  struct stat64 sbuf;
+    struct stat64 sbuf;
 #else
-  struct stat sbuf;
+    struct stat sbuf;
 #endif
-  unsigned int pid;
+    unsigned int pid;
 
-  pid = _getpid_r (ptr);
-  for (trv = path; *trv; ++trv)		/* extra X's get set to 0's */
-    continue;
-  if (trv - path < suffixlen)
-    {
-      ptr->_errno = EINVAL;
-      return 0;
+    pid = _getpid_r(ptr);
+    for(trv = path; *trv; ++trv) /* extra X's get set to 0's */
+        continue;
+    if(trv - path < suffixlen) {
+        ptr->_errno = EINVAL;
+        return 0;
     }
-  trv -= suffixlen;
-  end = trv;
-  while (path < trv && *--trv == 'X')
-    {
-      *trv = (pid % 10) + '0';
-      pid /= 10;
+    trv -= suffixlen;
+    end = trv;
+    while(path < trv && *--trv == 'X') {
+        *trv = (pid % 10) + '0';
+        pid /= 10;
     }
-  if (end - trv < 6)
-    {
-      ptr->_errno = EINVAL;
-      return 0;
+    if(end - trv < 6) {
+        ptr->_errno = EINVAL;
+        return 0;
     }
 
-  /*
+    /*
    * Check the target directory; if you have six X's and it
    * doesn't exist this runs for a *very* long time.
    */
 
-  for (start = trv + 1;; --trv)
-    {
-      if (trv <= path)
-	break;
-      if (*trv == '/')
-	{
-	  *trv = '\0';
+    for(start = trv + 1;; --trv) {
+        if(trv <= path) break;
+        if(*trv == '/') {
+            *trv = '\0';
 #ifdef __USE_INTERNAL_STAT64
-	  if (_stat64_r (ptr, path, &sbuf))
+            if(_stat64_r(ptr, path, &sbuf))
 #else
-	  if (_stat_r (ptr, path, &sbuf))
+            if(_stat_r(ptr, path, &sbuf))
 #endif
-	    return (0);
-	  if (!(sbuf.st_mode & S_IFDIR))
-	    {
-	      ptr->_errno = ENOTDIR;
-	      return (0);
-	    }
-	  *trv = '/';
-	  break;
-	}
+                return (0);
+            if(!(sbuf.st_mode & S_IFDIR)) {
+                ptr->_errno = ENOTDIR;
+                return (0);
+            }
+            *trv = '/';
+            break;
+        }
     }
 
-  for (;;)
-    {
+    for(;;) {
 #if !defined _ELIX_LEVEL || _ELIX_LEVEL >= 4
-      if (domkdir)
-	{
+        if(domkdir) {
 #ifdef HAVE_MKDIR
-	  if (_mkdir_r (ptr, path, 0700) == 0)
-	    return 1;
-	  if (ptr->_errno != EEXIST)
-	    return 0;
-#else /* !HAVE_MKDIR */
-	  ptr->_errno = ENOSYS;
-	  return 0;
+            if(_mkdir_r(ptr, path, 0700) == 0) return 1;
+            if(ptr->_errno != EEXIST) return 0;
+#else  /* !HAVE_MKDIR */
+            ptr->_errno = ENOSYS;
+            return 0;
 #endif /* !HAVE_MKDIR */
-	}
-      else
+        } else
 #endif /* _ELIX_LEVEL */
-      if (doopen)
-	{
-	  if ((*doopen = _open_r (ptr, path, O_CREAT | O_EXCL | O_RDWR | flags,
-				  0600)) >= 0)
-	    return 1;
-	  if (ptr->_errno != EEXIST)
-	    return 0;
-	}
+            if(doopen) {
+            if((*doopen = _open_r(ptr, path, O_CREAT | O_EXCL | O_RDWR | flags, 0600)) >=
+               0)
+                return 1;
+            if(ptr->_errno != EEXIST) return 0;
+        }
 #ifdef __USE_INTERNAL_STAT64
-      else if (_stat64_r (ptr, path, &sbuf))
+        else if(_stat64_r(ptr, path, &sbuf))
 #else
-      else if (_stat_r (ptr, path, &sbuf))
+        else if(_stat_r(ptr, path, &sbuf))
 #endif
-	return (ptr->_errno == ENOENT ? 1 : 0);
+            return (ptr->_errno == ENOENT ? 1 : 0);
 
-      /* tricky little algorithm for backward compatibility */
-      for (trv = start;;)
-	{
-	  if (trv == end)
-	    return 0;
-	  if (*trv == 'z')
-	    *trv++ = 'a';
-	  else
-	    {
-	      /* Safe, since it only encounters 7-bit characters.  */
-	      if (isdigit ((unsigned char) *trv))
-		*trv = 'a';
-	      else
-		++ * trv;
-	      break;
-	    }
-	}
+        /* tricky little algorithm for backward compatibility */
+        for(trv = start;;) {
+            if(trv == end) return 0;
+            if(*trv == 'z')
+                *trv++ = 'a';
+            else {
+                /* Safe, since it only encounters 7-bit characters.  */
+                if(isdigit((unsigned char)*trv))
+                    *trv = 'a';
+                else
+                    ++*trv;
+                break;
+            }
+        }
     }
-  /*NOTREACHED*/
+    /*NOTREACHED*/
 }
 
 #ifndef O_BINARY
-# define O_BINARY 0
+#define O_BINARY 0
 #endif
 
-int
-_mkstemp_r (struct _reent *ptr,
-       char *path)
-{
-  int fd;
+int _mkstemp_r(struct _reent *ptr, char *path) {
+    int fd;
 
-  return (_gettemp (ptr, path, &fd, 0, 0, O_BINARY) ? fd : -1);
+    return (_gettemp(ptr, path, &fd, 0, 0, O_BINARY) ? fd : -1);
 }
 
 #if !defined _ELIX_LEVEL || _ELIX_LEVEL >= 4
-char *
-_mkdtemp_r (struct _reent *ptr,
-       char *path)
-{
-  return (_gettemp (ptr, path, (int *) NULL, 1, 0, 0) ? path : NULL);
+char *_mkdtemp_r(struct _reent *ptr, char *path) {
+    return (_gettemp(ptr, path, (int *)NULL, 1, 0, 0) ? path : NULL);
 }
 
-int
-_mkstemps_r (struct _reent *ptr,
-       char *path,
-       int len)
-{
-  int fd;
+int _mkstemps_r(struct _reent *ptr, char *path, int len) {
+    int fd;
 
-  return (_gettemp (ptr, path, &fd, 0, len, O_BINARY) ? fd : -1);
+    return (_gettemp(ptr, path, &fd, 0, len, O_BINARY) ? fd : -1);
 }
 
-int
-_mkostemp_r (struct _reent *ptr,
-       char *path,
-       int flags)
-{
-  int fd;
+int _mkostemp_r(struct _reent *ptr, char *path, int flags) {
+    int fd;
 
-  return (_gettemp (ptr, path, &fd, 0, 0, flags & ~O_ACCMODE) ? fd : -1);
+    return (_gettemp(ptr, path, &fd, 0, 0, flags & ~O_ACCMODE) ? fd : -1);
 }
 
-int
-_mkostemps_r (struct _reent *ptr,
-       char *path,
-       int len,
-       int flags)
-{
-  int fd;
+int _mkostemps_r(struct _reent *ptr, char *path, int len, int flags) {
+    int fd;
 
-  return (_gettemp (ptr, path, &fd, 0, len, flags & ~O_ACCMODE) ? fd : -1);
+    return (_gettemp(ptr, path, &fd, 0, len, flags & ~O_ACCMODE) ? fd : -1);
 }
 #endif /* _ELIX_LEVEL */
 
-char *
-_mktemp_r (struct _reent *ptr,
-       char *path)
-{
-  return (_gettemp (ptr, path, (int *) NULL, 0, 0, 0) ? path : (char *) NULL);
+char *_mktemp_r(struct _reent *ptr, char *path) {
+    return (_gettemp(ptr, path, (int *)NULL, 0, 0, 0) ? path : (char *)NULL);
 }
 
 #ifndef _REENT_ONLY
 
-int
-mkstemp (char *path)
-{
-  int fd;
+int mkstemp(char *path) {
+    int fd;
 
-  return (_gettemp (_REENT, path, &fd, 0, 0, O_BINARY) ? fd : -1);
+    return (_gettemp(_REENT, path, &fd, 0, 0, O_BINARY) ? fd : -1);
 }
 
-# if !defined _ELIX_LEVEL || _ELIX_LEVEL >= 4
-char *
-mkdtemp (char *path)
-{
-  return (_gettemp (_REENT, path, (int *) NULL, 1, 0, 0) ? path : NULL);
+#if !defined _ELIX_LEVEL || _ELIX_LEVEL >= 4
+char *mkdtemp(char *path) {
+    return (_gettemp(_REENT, path, (int *)NULL, 1, 0, 0) ? path : NULL);
 }
 
-int
-mkstemps (char *path,
-       int len)
-{
-  int fd;
+int mkstemps(char *path, int len) {
+    int fd;
 
-  return (_gettemp (_REENT, path, &fd, 0, len, O_BINARY) ? fd : -1);
+    return (_gettemp(_REENT, path, &fd, 0, len, O_BINARY) ? fd : -1);
 }
 
-int
-mkostemp (char *path,
-       int flags)
-{
-  int fd;
+int mkostemp(char *path, int flags) {
+    int fd;
 
-  return (_gettemp (_REENT, path, &fd, 0, 0, flags & ~O_ACCMODE) ? fd : -1);
+    return (_gettemp(_REENT, path, &fd, 0, 0, flags & ~O_ACCMODE) ? fd : -1);
 }
 
-int
-mkostemps (char *path,
-       int len,
-       int flags)
-{
-  int fd;
+int mkostemps(char *path, int len, int flags) {
+    int fd;
 
-  return (_gettemp (_REENT, path, &fd, 0, len, flags & ~O_ACCMODE) ? fd : -1);
+    return (_gettemp(_REENT, path, &fd, 0, len, flags & ~O_ACCMODE) ? fd : -1);
 }
-# endif /* _ELIX_LEVEL */
+#endif /* _ELIX_LEVEL */
 
-char *
-mktemp (char *path)
-{
-  return (_gettemp (_REENT, path, (int *) NULL, 0, 0, 0) ? path : (char *) NULL);
+char *mktemp(char *path) {
+    return (_gettemp(_REENT, path, (int *)NULL, 0, 0, 0) ? path : (char *)NULL);
 }
 
 #endif /* ! defined (_REENT_ONLY) */

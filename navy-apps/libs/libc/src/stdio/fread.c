@@ -92,177 +92,140 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #endif
 
 #ifdef __SCLE
-static size_t
-crlf_r (struct _reent * ptr,
-       FILE * fp,
-       char * buf,
-       size_t count,
-       int eof)
-{
-  int r;
-  char *s, *d, *e;
+static size_t crlf_r(struct _reent *ptr, FILE *fp, char *buf, size_t count, int eof) {
+    int r;
+    char *s, *d, *e;
 
-  if (count == 0)
-    return 0;
+    if(count == 0) return 0;
 
-  e = buf + count;
-  for (s=d=buf; s<e-1; s++)
-    {
-      if (*s == '\r' && s[1] == '\n')
-        s++;
-      *d++ = *s;
+    e = buf + count;
+    for(s = d = buf; s < e - 1; s++) {
+        if(*s == '\r' && s[1] == '\n') s++;
+        *d++ = *s;
     }
-  if (s < e)
-    {
-      if (*s == '\r')
-        {
-          int c = __sgetc_raw_r (ptr, fp);
-          if (c == '\n')
-            *s = '\n';
-          else
-            ungetc (c, fp);
+    if(s < e) {
+        if(*s == '\r') {
+            int c = __sgetc_raw_r(ptr, fp);
+            if(c == '\n')
+                *s = '\n';
+            else
+                ungetc(c, fp);
         }
-      *d++ = *s++;
+        *d++ = *s++;
     }
 
-
-  while (d < e)
-    {
-      r = _getc_r (ptr, fp);
-      if (r == EOF)
-        return count - (e-d);
-      *d++ = r;
+    while(d < e) {
+        r = _getc_r(ptr, fp);
+        if(r == EOF) return count - (e - d);
+        *d++ = r;
     }
 
-  return count;
-  
+    return count;
 }
 
 #endif
 
-size_t
-_fread_r (struct _reent * ptr,
-       void *__restrict buf,
-       size_t size,
-       size_t count,
-       FILE * __restrict fp)
-{
-  register size_t resid;
-  register char *p;
-  register int r;
-  size_t total;
+size_t _fread_r(struct _reent *ptr, void *__restrict buf, size_t size, size_t count,
+                FILE *__restrict fp) {
+    register size_t resid;
+    register char *p;
+    register int r;
+    size_t total;
 
-  if ((resid = count * size) == 0)
-    return 0;
+    if((resid = count * size) == 0) return 0;
 
-  CHECK_INIT(ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, -1);
-  if (fp->_r < 0)
-    fp->_r = 0;
-  total = resid;
-  p = buf;
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, -1);
+    if(fp->_r < 0) fp->_r = 0;
+    total = resid;
+    p = buf;
 
 #if !defined(PREFER_SIZE_OVER_SPEED) && !defined(__OPTIMIZE_SIZE__)
 
-  /* Optimize unbuffered I/O.  */
-  if (fp->_flags & __SNBF)
-    {
-      /* First copy any available characters from ungetc buffer.  */
-      int copy_size = resid > fp->_r ? fp->_r : resid;
-      (void) memcpy ((void *) p, (void *) fp->_p, (size_t) copy_size);
-      fp->_p += copy_size;
-      fp->_r -= copy_size;
-      p += copy_size;
-      resid -= copy_size;
+    /* Optimize unbuffered I/O.  */
+    if(fp->_flags & __SNBF) {
+        /* First copy any available characters from ungetc buffer.  */
+        int copy_size = resid > fp->_r ? fp->_r : resid;
+        (void)memcpy((void *)p, (void *)fp->_p, (size_t)copy_size);
+        fp->_p += copy_size;
+        fp->_r -= copy_size;
+        p += copy_size;
+        resid -= copy_size;
 
-      /* If still more data needed, free any allocated ungetc buffer.  */
-      if (HASUB (fp) && resid > 0)
-	FREEUB (ptr, fp);
+        /* If still more data needed, free any allocated ungetc buffer.  */
+        if(HASUB(fp) && resid > 0) FREEUB(ptr, fp);
 
-      /* Finally read directly into user's buffer if needed.  */
-      while (resid > 0)
-	{
-	  int rc = 0;
-	  /* save fp buffering state */
-	  void *old_base = fp->_bf._base;
-	  void * old_p = fp->_p;
-	  int old_size = fp->_bf._size;
-	  /* allow __refill to use user's buffer */
-	  fp->_bf._base = (unsigned char *) p;
-	  fp->_bf._size = resid;
-	  fp->_p = (unsigned char *) p;
-	  rc = __srefill_r (ptr, fp);
-	  /* restore fp buffering back to original state */
-	  fp->_bf._base = old_base;
-	  fp->_bf._size = old_size;
-	  fp->_p = old_p;
-	  resid -= fp->_r;
-	  p += fp->_r;
-	  fp->_r = 0;
-	  if (rc)
-	    {
+        /* Finally read directly into user's buffer if needed.  */
+        while(resid > 0) {
+            int rc = 0;
+            /* save fp buffering state */
+            void *old_base = fp->_bf._base;
+            void *old_p = fp->_p;
+            int old_size = fp->_bf._size;
+            /* allow __refill to use user's buffer */
+            fp->_bf._base = (unsigned char *)p;
+            fp->_bf._size = resid;
+            fp->_p = (unsigned char *)p;
+            rc = __srefill_r(ptr, fp);
+            /* restore fp buffering back to original state */
+            fp->_bf._base = old_base;
+            fp->_bf._size = old_size;
+            fp->_p = old_p;
+            resid -= fp->_r;
+            p += fp->_r;
+            fp->_r = 0;
+            if(rc) {
 #ifdef __SCLE
-              if (fp->_flags & __SCLE)
-	        {
-	          _newlib_flockfile_exit (fp);
-	          return crlf_r (ptr, fp, buf, total-resid, 1) / size;
-	        }
+                if(fp->_flags & __SCLE) {
+                    _newlib_flockfile_exit(fp);
+                    return crlf_r(ptr, fp, buf, total - resid, 1) / size;
+                }
 #endif
-	      _newlib_flockfile_exit (fp);
-	      return (total - resid) / size;
-	    }
-	}
-    }
-  else
+                _newlib_flockfile_exit(fp);
+                return (total - resid) / size;
+            }
+        }
+    } else
 #endif /* !PREFER_SIZE_OVER_SPEED && !__OPTIMIZE_SIZE__ */
     {
-      while (resid > (r = fp->_r))
-	{
-	  (void) memcpy ((void *) p, (void *) fp->_p, (size_t) r);
-	  fp->_p += r;
-	  /* fp->_r = 0 ... done in __srefill */
-	  p += r;
-	  resid -= r;
-	  if (__srefill_r (ptr, fp))
-	    {
-	      /* no more input: return partial result */
+        while(resid > (r = fp->_r)) {
+            (void)memcpy((void *)p, (void *)fp->_p, (size_t)r);
+            fp->_p += r;
+            /* fp->_r = 0 ... done in __srefill */
+            p += r;
+            resid -= r;
+            if(__srefill_r(ptr, fp)) {
+                /* no more input: return partial result */
 #ifdef __SCLE
-	      if (fp->_flags & __SCLE)
-		{
-		  _newlib_flockfile_exit (fp);
-		  return crlf_r (ptr, fp, buf, total-resid, 1) / size;
-		}
+                if(fp->_flags & __SCLE) {
+                    _newlib_flockfile_exit(fp);
+                    return crlf_r(ptr, fp, buf, total - resid, 1) / size;
+                }
 #endif
-	      _newlib_flockfile_exit (fp);
-	      return (total - resid) / size;
-	    }
-	}
-      (void) memcpy ((void *) p, (void *) fp->_p, resid);
-      fp->_r -= resid;
-      fp->_p += resid;
+                _newlib_flockfile_exit(fp);
+                return (total - resid) / size;
+            }
+        }
+        (void)memcpy((void *)p, (void *)fp->_p, resid);
+        fp->_r -= resid;
+        fp->_p += resid;
     }
 
-  /* Perform any CR/LF clean-up if necessary.  */
+    /* Perform any CR/LF clean-up if necessary.  */
 #ifdef __SCLE
-  if (fp->_flags & __SCLE)
-    {
-      _newlib_flockfile_exit (fp);
-      return crlf_r(ptr, fp, buf, total, 0) / size;
+    if(fp->_flags & __SCLE) {
+        _newlib_flockfile_exit(fp);
+        return crlf_r(ptr, fp, buf, total, 0) / size;
     }
 #endif
-  _newlib_flockfile_end (fp);
-  return count;
+    _newlib_flockfile_end(fp);
+    return count;
 }
 
 #ifndef _REENT_ONLY
-size_t
-fread (void *__restrict  buf,
-       size_t size,
-       size_t count,
-       FILE *__restrict fp)
-{
-   return _fread_r (_REENT, buf, size, count, fp);
+size_t fread(void *__restrict buf, size_t size, size_t count, FILE *__restrict fp) {
+    return _fread_r(_REENT, buf, size, count, fp);
 }
 #endif

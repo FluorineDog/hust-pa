@@ -49,40 +49,28 @@ effects vary with the locale.
 #include <wchar.h>
 #include "local.h"
 
-int
-mbtowc (wchar_t *__restrict pwc,
-        const char *__restrict s,
-        size_t n)
-{
+int mbtowc(wchar_t *__restrict pwc, const char *__restrict s, size_t n) {
 #ifdef _MB_CAPABLE
-  int retval = 0;
-  struct _reent *reent = _REENT;
-  mbstate_t *ps;
+    int retval = 0;
+    struct _reent *reent = _REENT;
+    mbstate_t *ps;
 
-  _REENT_CHECK_MISC(reent);
-  ps = &(_REENT_MBTOWC_STATE(reent));
-  
-  retval = __MBTOWC (reent, pwc, s, n, ps);
-  
-  if (retval < 0)
-    {
-      ps->__count = 0;
-      return -1;
+    _REENT_CHECK_MISC(reent);
+    ps = &(_REENT_MBTOWC_STATE(reent));
+
+    retval = __MBTOWC(reent, pwc, s, n, ps);
+
+    if(retval < 0) {
+        ps->__count = 0;
+        return -1;
     }
-  return retval;
-#else /* not _MB_CAPABLE */
-  if (s == NULL)
-    return 0;
-  if (n == 0)
-    return -1;
-  if (pwc)
-    *pwc = (wchar_t) *s;
-  return (*s != '\0');
+    return retval;
+#else  /* not _MB_CAPABLE */
+    if(s == NULL) return 0;
+    if(n == 0) return -1;
+    if(pwc) *pwc = (wchar_t)*s;
+    return (*s != '\0');
 #endif /* not _MB_CAPABLE */
 }
 
 #endif /* !_REENT_ONLY */
-
-
-
-

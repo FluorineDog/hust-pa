@@ -46,29 +46,24 @@ effects vary with the locale.
 #include <stdlib.h>
 #include <wchar.h>
 
-size_t
-mbstowcs (wchar_t *__restrict pwcs,
-        const char *__restrict s,
-        size_t n)
-{
+size_t mbstowcs(wchar_t *__restrict pwcs, const char *__restrict s, size_t n) {
 #ifdef _MB_CAPABLE
-  mbstate_t state;
-  state.__count = 0;
-  
-  return _mbstowcs_r (_REENT, pwcs, s, n, &state);
-#else /* not _MB_CAPABLE */
-  
-  int count = 0;
-  
-  if (n != 0) {
-    do {
-      if ((*pwcs++ = (wchar_t) *s++) == 0)
-	break;
-      count++;
-    } while (--n != 0);
-  }
-  
-  return count;
+    mbstate_t state;
+    state.__count = 0;
+
+    return _mbstowcs_r(_REENT, pwcs, s, n, &state);
+#else  /* not _MB_CAPABLE */
+
+    int count = 0;
+
+    if(n != 0) {
+        do {
+            if((*pwcs++ = (wchar_t)*s++) == 0) break;
+            count++;
+        } while(--n != 0);
+    }
+
+    return count;
 #endif /* not _MB_CAPABLE */
 }
 

@@ -23,26 +23,22 @@
 #include <wordexp.h>
 #include "wordexp2.h"
 
-void
-wordfree(wordexp_t *pwordexp)
-{
-  ext_wordv_t *wordv;
+void wordfree(wordexp_t *pwordexp) {
+    ext_wordv_t *wordv;
 
-  if (pwordexp == NULL)
-    return;
+    if(pwordexp == NULL) return;
 
-  if (pwordexp->we_wordv == NULL)
-    return;
+    if(pwordexp->we_wordv == NULL) return;
 
-  wordv = WE_WORDV_TO_EXT_WORDV(pwordexp->we_wordv);
-  while (!SLIST_EMPTY(&wordv->list)) {
-    struct ewords_entry *entry = SLIST_FIRST(&wordv->list);
-    SLIST_REMOVE_HEAD(&wordv->list, next);
-    free(entry);
-  }
+    wordv = WE_WORDV_TO_EXT_WORDV(pwordexp->we_wordv);
+    while(!SLIST_EMPTY(&wordv->list)) {
+        struct ewords_entry *entry = SLIST_FIRST(&wordv->list);
+        SLIST_REMOVE_HEAD(&wordv->list, next);
+        free(entry);
+    }
 
-  free(wordv);
-  pwordexp->we_wordv = NULL;
+    free(wordv);
+    pwordexp->we_wordv = NULL;
 }
 
 #endif /* !_NO_WORDEXP  */

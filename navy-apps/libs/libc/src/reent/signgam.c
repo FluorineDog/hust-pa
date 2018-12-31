@@ -7,10 +7,8 @@
 
 #ifndef _REENT_ONLY
 
-int *
-__signgam (void)
-{
-  return &_REENT_SIGNGAM(_REENT);
+int* __signgam(void) {
+    return &_REENT_SIGNGAM(_REENT);
 }
 
 #endif

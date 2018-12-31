@@ -45,28 +45,24 @@ effects vary with the locale.
 #include <errno.h>
 #include "local.h"
 
-int
-wctomb (char *s,
-        wchar_t wchar)
-{
+int wctomb(char *s, wchar_t wchar) {
 #ifdef _MB_CAPABLE
-	struct _reent *reent = _REENT;
+    struct _reent *reent = _REENT;
 
-        _REENT_CHECK_MISC(reent);
+    _REENT_CHECK_MISC(reent);
 
-        return __WCTOMB (reent, s, wchar, &(_REENT_WCTOMB_STATE(reent)));
-#else /* not _MB_CAPABLE */
-        if (s == NULL)
-                return 0;
+    return __WCTOMB(reent, s, wchar, &(_REENT_WCTOMB_STATE(reent)));
+#else  /* not _MB_CAPABLE */
+    if(s == NULL) return 0;
 
-	/* Verify that wchar is a valid single-byte character.  */
-	if ((size_t)wchar >= 0x100) {
-		errno = EILSEQ;
-		return -1;
-	}
+    /* Verify that wchar is a valid single-byte character.  */
+    if((size_t)wchar >= 0x100) {
+        errno = EILSEQ;
+        return -1;
+    }
 
-        *s = (char) wchar;
-        return 1;
+    *s = (char)wchar;
+    return 1;
 #endif /* not _MB_CAPABLE */
 }
 

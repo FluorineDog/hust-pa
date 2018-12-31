@@ -40,29 +40,20 @@ effects vary with the locale.
 #include <wchar.h>
 #include "local.h"
 
-int
-_mblen_r (struct _reent *r,
-        const char *s,
-        size_t n,
-        mbstate_t *state)
-{
+int _mblen_r(struct _reent *r, const char *s, size_t n, mbstate_t *state) {
 #ifdef _MB_CAPABLE
-  int retval;
-  retval = __MBTOWC (r, NULL, s, n, state);
+    int retval;
+    retval = __MBTOWC(r, NULL, s, n, state);
 
-  if (retval < 0)
-    {
-      state->__count = 0;
-      return -1;
+    if(retval < 0) {
+        state->__count = 0;
+        return -1;
     }
 
-  return retval;
-#else /* not _MB_CAPABLE */
-  if (s == NULL || *s == '\0')
-    return 0;
-  if (n == 0)
-    return -1;
-  return 1;
+    return retval;
+#else  /* not _MB_CAPABLE */
+    if(s == NULL || *s == '\0') return 0;
+    if(n == 0) return -1;
+    return 1;
 #endif /* not _MB_CAPABLE */
 }
-

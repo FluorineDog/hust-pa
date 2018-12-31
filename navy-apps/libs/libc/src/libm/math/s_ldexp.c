@@ -46,7 +46,7 @@ On overflow, <<ldexp>> returns plus or minus <<HUGE_VAL>>.
 PORTABILITY
 <<ldexp>> is ANSI. <<ldexpf>> is an extension.
               
-*/   
+*/
 
 #include "fdlibm.h"
 #include <errno.h>
@@ -54,16 +54,16 @@ PORTABILITY
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double ldexp(double value, int exp)
+double ldexp(double value, int exp)
 #else
-	double ldexp(value, exp)
-	double value; int exp;
+double ldexp(value, exp) double value;
+int exp;
 #endif
 {
-	if(!finite(value)||value==0.0) return value;
-	value = scalbn(value,exp);
-	if(!finite(value)||value==0.0) errno = ERANGE;
-	return value;
+    if(!finite(value) || value == 0.0) return value;
+    value = scalbn(value, exp);
+    if(!finite(value) || value == 0.0) errno = ERANGE;
+    return value;
 }
 
 #endif /* _DOUBLE_IS_32BITS */

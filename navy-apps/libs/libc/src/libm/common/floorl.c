@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-floorl (long double x)
-{
-  return floor(x);
+long double floorl(long double x) {
+    return floor(x);
 }
 #endif
-

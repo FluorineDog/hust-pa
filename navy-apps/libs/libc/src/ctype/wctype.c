@@ -75,67 +75,53 @@ No supporting OS subroutines are required.
 #include <errno.h>
 #include "local.h"
 
-wctype_t
-_wctype_r (struct _reent *r,
-	const char *c)
-{
-  switch (*c)
-    {
-    case 'a':
-      if (!strcmp (c, "alnum"))
-        return WC_ALNUM; 
-      else if (!strcmp (c, "alpha"))
-        return WC_ALPHA;
-      break;
-    case 'b':
-      if (!strcmp (c, "blank"))
-        return WC_BLANK;
-      break;
-    case 'c':
-      if (!strcmp (c, "cntrl"))
-        return WC_CNTRL;
-      break;
-    case 'd':
-      if (!strcmp (c, "digit"))
-        return WC_DIGIT;
-      break;
-    case 'g':
-      if (!strcmp (c, "graph"))
-        return WC_GRAPH;
-      break;
-    case 'l':
-      if (!strcmp (c, "lower"))
-        return WC_LOWER;
-      break;
-    case 'p':
-      if (!strcmp (c, "print"))
-        return WC_PRINT;
-      else if (!strcmp (c, "punct"))
-        return WC_PUNCT;
-      break;
-    case 's':
-      if (!strcmp (c, "space"))
-        return WC_SPACE;
-      break;
-    case 'u':
-      if (!strcmp (c, "upper"))
-        return WC_UPPER;
-      break;
-    case 'x':
-      if (!strcmp (c, "xdigit"))
-        return WC_XDIGIT;
-      break;
+wctype_t _wctype_r(struct _reent *r, const char *c) {
+    switch(*c) {
+        case 'a':
+            if(!strcmp(c, "alnum"))
+                return WC_ALNUM;
+            else if(!strcmp(c, "alpha"))
+                return WC_ALPHA;
+            break;
+        case 'b':
+            if(!strcmp(c, "blank")) return WC_BLANK;
+            break;
+        case 'c':
+            if(!strcmp(c, "cntrl")) return WC_CNTRL;
+            break;
+        case 'd':
+            if(!strcmp(c, "digit")) return WC_DIGIT;
+            break;
+        case 'g':
+            if(!strcmp(c, "graph")) return WC_GRAPH;
+            break;
+        case 'l':
+            if(!strcmp(c, "lower")) return WC_LOWER;
+            break;
+        case 'p':
+            if(!strcmp(c, "print"))
+                return WC_PRINT;
+            else if(!strcmp(c, "punct"))
+                return WC_PUNCT;
+            break;
+        case 's':
+            if(!strcmp(c, "space")) return WC_SPACE;
+            break;
+        case 'u':
+            if(!strcmp(c, "upper")) return WC_UPPER;
+            break;
+        case 'x':
+            if(!strcmp(c, "xdigit")) return WC_XDIGIT;
+            break;
     }
 
-  /* otherwise invalid */
-  r->_errno = EINVAL;
-  return 0;
+    /* otherwise invalid */
+    r->_errno = EINVAL;
+    return 0;
 }
 
 #ifndef _REENT_ONLY
-wctype_t
-wctype (const char *c)
-{
-  return _wctype_r (_REENT, c);
+wctype_t wctype(const char *c) {
+    return _wctype_r(_REENT, c);
 }
 #endif /* !_REENT_ONLY */

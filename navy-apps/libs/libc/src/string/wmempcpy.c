@@ -33,10 +33,6 @@ No supporting OS subroutines are required.
 #include <string.h>
 #include <wchar.h>
 
-wchar_t *
-wmempcpy (wchar_t *__restrict d,
-	const wchar_t *__restrict s,
-	size_t n)
-{
-  return (wchar_t *) mempcpy (d, s, n * sizeof (wchar_t));
+wchar_t *wmempcpy(wchar_t *__restrict d, const wchar_t *__restrict s, size_t n) {
+    return (wchar_t *)mempcpy(d, s, n * sizeof(wchar_t));
 }

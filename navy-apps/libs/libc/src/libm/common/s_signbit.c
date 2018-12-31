@@ -35,25 +35,21 @@ C99, POSIX.
 
 #include "fdlibm.h"
 
-int __signbitf (float x);
-int __signbitd (double x);
+int __signbitf(float x);
+int __signbitd(double x);
 
-int
-__signbitf (float x)
-{
-  __uint32_t w;
+int __signbitf(float x) {
+    __uint32_t w;
 
-  GET_FLOAT_WORD(w,x);
+    GET_FLOAT_WORD(w, x);
 
-  return (w & 0x80000000) != 0;
+    return (w & 0x80000000) != 0;
 }
 
-int
-__signbitd (double x)
-{
-  __uint32_t msw;
+int __signbitd(double x) {
+    __uint32_t msw;
 
-  GET_HIGH_WORD(msw, x);
+    GET_HIGH_WORD(msw, x);
 
-  return (msw & 0x80000000) != 0;
+    return (msw & 0x80000000) != 0;
 }

@@ -31,69 +31,56 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-sqrtf (float x)
-{
-  float f, y;
-  int exp, i, odd;
+float sqrtf(float x) {
+    float f, y;
+    int exp, i, odd;
 
-  /* Check for special values. */
-  switch (numtestf (x))
-    {
-      case NAN:
+    /* Check for special values. */
+    switch(numtestf(x)) {
+        case NAN: errno = EDOM; return (x);
+        case INF:
+            if(isposf(x)) {
+                errno = EDOM;
+                return (z_notanum_f.f);
+            } else {
+                errno = ERANGE;
+                return (z_infinity_f.f);
+            }
+    }
+
+    /* Initial checks are performed here. */
+    if(x == 0.0) return (0.0);
+    if(x < 0) {
         errno = EDOM;
-        return (x);
-      case INF:
-        if (isposf (x))
-          {
-            errno = EDOM;
-            return (z_notanum_f.f);
-          }
-        else
-          {
-            errno = ERANGE;
-            return (z_infinity_f.f);
-          }
-    } 
-
-  /* Initial checks are performed here. */
-  if (x == 0.0)
-    return (0.0);
-  if (x < 0)
-    {
-      errno = EDOM;
-      return (z_notanum_f.f);
+        return (z_notanum_f.f);
     }
 
-  /* Find the exponent and mantissa for the form x = f * 2^exp. */
-  f = frexpf (x, &exp);
-  odd = exp & 1;
+    /* Find the exponent and mantissa for the form x = f * 2^exp. */
+    f = frexpf(x, &exp);
+    odd = exp & 1;
 
-  /* Get the initial approximation. */
-  y = 0.41731 + 0.59016 * f;
+    /* Get the initial approximation. */
+    y = 0.41731 + 0.59016 * f;
 
-  f *= 0.5;
-  /* Calculate the remaining iterations. */
-  for (i = 0; i < 2; ++i)
-    y = y * 0.5 + f / y;
+    f *= 0.5;
+    /* Calculate the remaining iterations. */
+    for(i = 0; i < 2; ++i) y = y * 0.5 + f / y;
 
-  /* Calculate the final value. */
-  if (odd)
-    {
-      y *= __SQRT_HALF;
-      exp++;
+    /* Calculate the final value. */
+    if(odd) {
+        y *= __SQRT_HALF;
+        exp++;
     }
-  exp >>= 1;
-  y = ldexpf (y, exp);
+    exp >>= 1;
+    y = ldexpf(y, exp);
 
-  return (y);
+    return (y);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-double sqrt (double x)
-{
-  return (double) sqrtf ((float) x);
+double sqrt(double x) {
+    return (double)sqrtf((float)x);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

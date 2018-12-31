@@ -32,24 +32,17 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wchar.h>
 
-wchar_t *
-wcpncpy (wchar_t *__restrict dst,
-	const wchar_t *__restrict src,
-	size_t count)
-{
-  wchar_t *ret = NULL;
+wchar_t *wcpncpy(wchar_t *__restrict dst, const wchar_t *__restrict src, size_t count) {
+    wchar_t *ret = NULL;
 
-  while (count > 0)
-    {
-      --count;
-      if ((*dst++ = *src++) == L'\0')
-	{
-	  ret = dst - 1;
-	  break;
-	}
+    while(count > 0) {
+        --count;
+        if((*dst++ = *src++) == L'\0') {
+            ret = dst - 1;
+            break;
+        }
     }
-  while (count-- > 0)
-    *dst++ = L'\0';
+    while(count-- > 0) *dst++ = L'\0';
 
-  return ret ? ret : dst;
+    return ret ? ret : dst;
 }

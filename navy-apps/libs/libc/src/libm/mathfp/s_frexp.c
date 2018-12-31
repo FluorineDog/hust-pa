@@ -66,35 +66,30 @@ PORTABILITY
 
 #ifndef _DOUBLE_IS_32BITS
 
-double frexp (double d, int *exp)
-{
-  double f;
-  __uint32_t hd, ld, hf, lf;
+double frexp(double d, int *exp) {
+    double f;
+    __uint32_t hd, ld, hf, lf;
 
-  /* Check for special values. */
-  switch (numtest (d))
-    {
-      case NAN:
-      case INF:
-        errno = EDOM;
-      case 0:
-        *exp = 0;
-        return (d);
+    /* Check for special values. */
+    switch(numtest(d)) {
+        case NAN:
+        case INF: errno = EDOM;
+        case 0: *exp = 0; return (d);
     }
 
-  EXTRACT_WORDS (hd, ld, d);
+    EXTRACT_WORDS(hd, ld, d);
 
-  /* Get the exponent. */
-  *exp = ((hd & 0x7ff00000) >> 20) - 1022;
+    /* Get the exponent. */
+    *exp = ((hd & 0x7ff00000) >> 20) - 1022;
 
-  /* Get the mantissa. */ 
-  lf = ld;
-  hf = hd & 0x800fffff;  
-  hf |= 0x3fe00000;
+    /* Get the mantissa. */
+    lf = ld;
+    hf = hd & 0x800fffff;
+    hf |= 0x3fe00000;
 
-  INSERT_WORDS (f, hf, lf);
+    INSERT_WORDS(f, hf, lf);
 
-  return (f);
+    return (f);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

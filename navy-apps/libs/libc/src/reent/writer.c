@@ -37,18 +37,12 @@ DESCRIPTION
 	<<errno>>.
 */
 
-_ssize_t
-_write_r (struct _reent *ptr,
-     int fd,
-     const void *buf,
-     size_t cnt)
-{
-  _ssize_t ret;
+_ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t cnt) {
+    _ssize_t ret;
 
-  errno = 0;
-  if ((ret = (_ssize_t)_write (fd, buf, cnt)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = (_ssize_t)_write(fd, buf, cnt)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

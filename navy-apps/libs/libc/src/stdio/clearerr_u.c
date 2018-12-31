@@ -30,11 +30,9 @@
 
 /* A subroutine version of the macro clearerr_unlocked.  */
 
-#undef	clearerr_unlocked
+#undef clearerr_unlocked
 
-void
-clearerr_unlocked (FILE * fp)
-{
-  CHECK_INIT(_REENT, fp);
-  __sclearerr (fp);
+void clearerr_unlocked(FILE* fp) {
+    CHECK_INIT(_REENT, fp);
+    __sclearerr(fp);
 }

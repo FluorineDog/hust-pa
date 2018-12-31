@@ -72,92 +72,66 @@ PORTABILITY
 #include "local.h"
 #include "../locale/setlocale.h"
 
-size_t
-_wcsnrtombs_l (struct _reent *r, char *dst, const wchar_t **src, size_t nwc,
-	       size_t len, mbstate_t *ps, struct __locale_t *loc)
-{
-  char *ptr = dst;
-  char buff[10];
-  wchar_t *pwcs;
-  size_t n;
-  int i;
+size_t _wcsnrtombs_l(struct _reent *r, char *dst, const wchar_t **src, size_t nwc,
+                     size_t len, mbstate_t *ps, struct __locale_t *loc) {
+    char *ptr = dst;
+    char buff[10];
+    wchar_t *pwcs;
+    size_t n;
+    int i;
 
 #ifdef _MB_CAPABLE
-  if (ps == NULL)
-    {
-      _REENT_CHECK_MISC(r);
-      ps = &(_REENT_WCSRTOMBS_STATE(r));
+    if(ps == NULL) {
+        _REENT_CHECK_MISC(r);
+        ps = &(_REENT_WCSRTOMBS_STATE(r));
     }
 #endif
 
-  /* If no dst pointer, treat len as maximum possible value. */
-  if (dst == NULL)
-    len = (size_t)-1;
+    /* If no dst pointer, treat len as maximum possible value. */
+    if(dst == NULL) len = (size_t)-1;
 
-  n = 0;
-  pwcs = (wchar_t *)(*src);
+    n = 0;
+    pwcs = (wchar_t *)(*src);
 
-  while (n < len && nwc-- > 0)
-    {
-      int count = ps->__count;
-      wint_t wch = ps->__value.__wch;
-      int bytes = loc->wctomb (r, buff, *pwcs, ps);
-      if (bytes == -1)
-	{
-	  r->_errno = EILSEQ;
-	  ps->__count = 0;
-	  return (size_t)-1;
-	}
-      if (n + bytes <= len)
-	{
-          n += bytes;
-	  if (dst)
-	    {
-	      for (i = 0; i < bytes; ++i)
-	        *ptr++ = buff[i];
-	      ++(*src);
-	    }
-	  if (*pwcs++ == 0x00)
-	    {
-	      if (dst)
-	        *src = NULL;
-	      ps->__count = 0;
-	      return n - 1;
-	    }
-	}
-      else
-	{
-	  /* not enough room, we must back up state to before __WCTOMB call */
-	  ps->__count = count;
-	  ps->__value.__wch = wch;
-          len = 0;
-	}
+    while(n < len && nwc-- > 0) {
+        int count = ps->__count;
+        wint_t wch = ps->__value.__wch;
+        int bytes = loc->wctomb(r, buff, *pwcs, ps);
+        if(bytes == -1) {
+            r->_errno = EILSEQ;
+            ps->__count = 0;
+            return (size_t)-1;
+        }
+        if(n + bytes <= len) {
+            n += bytes;
+            if(dst) {
+                for(i = 0; i < bytes; ++i) *ptr++ = buff[i];
+                ++(*src);
+            }
+            if(*pwcs++ == 0x00) {
+                if(dst) *src = NULL;
+                ps->__count = 0;
+                return n - 1;
+            }
+        } else {
+            /* not enough room, we must back up state to before __WCTOMB call */
+            ps->__count = count;
+            ps->__value.__wch = wch;
+            len = 0;
+        }
     }
 
-  return n;
-} 
+    return n;
+}
 
-size_t
-_wcsnrtombs_r (struct _reent *r,
-	char *dst,
-	const wchar_t **src,
-	size_t nwc,
-	size_t len,
-	mbstate_t *ps)
-{
-  return _wcsnrtombs_l (_REENT, dst, src, nwc, len, ps,
-			__get_current_locale ());
+size_t _wcsnrtombs_r(struct _reent *r, char *dst, const wchar_t **src, size_t nwc,
+                     size_t len, mbstate_t *ps) {
+    return _wcsnrtombs_l(_REENT, dst, src, nwc, len, ps, __get_current_locale());
 }
 
 #ifndef _REENT_ONLY
-size_t
-wcsnrtombs (char *__restrict dst,
-	const wchar_t **__restrict src,
-	size_t nwc,
-	size_t len,
-	mbstate_t *__restrict ps)
-{
-  return _wcsnrtombs_l (_REENT, dst, src, nwc, len, ps,
-			__get_current_locale ());
+size_t wcsnrtombs(char *__restrict dst, const wchar_t **__restrict src, size_t nwc,
+                  size_t len, mbstate_t *__restrict ps) {
+    return _wcsnrtombs_l(_REENT, dst, src, nwc, len, ps, __get_current_locale());
 }
 #endif /* !_REENT_ONLY */

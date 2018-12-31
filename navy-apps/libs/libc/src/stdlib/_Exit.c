@@ -30,11 +30,9 @@ Supporting OS subroutines required: <<_exit>>.
 */
 
 #include <stdlib.h>
-#include <unistd.h>	/* for _exit() declaration */
+#include <unistd.h> /* for _exit() declaration */
 #include <reent.h>
 
-void 
-_Exit (int code)
-{
-  _exit (code);
+void _Exit(int code) {
+    _exit(code);
 }

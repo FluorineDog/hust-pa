@@ -46,14 +46,11 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include "fdlibm.h"
 
-double
-creal(double complex z)
-{
-	double_complex w = { .z = z };
+double creal(double complex z) {
+    double_complex w = {.z = z};
 
-	return (REAL_PART(w));
+    return (REAL_PART(w));
 }

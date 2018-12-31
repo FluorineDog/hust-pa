@@ -55,37 +55,31 @@ _ARC4_LOCK_INIT
 _ARC4RANDOM_DATA
 #else
 static struct {
-	struct _rs rs;
-	struct _rsx rsx;
+    struct _rs rs;
+    struct _rsx rsx;
 } _arc4random_data;
 #endif
 
-static inline void
-_getentropy_fail(void)
-{
+static inline void _getentropy_fail(void) {
 #ifdef _ARC4RANDOM_GETENTROPY_FAIL
-	_ARC4RANDOM_GETENTROPY_FAIL();
+    _ARC4RANDOM_GETENTROPY_FAIL();
 #else
-	raise(SIGKILL);
+    raise(SIGKILL);
 #endif
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
-{
+static inline int _rs_allocate(struct _rs **rsp, struct _rsx **rsxp) {
 #ifdef _ARC4RANDOM_ALLOCATE
-	_ARC4RANDOM_ALLOCATE(rsp, rsxp);
+    _ARC4RANDOM_ALLOCATE(rsp, rsxp);
 #else
-	*rsp = &_arc4random_data.rs;
-	*rsxp = &_arc4random_data.rsx;
-	return (0);
+    *rsp = &_arc4random_data.rs;
+    *rsxp = &_arc4random_data.rsx;
+    return (0);
 #endif
 }
 
-static inline void
-_rs_forkdetect(void)
-{
+static inline void _rs_forkdetect(void) {
 #ifdef _ARC4RANDOM_FORKDETECT
-	_ARC4RANDOM_FORKDETECT();
+    _ARC4RANDOM_FORKDETECT();
 #endif
 }

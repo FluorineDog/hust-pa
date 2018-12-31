@@ -17,43 +17,40 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	float tgammaf(float x)
+float tgammaf(float x)
 #else
-	float tgammaf(x)
-	float x;
+float tgammaf(x) float x;
 #endif
 {
-        float y;
-	int local_signgam;
-	y = __ieee754_gammaf_r(x,&local_signgam);
-	if (local_signgam < 0) y = -y;
+    float y;
+    int local_signgam;
+    y = __ieee754_gammaf_r(x, &local_signgam);
+    if(local_signgam < 0) y = -y;
 #ifdef _IEEE_LIBM
-	return y;
+    return y;
 #else
-	if(_LIB_VERSION == _IEEE_) return y;
+    if(_LIB_VERSION == _IEEE_) return y;
 
-	if(!finitef(y)&&finitef(x)) {
-	  if(floorf(x)==x&&x<=(float)0.0)
-	    /* tgammaf pole */
-	    return (float)__kernel_standard((double)x,(double)x,141);
-	  else
-	    /* tgammaf overflow */
-	    return (float)__kernel_standard((double)x,(double)x,140);
-	}
-	return y;
+    if(!finitef(y) && finitef(x)) {
+        if(floorf(x) == x && x <= (float)0.0) /* tgammaf pole */
+            return (float)__kernel_standard((double)x, (double)x, 141);
+        else
+            /* tgammaf overflow */
+            return (float)__kernel_standard((double)x, (double)x, 140);
+    }
+    return y;
 #endif
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double tgamma(double x)
+double tgamma(double x)
 #else
-	double tgamma(x)
-	double x;
+double tgamma(x) double x;
 #endif
 {
-	return (double) tgammaf((float) x);
+    return (double)tgammaf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

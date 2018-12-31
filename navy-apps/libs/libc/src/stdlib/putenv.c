@@ -22,10 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-int
-putenv (char *str)
-{
-  return _putenv_r (_REENT, str);
+int putenv(char *str) {
+    return _putenv_r(_REENT, str);
 }
 
 #endif /* !_REENT_ONLY */

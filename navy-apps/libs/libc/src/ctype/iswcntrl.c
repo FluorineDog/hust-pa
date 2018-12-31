@@ -65,8 +65,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswcntrl (wint_t c)
-{
-  return iswcntrl_l (c, 0);
+int iswcntrl(wint_t c) {
+    return iswcntrl_l(c, 0);
 }

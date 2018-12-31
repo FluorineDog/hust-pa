@@ -28,13 +28,10 @@ QUICKREF
 #include <string.h>
 #include <ctype.h>
 
-char *
-strlwr (char *s)
-{
-  unsigned char *ucs = (unsigned char *) s;
-  for ( ; *ucs != '\0'; ucs++)
-    {
-      *ucs = tolower(*ucs);
+char *strlwr(char *s) {
+    unsigned char *ucs = (unsigned char *)s;
+    for(; *ucs != '\0'; ucs++) {
+        *ucs = tolower(*ucs);
     }
-  return s;
+    return s;
 }

@@ -23,11 +23,7 @@
 #include "map.h"
 
 LPPALMAP
-PAL_LoadMap(
-   INT               iMapNum,
-   FILE             *fpMapMKF,
-   FILE             *fpGopMKF
-)
+PAL_LoadMap(INT iMapNum, FILE *fpMapMKF, FILE *fpGopMKF)
 /*++
   Purpose:
 
@@ -50,113 +46,99 @@ PAL_LoadMap(
 
 --*/
 {
-   LPBYTE                     buf;
-   INT                        size, i, j;
-   LPPALMAP                   map;
+    LPBYTE buf;
+    INT size, i, j;
+    LPPALMAP map;
 
-   //
-   // Check for invalid map number.
-   //
-   if (iMapNum >= PAL_MKFGetChunkCount(fpMapMKF) ||
-      iMapNum >= PAL_MKFGetChunkCount(fpGopMKF) ||
-      iMapNum <= 0)
-   {
-      return NULL;
-   }
+    //
+    // Check for invalid map number.
+    //
+    if(iMapNum >= PAL_MKFGetChunkCount(fpMapMKF) ||
+       iMapNum >= PAL_MKFGetChunkCount(fpGopMKF) || iMapNum <= 0) {
+        return NULL;
+    }
 
-   //
-   // Load the map tile data.
-   //
-   size = PAL_MKFGetChunkSize(iMapNum, fpMapMKF);
+    //
+    // Load the map tile data.
+    //
+    size = PAL_MKFGetChunkSize(iMapNum, fpMapMKF);
 
-   //
-   // Allocate a temporary buffer for the compressed data.
-   //
-   buf = (LPBYTE)malloc(size);
-   if (buf == NULL)
-   {
-      return NULL;
-   }
+    //
+    // Allocate a temporary buffer for the compressed data.
+    //
+    buf = (LPBYTE)malloc(size);
+    if(buf == NULL) {
+        return NULL;
+    }
 
-   //
-   // Create the map instance.
-   //
-   map = (LPPALMAP)malloc(sizeof(PALMAP));
-   if (map == NULL)
-   {
-      return NULL;
-   }
+    //
+    // Create the map instance.
+    //
+    map = (LPPALMAP)malloc(sizeof(PALMAP));
+    if(map == NULL) {
+        return NULL;
+    }
 
-   //
-   // Read the map data.
-   //
-   if (PAL_MKFReadChunk(buf, size, iMapNum, fpMapMKF) < 0)
-   {
-      free(buf);
-      free(map);
-      return NULL;
-   }
+    //
+    // Read the map data.
+    //
+    if(PAL_MKFReadChunk(buf, size, iMapNum, fpMapMKF) < 0) {
+        free(buf);
+        free(map);
+        return NULL;
+    }
 
-   //
-   // Decompress the tile data.
-   //
-   if (Decompress(buf, (LPBYTE)(map->Tiles), sizeof(map->Tiles)) < 0)
-   {
-      free(map);
-      free(buf);
-      return NULL;
-   }
+    //
+    // Decompress the tile data.
+    //
+    if(Decompress(buf, (LPBYTE)(map->Tiles), sizeof(map->Tiles)) < 0) {
+        free(map);
+        free(buf);
+        return NULL;
+    }
 
-   //
-   // The compressed data is useless now; delete it.
-   //
-   free(buf);
+    //
+    // The compressed data is useless now; delete it.
+    //
+    free(buf);
 
-   //
-   // Adjust the endianness of the decompressed data.
-   //
-   for (i = 0; i < 128; i++)
-   {
-      for (j = 0; j < 64; j++)
-      {
-         map->Tiles[i][j][0] = SWAP32(map->Tiles[i][j][0]);
-         map->Tiles[i][j][1] = SWAP32(map->Tiles[i][j][1]);
-      }
-   }
+    //
+    // Adjust the endianness of the decompressed data.
+    //
+    for(i = 0; i < 128; i++) {
+        for(j = 0; j < 64; j++) {
+            map->Tiles[i][j][0] = SWAP32(map->Tiles[i][j][0]);
+            map->Tiles[i][j][1] = SWAP32(map->Tiles[i][j][1]);
+        }
+    }
 
-   //
-   // Load the tile bitmaps.
-   //
-   size = PAL_MKFGetChunkSize(iMapNum, fpGopMKF);
-   if (size <= 0)
-   {
-      free(map);
-      return NULL;
-   }
-   map->pTileSprite = (LPSPRITE)malloc(size);
-   if (map->pTileSprite == NULL)
-   {
-      free(map);
-      return NULL;
-   }
-   if (PAL_MKFReadChunk(map->pTileSprite, size, iMapNum, fpGopMKF) < 0)
-   {
-      free(map);
-      return NULL;
-   }
+    //
+    // Load the tile bitmaps.
+    //
+    size = PAL_MKFGetChunkSize(iMapNum, fpGopMKF);
+    if(size <= 0) {
+        free(map);
+        return NULL;
+    }
+    map->pTileSprite = (LPSPRITE)malloc(size);
+    if(map->pTileSprite == NULL) {
+        free(map);
+        return NULL;
+    }
+    if(PAL_MKFReadChunk(map->pTileSprite, size, iMapNum, fpGopMKF) < 0) {
+        free(map);
+        return NULL;
+    }
 
-   //
-   // Done.
-   //
-   map->iMapNum = iMapNum;
+    //
+    // Done.
+    //
+    map->iMapNum = iMapNum;
 
-   return map;
+    return map;
 }
 
-VOID
-PAL_FreeMap(
-   LPPALMAP          lpMap
-)
+VOID PAL_FreeMap(LPPALMAP lpMap)
 /*++
   Purpose:
 
@@ -172,36 +154,28 @@ PAL_FreeMap(
 
 --*/
 {
-   //
-   // Check for NULL pointer.
-   //
-   if (lpMap == NULL)
-   {
-      return;
-   }
+    //
+    // Check for NULL pointer.
+    //
+    if(lpMap == NULL) {
+        return;
+    }
 
-   //
-   // Free the tile bitmaps.
-   //
-   if (lpMap->pTileSprite != NULL)
-   {
-      free(lpMap->pTileSprite);
-   }
+    //
+    // Free the tile bitmaps.
+    //
+    if(lpMap->pTileSprite != NULL) {
+        free(lpMap->pTileSprite);
+    }
 
-   //
-   // Delete the instance.
-   //
-   free(lpMap);
+    //
+    // Delete the instance.
+    //
+    free(lpMap);
 }
 
 LPCBITMAPRLE
-PAL_MapGetTileBitmap(
-   BYTE       x,
-   BYTE       y,
-   BYTE       h,
-   BYTE       ucLayer,
-   LPCPALMAP  lpMap
-)
+PAL_MapGetTileBitmap(BYTE x, BYTE y, BYTE h, BYTE ucLayer, LPCPALMAP lpMap)
 /*++
   Purpose:
 
@@ -226,45 +200,36 @@ PAL_MapGetTileBitmap(
 
 --*/
 {
-   DWORD d;
+    DWORD d;
 
-   //
-   // Check for invalid parameters.
-   //
-   if (x >= 64 || y >= 128 || h > 1 || lpMap == NULL)
-   {
-      return NULL;
-   }
+    //
+    // Check for invalid parameters.
+    //
+    if(x >= 64 || y >= 128 || h > 1 || lpMap == NULL) {
+        return NULL;
+    }
 
-   //
-   // Get the tile data of the specified location.
-   //
-   d = lpMap->Tiles[y][x][h];
+    //
+    // Get the tile data of the specified location.
+    //
+    d = lpMap->Tiles[y][x][h];
 
-   if (ucLayer == 0)
-   {
-      //
-      // Bottom layer
-      //
-      return PAL_SpriteGetFrame(lpMap->pTileSprite, (d & 0xFF) | ((d >> 4) & 0x100));
-   }
-   else
-   {
-      //
-      // Top layer
-      //
-      d >>= 16;
-      return PAL_SpriteGetFrame(lpMap->pTileSprite, ((d & 0xFF) | ((d >> 4) & 0x100)) - 1);
-   }
+    if(ucLayer == 0) {
+        //
+        // Bottom layer
+        //
+        return PAL_SpriteGetFrame(lpMap->pTileSprite, (d & 0xFF) | ((d >> 4) & 0x100));
+    } else {
+        //
+        // Top layer
+        //
+        d >>= 16;
+        return PAL_SpriteGetFrame(lpMap->pTileSprite,
+                                  ((d & 0xFF) | ((d >> 4) & 0x100)) - 1);
+    }
 }
 
-BOOL
-PAL_MapTileIsBlocked(
-   BYTE       x,
-   BYTE       y,
-   BYTE       h,
-   LPCPALMAP  lpMap
-)
+BOOL PAL_MapTileIsBlocked(BYTE x, BYTE y, BYTE h, LPCPALMAP lpMap)
 /*++
   Purpose:
 
@@ -287,25 +252,17 @@ PAL_MapTileIsBlocked(
 
 --*/
 {
-   //
-   // Check for invalid parameters.
-   //
-   if (x >= 64 || y >= 128 || h > 1 || lpMap == NULL)
-   {
-      return TRUE;
-   }
+    //
+    // Check for invalid parameters.
+    //
+    if(x >= 64 || y >= 128 || h > 1 || lpMap == NULL) {
+        return TRUE;
+    }
 
-   return (lpMap->Tiles[y][x][h] & 0x2000) >> 13;
+    return (lpMap->Tiles[y][x][h] & 0x2000) >> 13;
 }
 
-BYTE
-PAL_MapGetTileHeight(
-   BYTE       x,
-   BYTE       y,
-   BYTE       h,
-   BYTE       ucLayer,
-   LPCPALMAP  lpMap
-)
+BYTE PAL_MapGetTileHeight(BYTE x, BYTE y, BYTE h, BYTE ucLayer, LPCPALMAP lpMap)
 /*++
   Purpose:
 
@@ -331,34 +288,27 @@ PAL_MapGetTileHeight(
 
 --*/
 {
-   DWORD      d;
+    DWORD d;
 
-   //
-   // Check for invalid parameters.
-   //
-   if (y >= 128 || x >= 64 || h > 1 || lpMap == NULL)
-   {
-      return 0;
-   }
+    //
+    // Check for invalid parameters.
+    //
+    if(y >= 128 || x >= 64 || h > 1 || lpMap == NULL) {
+        return 0;
+    }
 
-   d = lpMap->Tiles[y][x][h];
+    d = lpMap->Tiles[y][x][h];
 
-   if (ucLayer)
-   {
-      d >>= 16;
-   }
+    if(ucLayer) {
+        d >>= 16;
+    }
 
-   d >>= 8;
-   return (BYTE)(d & 0xf);
+    d >>= 8;
+    return (BYTE)(d & 0xf);
 }
 
-VOID
-PAL_MapBlitToSurface(
-   LPCPALMAP             lpMap,
-   SDL_Surface          *lpSurface,
-   const SDL_Rect       *lpSrcRect,
-   BYTE                  ucLayer
-)
+VOID PAL_MapBlitToSurface(LPCPALMAP lpMap, SDL_Surface *lpSurface,
+                          const SDL_Rect *lpSrcRect, BYTE ucLayer)
 /*++
   Purpose:
 
@@ -380,39 +330,35 @@ PAL_MapBlitToSurface(
 
 --*/
 {
-   int              sx, sy, dx, dy, x, y, h, xPos, yPos;
-   LPCBITMAPRLE     lpBitmap = NULL;
+    int sx, sy, dx, dy, x, y, h, xPos, yPos;
+    LPCBITMAPRLE lpBitmap = NULL;
 
-   //
-   // Convert the coordinate
-   //
-   sy = lpSrcRect->y / 16 - 1;
-   dy = (lpSrcRect->y + lpSrcRect->h) / 16 + 2;
-   sx = lpSrcRect->x / 32 - 1;
-   dx = (lpSrcRect->x + lpSrcRect->w) / 32 + 2;
+    //
+    // Convert the coordinate
+    //
+    sy = lpSrcRect->y / 16 - 1;
+    dy = (lpSrcRect->y + lpSrcRect->h) / 16 + 2;
+    sx = lpSrcRect->x / 32 - 1;
+    dx = (lpSrcRect->x + lpSrcRect->w) / 32 + 2;
 
-   //
-   // Do the drawing.
-   //
-   yPos = sy * 16 - 8 - lpSrcRect->y;
-   for (y = sy; y < dy; y++)
-   {
-      for (h = 0; h < 2; h++, yPos += 8)
-      {
-         xPos = sx * 32 + h * 16 - 16 - lpSrcRect->x;
-         for (x = sx; x < dx; x++, xPos += 32)
-         {
-            lpBitmap = PAL_MapGetTileBitmap((BYTE)x, (BYTE)y, (BYTE)h, ucLayer, lpMap);
-            if (lpBitmap == NULL)
-            {
-               if (ucLayer)
-               {
-                  continue;
-               }
-               lpBitmap = PAL_MapGetTileBitmap(0, 0, 0, ucLayer, lpMap);
+    //
+    // Do the drawing.
+    //
+    yPos = sy * 16 - 8 - lpSrcRect->y;
+    for(y = sy; y < dy; y++) {
+        for(h = 0; h < 2; h++, yPos += 8) {
+            xPos = sx * 32 + h * 16 - 16 - lpSrcRect->x;
+            for(x = sx; x < dx; x++, xPos += 32) {
+                lpBitmap =
+                    PAL_MapGetTileBitmap((BYTE)x, (BYTE)y, (BYTE)h, ucLayer, lpMap);
+                if(lpBitmap == NULL) {
+                    if(ucLayer) {
+                        continue;
+                    }
+                    lpBitmap = PAL_MapGetTileBitmap(0, 0, 0, ucLayer, lpMap);
+                }
+                PAL_RLEBlitToSurface(lpBitmap, lpSurface, PAL_XY(xPos, yPos));
             }
-            PAL_RLEBlitToSurface(lpBitmap, lpSurface, PAL_XY(xPos, yPos));
-         }
-      }
-   }
+        }
+    }
 }

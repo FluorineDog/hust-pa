@@ -45,11 +45,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 
 #ifndef _REENT_ONLY
 
-void *
-calloc (size_t n,
-	size_t size)
-{
-  return _calloc_r (_REENT, n, size);
+void* calloc(size_t n, size_t size) {
+    return _calloc_r(_REENT, n, size);
 }
 
 #endif

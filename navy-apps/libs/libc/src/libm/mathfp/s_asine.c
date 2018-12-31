@@ -75,91 +75,74 @@ return NaN (not a number), set the global variable <<errno>> to
 
 #ifndef _DOUBLE_IS_32BITS
 
-static const double p[] = { -0.27368494524164255994e+2,
-                             0.57208227877891731407e+2,
-                            -0.39688862997404877339e+2,
-                             0.10152522233806463645e+2,
-                            -0.69674573447350646411 };
-static const double q[] = { -0.16421096714498560795e+3,
-                             0.41714430248260412556e+3,
-                            -0.38186303361750149284e+3,
-                             0.15095270841030604719e+3,
-                            -0.23823859153670238830e+2 };
-static const double a[] = { 0.0, 0.78539816339744830962 };
-static const double b[] = { 1.57079632679489661923, 0.78539816339744830962 };
+static const double p[] = {-0.27368494524164255994e+2, 0.57208227877891731407e+2,
+                           -0.39688862997404877339e+2, 0.10152522233806463645e+2,
+                           -0.69674573447350646411};
+static const double q[] = {-0.16421096714498560795e+3, 0.41714430248260412556e+3,
+                           -0.38186303361750149284e+3, 0.15095270841030604719e+3,
+                           -0.23823859153670238830e+2};
+static const double a[] = {0.0, 0.78539816339744830962};
+static const double b[] = {1.57079632679489661923, 0.78539816339744830962};
 
-double
-asine (double x,
-        int acosine)
-{
-  int flag, i;
-  int branch = 0;
-  double g, res, R, P, Q, y;
+double asine(double x, int acosine) {
+    int flag, i;
+    int branch = 0;
+    double g, res, R, P, Q, y;
 
-  /* Check for special values. */
-  i = numtest (x);
-  if (i == NAN || i == INF)
-    {
-      errno = EDOM;
-      if (i == NAN)
-        return (x);
-      else
-        return (z_infinity.d);
+    /* Check for special values. */
+    i = numtest(x);
+    if(i == NAN || i == INF) {
+        errno = EDOM;
+        if(i == NAN)
+            return (x);
+        else
+            return (z_infinity.d);
     }
 
-  y = fabs (x);
-  flag = acosine;
+    y = fabs(x);
+    flag = acosine;
 
-  if (y > 0.5)
-    {
-      i = 1 - flag;
+    if(y > 0.5) {
+        i = 1 - flag;
 
-      /* Check for range error. */
-      if (y > 1.0)
-        {
-          errno = ERANGE;
-          return (z_notanum.d);
+        /* Check for range error. */
+        if(y > 1.0) {
+            errno = ERANGE;
+            return (z_notanum.d);
         }
 
-      g = (1 - y) / 2.0;
-      y = -2 * sqrt (g);
-      branch = 1;
-    }
-  else
-    {
-      i = flag;
-      if (y < z_rooteps)
-        res = y;
-      else
-        g = y * y;
+        g = (1 - y) / 2.0;
+        y = -2 * sqrt(g);
+        branch = 1;
+    } else {
+        i = flag;
+        if(y < z_rooteps)
+            res = y;
+        else
+            g = y * y;
     }
 
-  if (y >= z_rooteps || branch == 1)
-    {
-      /* Calculate the Taylor series. */
-      P = ((((p[4] * g + p[3]) * g + p[2]) * g + p[1]) * g + p[0]) * g;
-      Q = ((((g + q[4]) * g + q[3]) * g + q[2]) * g + q[1]) * g + q[0];
-      R = P / Q;
+    if(y >= z_rooteps || branch == 1) {
+        /* Calculate the Taylor series. */
+        P = ((((p[4] * g + p[3]) * g + p[2]) * g + p[1]) * g + p[0]) * g;
+        Q = ((((g + q[4]) * g + q[3]) * g + q[2]) * g + q[1]) * g + q[0];
+        R = P / Q;
 
-      res = y + y * R;
+        res = y + y * R;
     }
 
-  /* Calculate asine or acose. */
-  if (flag == 0)
-    {
-      res = (a[i] + res) + a[i];
-      if (x < 0.0)
-        res = -res;
-    }
-  else
-    {
-      if (x < 0.0)
-        res = (b[i] + res) + b[i];
-      else
-        res = (a[i] - res) + a[i];
+    /* Calculate asine or acose. */
+    if(flag == 0) {
+        res = (a[i] + res) + a[i];
+        if(x < 0.0) res = -res;
+    } else {
+        if(x < 0.0)
+            res = (b[i] + res) + b[i];
+        else
+            res = (a[i] - res) + a[i];
     }
 
-  return (res);
+    return (res);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

@@ -23,19 +23,12 @@
 #define RNGPLAY_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include "_common.h"
 
-VOID
-PAL_RNGPlay(
-   INT           iNumRNG,
-   INT           iStartFrame,
-   INT           iNumFrames,
-   INT           iSpeed
-);
+VOID PAL_RNGPlay(INT iNumRNG, INT iStartFrame, INT iNumFrames, INT iSpeed);
 
 #ifdef __cplusplus
 }

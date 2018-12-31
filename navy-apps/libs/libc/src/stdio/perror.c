@@ -58,56 +58,47 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <string.h>
 #include "local.h"
 
-#define WRITE_STR(str) \
-{ \
-  const char *p = (str); \
-  size_t len = strlen (p); \
-  while (len) \
-    { \
-      ssize_t len1 = _write_r (ptr, fileno (fp), p, len); \
-      if (len1 < 0) \
-	break; \
-      len -= len1; \
-      p += len1; \
-    } \
-}
-
-void
-_perror_r (struct _reent *ptr,
-       const char *s)
-{
-  char *error;
-  int dummy;
-  FILE *fp = _stderr_r (ptr);
-
-  CHECK_INIT (ptr, fp);
-
-  _newlib_flockfile_start(fp);
-  _fflush_r (ptr, fp);
-  if (s != NULL && *s != '\0')
-    {
-      WRITE_STR (s);
-      WRITE_STR (": ");
+#define WRITE_STR(str)                                        \
+    {                                                         \
+        const char *p = (str);                                \
+        size_t len = strlen(p);                               \
+        while(len) {                                          \
+            ssize_t len1 = _write_r(ptr, fileno(fp), p, len); \
+            if(len1 < 0) break;                               \
+            len -= len1;                                      \
+            p += len1;                                        \
+        }                                                     \
     }
 
-  if ((error = _strerror_r (ptr, ptr->_errno, 1, &dummy)) != NULL)
-    WRITE_STR (error);
+void _perror_r(struct _reent *ptr, const char *s) {
+    char *error;
+    int dummy;
+    FILE *fp = _stderr_r(ptr);
+
+    CHECK_INIT(ptr, fp);
+
+    _newlib_flockfile_start(fp);
+    _fflush_r(ptr, fp);
+    if(s != NULL && *s != '\0') {
+        WRITE_STR(s);
+        WRITE_STR(": ");
+    }
+
+    if((error = _strerror_r(ptr, ptr->_errno, 1, &dummy)) != NULL) WRITE_STR(error);
 
 #ifdef __SCLE
-  WRITE_STR ((fp->_flags & __SCLE) ? "\r\n" : "\n");
+    WRITE_STR((fp->_flags & __SCLE) ? "\r\n" : "\n");
 #else
-  WRITE_STR ("\n");
+    WRITE_STR("\n");
 #endif
-  fp->_flags &= ~__SOFF;
-  _newlib_flockfile_end(fp);
+    fp->_flags &= ~__SOFF;
+    _newlib_flockfile_end(fp);
 }
 
 #ifndef _REENT_ONLY
 
-void
-perror (const char *s)
-{
-  _perror_r (_REENT, s);
+void perror(const char *s) {
+    _perror_r(_REENT, s);
 }
 
 #endif

@@ -84,24 +84,16 @@ Supporting OS subroutines required:
 
 #ifndef _REENT_ONLY
 
-int
-viscanf (const char *fmt,
-       va_list ap)
-{
-  struct _reent *reent = _REENT;
+int viscanf(const char *fmt, va_list ap) {
+    struct _reent *reent = _REENT;
 
-  _REENT_SMALL_CHECK_INIT (reent);
-  return __svfiscanf_r (reent, _stdin_r (reent), fmt, ap);
+    _REENT_SMALL_CHECK_INIT(reent);
+    return __svfiscanf_r(reent, _stdin_r(reent), fmt, ap);
 }
 
 #endif /* !_REENT_ONLY */
 
-int
-_viscanf_r (struct _reent *ptr,
-       const char *fmt,
-       va_list ap)
-{
-  _REENT_SMALL_CHECK_INIT (ptr);
-  return __svfiscanf_r (ptr, _stdin_r (ptr), fmt, ap);
+int _viscanf_r(struct _reent *ptr, const char *fmt, va_list ap) {
+    _REENT_SMALL_CHECK_INIT(ptr);
+    return __svfiscanf_r(ptr, _stdin_r(ptr), fmt, ap);
 }
-

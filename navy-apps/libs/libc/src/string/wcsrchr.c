@@ -59,23 +59,17 @@ No supporting OS subroutines are required.
 #include <stddef.h>
 #include <wchar.h>
 
-wchar_t *
-wcsrchr (const wchar_t * s,
-	wchar_t c)
-{
-  const wchar_t *p;
+wchar_t *wcsrchr(const wchar_t *s, wchar_t c) {
+    const wchar_t *p;
 
-  p = s;
-  while (*p)
-    p++;
-  while (s <= p)
-    {
-      if (*p == c)
-	{
-	  /* LINTED interface specification */
-	  return (wchar_t *) p;
-	}
-      p--;
+    p = s;
+    while(*p) p++;
+    while(s <= p) {
+        if(*p == c) {
+            /* LINTED interface specification */
+            return (wchar_t *)p;
+        }
+        p--;
     }
-  return NULL;
+    return NULL;
 }

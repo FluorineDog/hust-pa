@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-tanl (long double x)
-{
-  return tan(x);
+long double tanl(long double x) {
+    return tan(x);
 }
 #endif
-

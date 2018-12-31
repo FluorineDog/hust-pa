@@ -62,10 +62,8 @@ QUICKREF
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-cosh (double x)
-{
-  return (sineh (x, 1));
+double cosh(double x) {
+    return (sineh(x, 1));
 }
 
 #endif /* _DOUBLE_IS_32BITS */

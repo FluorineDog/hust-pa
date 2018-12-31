@@ -79,49 +79,42 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <stdarg.h>
 #include "local.h"
 
-#ifndef _REENT_ONLY 
+#ifndef _REENT_ONLY
 
-int 
-siscanf (const char *str,
-       const char *fmt, ...)
-{
-  int ret;
-  va_list ap;
-  FILE f;
+int siscanf(const char *str, const char *fmt, ...) {
+    int ret;
+    va_list ap;
+    FILE f;
 
-  f._flags = __SRD | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._r = strlen (str);
-  f._read = __seofread;
-  f._ub._base = NULL;
-  f._lb._base = NULL;
-  f._file = -1;  /* No file. */
-  va_start (ap, fmt);
-  ret = __ssvfiscanf_r (_REENT, &f, fmt, ap);
-  va_end (ap);
-  return ret;
+    f._flags = __SRD | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._r = strlen(str);
+    f._read = __seofread;
+    f._ub._base = NULL;
+    f._lb._base = NULL;
+    f._file = -1; /* No file. */
+    va_start(ap, fmt);
+    ret = __ssvfiscanf_r(_REENT, &f, fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
 #endif /* !_REENT_ONLY */
 
-int 
-_siscanf_r (struct _reent *ptr,
-       const char *str,
-       const char *fmt, ...)
-{
-  int ret;
-  va_list ap;
-  FILE f;
+int _siscanf_r(struct _reent *ptr, const char *str, const char *fmt, ...) {
+    int ret;
+    va_list ap;
+    FILE f;
 
-  f._flags = __SRD | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._r = strlen (str);
-  f._read = __seofread;
-  f._ub._base = NULL;
-  f._lb._base = NULL;
-  f._file = -1;  /* No file. */
-  va_start (ap, fmt);
-  ret = __ssvfiscanf_r (ptr, &f, fmt, ap);
-  va_end (ap);
-  return ret;
+    f._flags = __SRD | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._r = strlen(str);
+    f._read = __seofread;
+    f._ub._base = NULL;
+    f._lb._base = NULL;
+    f._file = -1; /* No file. */
+    va_start(ap, fmt);
+    ret = __ssvfiscanf_r(ptr, &f, fmt, ap);
+    va_end(ap);
+    return ret;
 }

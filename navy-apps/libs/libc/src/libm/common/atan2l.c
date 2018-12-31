@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-atan2l (long double v, long double u)
-{
-  return atan2(v, u);
+long double atan2l(long double v, long double u) {
+    return atan2(v, u);
 }
 #endif
-

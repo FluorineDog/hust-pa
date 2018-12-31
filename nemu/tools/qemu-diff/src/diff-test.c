@@ -30,7 +30,7 @@ void difftest_setregs(const void *r) {
     memcpy(&qemu_r, r, DIFFTEST_REG_SIZE - 4);
     uint32_t mask = MASK_OF | MASK_SF | MASK_ZF | MASK_CF | MASK_IF;
     qemu_r.eflags &= ~mask;
-    qemu_r.eflags |= mask & ((union gdb_regs*)r)->eflags;
+    qemu_r.eflags |= mask & ((union gdb_regs *)r)->eflags;
     gdb_setregs(&qemu_r);
 }
 

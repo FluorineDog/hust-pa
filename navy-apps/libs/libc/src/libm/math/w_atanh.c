@@ -77,56 +77,51 @@ QUICKREF
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double atanh(double x)		/* wrapper atanh */
+double atanh(double x) /* wrapper atanh */
 #else
-	double atanh(x)			/* wrapper atanh */
-	double x;
+double atanh(x) /* wrapper atanh */
+    double x;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_atanh(x);
+    return __ieee754_atanh(x);
 #else
-	double z,y;
-	struct exception exc;
-	z = __ieee754_atanh(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	y = fabs(x);
-	if(y>=1.0) {
-	    if(y>1.0) {
-                /* atanh(|x|>1) */
-                exc.type = DOMAIN;
-                exc.name = "atanh";
-		exc.err = 0;
-		exc.arg1 = exc.arg2 = x;
-                exc.retval = 0.0/0.0;
-                if (_LIB_VERSION == _POSIX_)
-                  errno = EDOM;
-                else if (!matherr(&exc)) {
-                  errno = EDOM;
-                }
-	    } else { 
-                /* atanh(|x|=1) */
-                exc.type = SING;
-                exc.name = "atanh";
-		exc.err = 0;
-		exc.arg1 = exc.arg2 = x;
-		exc.retval = x/0.0;	/* sign(x)*inf */
-                if (_LIB_VERSION == _POSIX_)
-                  errno = EDOM;
-                else if (!matherr(&exc)) {
-                  errno = EDOM;
-                }
+    double z, y;
+    struct exception exc;
+    z = __ieee754_atanh(x);
+    if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
+    y = fabs(x);
+    if(y >= 1.0) {
+        if(y > 1.0) {
+            /* atanh(|x|>1) */
+            exc.type = DOMAIN;
+            exc.name = "atanh";
+            exc.err = 0;
+            exc.arg1 = exc.arg2 = x;
+            exc.retval = 0.0 / 0.0;
+            if(_LIB_VERSION == _POSIX_)
+                errno = EDOM;
+            else if(!matherr(&exc)) {
+                errno = EDOM;
             }
-	    if (exc.err != 0)
-              errno = exc.err;
-            return exc.retval; 
-	} else
-	    return z;
+        } else {
+            /* atanh(|x|=1) */
+            exc.type = SING;
+            exc.name = "atanh";
+            exc.err = 0;
+            exc.arg1 = exc.arg2 = x;
+            exc.retval = x / 0.0; /* sign(x)*inf */
+            if(_LIB_VERSION == _POSIX_)
+                errno = EDOM;
+            else if(!matherr(&exc)) {
+                errno = EDOM;
+            }
+        }
+        if(exc.err != 0) errno = exc.err;
+        return exc.retval;
+    } else
+        return z;
 #endif
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */
-
-
-
-

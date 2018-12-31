@@ -39,15 +39,13 @@
 __weak_alias(casinf, _casinf)
 #endif
 
-float complex
-casinf(float complex z)
-{
-	float complex w;
-	float complex ca, ct, zz, z2;
-	float x, y;
+    float complex casinf(float complex z) {
+    float complex w;
+    float complex ca, ct, zz, z2;
+    float x, y;
 
-	x = crealf(z);
-	y = cimagf(z);
+    x = crealf(z);
+    y = cimagf(z);
 
 #if 0 /* MD: test is incorrect, casin(>1) is defined */
 	if (y == 0.0f) {
@@ -63,8 +61,8 @@ casinf(float complex z)
 	}
 #endif
 
-/* Power series expansion */
-/*
+    /* Power series expansion */
+    /*
 b = cabsf(z);
 if( b < 0.125 )
 {
@@ -103,20 +101,19 @@ return;
 }
 */
 
+    ca = x + y * I;
+    ct = ca * I;
+    /* sqrt( 1 - z*z) */
+    /* cmul( &ca, &ca, &zz ) */
+    /*x * x  -  y * y */
+    zz = (x - y) * (x + y) + (2.0f * x * y) * I;
 
-	ca = x + y * I;
-	ct = ca * I;
-	/* sqrt( 1 - z*z) */
-	/* cmul( &ca, &ca, &zz ) */
-	/*x * x  -  y * y */
-	zz = (x - y) * (x + y) + (2.0f * x * y) * I;
+    zz = 1.0f - crealf(zz) - cimagf(zz) * I;
+    z2 = csqrtf(zz);
 
-	zz = 1.0f - crealf(zz) - cimagf(zz) * I;
-	z2 = csqrtf(zz);
-
-	zz = ct + z2;
-	zz = clogf(zz);
-	/* multiply by 1/i = -i */
-	w = zz * (-1.0f * I);
-	return w;
+    zz = ct + z2;
+    zz = clogf(zz);
+    /* multiply by 1/i = -i */
+    w = zz * (-1.0f * I);
+    return w;
 }

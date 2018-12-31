@@ -29,7 +29,6 @@ make_EHelper(neg);
 
 make_EHelper(nop);
 
-
 make_EHelper(xor);
 make_EHelper(leave);
 
@@ -76,4 +75,3 @@ make_EHelper(iret);
 
 make_EHelper(pusha);
 make_EHelper(popa);
-

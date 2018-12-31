@@ -64,10 +64,6 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <stdio.h>
 #include "local.h"
 
-void
-setbuffer (FILE * fp,
-       char *buf,
-       int size)
-{
-  (void) setvbuf (fp, buf, buf ? _IOFBF : _IONBF, (size_t) size);
+void setbuffer(FILE *fp, char *buf, int size) {
+    (void)setvbuf(fp, buf, buf ? _IOFBF : _IONBF, (size_t)size);
 }

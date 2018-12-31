@@ -64,8 +64,8 @@ __uint32_t (*__default_hash)(const void *, size_t) = hash4;
  * This came from ejb's hsearch.
  */
 
-#define PRIME1		37
-#define PRIME2		1048583
+#define PRIME1 37
+#define PRIME2 1048583
 
 #if 0
 static __uint32_t
@@ -87,7 +87,7 @@ hash1(keyarg, len)
 /*
  * Phong's linear congruential hash
  */
-#define dcharhash(h, c)	((h) = 0x63c63cd9*(h) + 0x9c39c33d + (c))
+#define dcharhash(h, c) ((h) = 0x63c63cd9 * (h) + 0x9c39c33d + (c))
 
 #if 0
 static __uint32_t
@@ -130,7 +130,7 @@ hash3(keyarg, len)
 	size_t loop;
 	__uint32_t h;
 
-#define HASHC   h = *key++ + 65599 * h
+#define HASHC h = *key++ + 65599 * h
 
 	h = 0;
 	key = keyarg;
@@ -170,51 +170,48 @@ hash3(keyarg, len)
 #endif
 
 /* Hash function from Chris Torek. */
-static __uint32_t
-hash4(keyarg, len)
-	const void *keyarg;
-	size_t len;
+static __uint32_t hash4(keyarg, len) const void *keyarg;
+size_t len;
 {
-	const u_char *key;
-	size_t loop;
-	__uint32_t h;
+    const u_char *key;
+    size_t loop;
+    __uint32_t h;
 
-#define HASH4a   h = (h << 5) - h + *key++;
-#define HASH4b   h = (h << 5) + h + *key++;
+#define HASH4a h = (h << 5) - h + *key++;
+#define HASH4b h = (h << 5) + h + *key++;
 #define HASH4 HASH4b
 
-	h = 0;
-	key = keyarg;
-	if (len > 0) {
-		loop = (len + 8 - 1) >> 3;
+    h = 0;
+    key = keyarg;
+    if(len > 0) {
+        loop = (len + 8 - 1) >> 3;
 
-		switch (len & (8 - 1)) {
-		case 0:
-			do {
-				HASH4;
-				/* FALLTHROUGH */
-		case 7:
-				HASH4;
-				/* FALLTHROUGH */
-		case 6:
-				HASH4;
-				/* FALLTHROUGH */
-		case 5:
-				HASH4;
-				/* FALLTHROUGH */
-		case 4:
-				HASH4;
-				/* FALLTHROUGH */
-		case 3:
-				HASH4;
-				/* FALLTHROUGH */
-		case 2:
-				HASH4;
-				/* FALLTHROUGH */
-		case 1:
-				HASH4;
-			} while (--loop);
-		}
-	}
-	return (h);
+        switch(len & (8 - 1)) {
+            case 0:
+                do {
+                    HASH4;
+                        /* FALLTHROUGH */
+                    case 7:
+                        HASH4;
+                        /* FALLTHROUGH */
+                    case 6:
+                        HASH4;
+                        /* FALLTHROUGH */
+                    case 5:
+                        HASH4;
+                        /* FALLTHROUGH */
+                    case 4:
+                        HASH4;
+                        /* FALLTHROUGH */
+                    case 3:
+                        HASH4;
+                        /* FALLTHROUGH */
+                    case 2:
+                        HASH4;
+                        /* FALLTHROUGH */
+                    case 1: HASH4;
+                } while(--loop);
+        }
+    }
+    return (h);
 }

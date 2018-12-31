@@ -21,54 +21,49 @@
 #include <errno.h>
 
 #ifdef __STDC__
-	float remainderf(float x, float y)	/* wrapper remainder */
+float remainderf(float x, float y) /* wrapper remainder */
 #else
-	float remainderf(x,y)			/* wrapper remainder */
-	float x,y;
+float remainderf(x, y) /* wrapper remainder */
+    float x,
+    y;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_remainderf(x,y);
+    return __ieee754_remainderf(x, y);
 #else
-	float z;
-	struct exception exc;
-	z = __ieee754_remainderf(x,y);
-	if(_LIB_VERSION == _IEEE_ || isnan(y)) return z;
-	if(y==(float)0.0) { 
-            /* remainderf(x,0) */
-            exc.type = DOMAIN;
-            exc.name = "remainderf";
-	    exc.err = 0;
-	    exc.arg1 = (double)x;
-	    exc.arg2 = (double)y;
-            exc.retval = 0.0/0.0;
-            if (_LIB_VERSION == _POSIX_)
-               errno = EDOM;
-            else if (!matherr(&exc)) {
-               errno = EDOM;
-            }
-	    if (exc.err != 0)
-	       errno = exc.err;
-            return (float)exc.retval; 
-	} else
-	    return z;
+    float z;
+    struct exception exc;
+    z = __ieee754_remainderf(x, y);
+    if(_LIB_VERSION == _IEEE_ || isnan(y)) return z;
+    if(y == (float)0.0) {
+        /* remainderf(x,0) */
+        exc.type = DOMAIN;
+        exc.name = "remainderf";
+        exc.err = 0;
+        exc.arg1 = (double)x;
+        exc.arg2 = (double)y;
+        exc.retval = 0.0 / 0.0;
+        if(_LIB_VERSION == _POSIX_)
+            errno = EDOM;
+        else if(!matherr(&exc)) {
+            errno = EDOM;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return (float)exc.retval;
+    } else
+        return z;
 #endif
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double remainder(double x, double y)
+double remainder(double x, double y)
 #else
-	double remainder(x,y)
-	double x,y;
+double remainder(x, y) double x, y;
 #endif
 {
-	return (double) remainderf((float) x, (float) y);
+    return (double)remainderf((float)x, (float)y);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */
-
-
-
-

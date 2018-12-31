@@ -22,16 +22,15 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double gamma_r(double x, int *signgamp)
+double gamma_r(double x, int *signgamp)
 #else
-	double gamma_r(x,signgamp)
-	double x; int *signgamp;
+double gamma_r(x, signgamp) double x;
+int *signgamp;
 #endif
 {
-	return exp (lgamma_r(x,signgamp));
+    return exp(lgamma_r(x, signgamp));
 }
 
-double gamma(double x)
-{
-  return gamma_r(x, &(_REENT_SIGNGAM(_REENT)));
+double gamma(double x) {
+    return gamma_r(x, &(_REENT_SIGNGAM(_REENT)));
 }

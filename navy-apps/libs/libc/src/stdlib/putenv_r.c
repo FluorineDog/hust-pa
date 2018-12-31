@@ -30,27 +30,22 @@
 /* _putenv_r - reentrant version of putenv that either adds
                or replaces the environment variable "name"
                with "value" which is specified by str as "name=value". */
-int
-_putenv_r (struct _reent *reent_ptr,
-	char   *str)
-{
-  register char *p, *equal;
-  int rval;
+int _putenv_r(struct _reent *reent_ptr, char *str) {
+    register char *p, *equal;
+    int rval;
 
-  p = _strdup_r (reent_ptr, str);
+    p = _strdup_r(reent_ptr, str);
 
-  if (!p)
-    return 1;
+    if(!p) return 1;
 
-  if (!(equal = strchr (p, '=')))
-    {
-      (void) _free_r (reent_ptr, p);
-      return 1;
+    if(!(equal = strchr(p, '='))) {
+        (void)_free_r(reent_ptr, p);
+        return 1;
     }
 
-  *equal = '\0';
-  rval = _setenv_r (reent_ptr, p, equal + 1, 1);
-  (void) _free_r (reent_ptr, p);
+    *equal = '\0';
+    rval = _setenv_r(reent_ptr, p, equal + 1, 1);
+    (void)_free_r(reent_ptr, p);
 
-  return rval;
+    return rval;
 }

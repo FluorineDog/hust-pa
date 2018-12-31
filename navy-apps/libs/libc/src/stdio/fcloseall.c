@@ -56,18 +56,14 @@ Required OS subroutines: <<close>>, <<fstat>>, <<isatty>>, <<lseek>>,
 #include <errno.h>
 #include "local.h"
 
-int
-_fcloseall_r (struct _reent *ptr)
-{
-  return _fwalk_reent (ptr, _fclose_r);
+int _fcloseall_r(struct _reent *ptr) {
+    return _fwalk_reent(ptr, _fclose_r);
 }
 
 #ifndef _REENT_ONLY
 
-int
-fcloseall (void)
-{
-  return _fcloseall_r (_GLOBAL_REENT);
+int fcloseall(void) {
+    return _fcloseall_r(_GLOBAL_REENT);
 }
 
 #endif

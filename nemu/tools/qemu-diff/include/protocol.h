@@ -20,14 +20,14 @@
 #include <stdint.h>
 
 union gdb_regs {
-  struct {
-    uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
-    uint32_t eip, eflags;
-    uint32_t cs, ss, ds, es, fs, gs;
-  };
-  struct {
-    uint32_t array[77];
-  };
+    struct {
+        uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
+        uint32_t eip, eflags;
+        uint32_t cs, ss, ds, es, fs, gs;
+    };
+    struct {
+        uint32_t array[77];
+    };
 };
 
 struct gdb_conn;
@@ -45,4 +45,4 @@ void gdb_send(struct gdb_conn *conn, const uint8_t *command, size_t size);
 
 uint8_t *gdb_recv(struct gdb_conn *conn, size_t *size);
 
-const char * gdb_start_noack(struct gdb_conn *conn);
+const char *gdb_start_noack(struct gdb_conn *conn);

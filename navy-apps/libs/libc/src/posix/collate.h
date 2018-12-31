@@ -28,7 +28,7 @@
  */
 
 #ifndef _COLLATE_H_
-#define	_COLLATE_H_
+#define _COLLATE_H_
 
 #include <sys/cdefs.h>
 #include <sys/types.h>
@@ -39,11 +39,11 @@
 #define COLLATE_VERSION "1.0\n"
 
 struct __collate_st_char_pri {
-	int prim, sec;
+    int prim, sec;
 };
 struct __collate_st_chain_pri {
-	u_char str[STR_LEN];
-	int prim, sec;
+    u_char str[STR_LEN];
+    int prim, sec;
 };
 
 extern int __collate_load_error;
@@ -54,13 +54,13 @@ extern struct __collate_st_char_pri __collate_char_pri_table[UCHAR_MAX + 1];
 extern struct __collate_st_chain_pri __collate_chain_pri_table[TABLE_SIZE];
 
 __BEGIN_DECLS
-u_char	*__collate_strdup(u_char *);
-u_char	*__collate_substitute(const u_char *);
-int	__collate_load_tables(char *);
-void	__collate_lookup(const u_char *, int *, int *, int *);
-int	__collate_range_cmp(int, int);
+u_char *__collate_strdup(u_char *);
+u_char *__collate_substitute(const u_char *);
+int __collate_load_tables(char *);
+void __collate_lookup(const u_char *, int *, int *, int *);
+int __collate_range_cmp(int, int);
 #ifdef COLLATE_DEBUG
-void	__collate_print_tables(void);
+void __collate_print_tables(void);
 #endif
 __END_DECLS
 

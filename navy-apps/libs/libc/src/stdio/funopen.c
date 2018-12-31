@@ -86,8 +86,7 @@ Supporting OS subroutines required: <<sbrk>>.
 #include "local.h"
 
 typedef int (*funread)(void *_cookie, char *_buf, _READ_WRITE_BUFSIZE_TYPE _n);
-typedef int (*funwrite)(void *_cookie, const char *_buf,
-			_READ_WRITE_BUFSIZE_TYPE _n);
+typedef int (*funwrite)(void *_cookie, const char *_buf, _READ_WRITE_BUFSIZE_TYPE _n);
 #ifdef __LARGE64_FILES
 typedef _fpos64_t (*funseek)(void *_cookie, _fpos64_t _off, int _whence);
 #else
@@ -96,177 +95,131 @@ typedef fpos_t (*funseek)(void *_cookie, fpos_t _off, int _whence);
 typedef int (*funclose)(void *_cookie);
 
 typedef struct funcookie {
-  void *cookie;
-  funread readfn;
-  funwrite writefn;
-  funseek seekfn;
-  funclose closefn;
+    void *cookie;
+    funread readfn;
+    funwrite writefn;
+    funseek seekfn;
+    funclose closefn;
 } funcookie;
 
-static _READ_WRITE_RETURN_TYPE
-funreader (struct _reent *ptr,
-       void *cookie,
-       char *buf,
-       _READ_WRITE_BUFSIZE_TYPE n)
-{
-  int result;
-  funcookie *c = (funcookie *) cookie;
-  errno = 0;
-  if ((result = c->readfn (c->cookie, buf, n)) < 0 && errno)
-    ptr->_errno = errno;
-  return result;
+static _READ_WRITE_RETURN_TYPE funreader(struct _reent *ptr, void *cookie, char *buf,
+                                         _READ_WRITE_BUFSIZE_TYPE n) {
+    int result;
+    funcookie *c = (funcookie *)cookie;
+    errno = 0;
+    if((result = c->readfn(c->cookie, buf, n)) < 0 && errno) ptr->_errno = errno;
+    return result;
 }
 
-static _READ_WRITE_RETURN_TYPE
-funwriter (struct _reent *ptr,
-       void *cookie,
-       const char *buf,
-       _READ_WRITE_BUFSIZE_TYPE n)
-{
-  int result;
-  funcookie *c = (funcookie *) cookie;
-  errno = 0;
-  if ((result = c->writefn (c->cookie, buf, n)) < 0 && errno)
-    ptr->_errno = errno;
-  return result;
+static _READ_WRITE_RETURN_TYPE funwriter(struct _reent *ptr, void *cookie,
+                                         const char *buf, _READ_WRITE_BUFSIZE_TYPE n) {
+    int result;
+    funcookie *c = (funcookie *)cookie;
+    errno = 0;
+    if((result = c->writefn(c->cookie, buf, n)) < 0 && errno) ptr->_errno = errno;
+    return result;
 }
 
-static _fpos_t
-funseeker (struct _reent *ptr,
-       void *cookie,
-       _fpos_t off,
-       int whence)
-{
-  funcookie *c = (funcookie *) cookie;
+static _fpos_t funseeker(struct _reent *ptr, void *cookie, _fpos_t off, int whence) {
+    funcookie *c = (funcookie *)cookie;
 #ifndef __LARGE64_FILES
-  fpos_t result;
-  errno = 0;
-  if ((result = c->seekfn (c->cookie, (fpos_t) off, whence)) < 0 && errno)
-    ptr->_errno = errno;
-#else /* __LARGE64_FILES */
-  _fpos64_t result;
-  errno = 0;
-  if ((result = c->seekfn (c->cookie, (_fpos64_t) off, whence)) < 0 && errno)
-    ptr->_errno = errno;
-  else if ((_fpos_t)result != result)
-    {
-      ptr->_errno = EOVERFLOW;
-      result = -1;
+    fpos_t result;
+    errno = 0;
+    if((result = c->seekfn(c->cookie, (fpos_t)off, whence)) < 0 && errno)
+        ptr->_errno = errno;
+#else  /* __LARGE64_FILES */
+    _fpos64_t result;
+    errno = 0;
+    if((result = c->seekfn(c->cookie, (_fpos64_t)off, whence)) < 0 && errno)
+        ptr->_errno = errno;
+    else if((_fpos_t)result != result) {
+        ptr->_errno = EOVERFLOW;
+        result = -1;
     }
 #endif /* __LARGE64_FILES */
-  return result;
+    return result;
 }
 
 #ifdef __LARGE64_FILES
-static _fpos64_t
-funseeker64 (struct _reent *ptr,
-       void *cookie,
-       _fpos64_t off,
-       int whence)
-{
-  _fpos64_t result;
-  funcookie *c = (funcookie *) cookie;
-  errno = 0;
-  if ((result = c->seekfn (c->cookie, off, whence)) < 0 && errno)
-    ptr->_errno = errno;
-  return result;
+static _fpos64_t funseeker64(struct _reent *ptr, void *cookie, _fpos64_t off,
+                             int whence) {
+    _fpos64_t result;
+    funcookie *c = (funcookie *)cookie;
+    errno = 0;
+    if((result = c->seekfn(c->cookie, off, whence)) < 0 && errno) ptr->_errno = errno;
+    return result;
 }
 #endif /* __LARGE64_FILES */
 
-static int
-funcloser (struct _reent *ptr,
-       void *cookie)
-{
-  int result = 0;
-  funcookie *c = (funcookie *) cookie;
-  if (c->closefn)
-    {
-      errno = 0;
-      if ((result = c->closefn (c->cookie)) < 0 && errno)
-	ptr->_errno = errno;
+static int funcloser(struct _reent *ptr, void *cookie) {
+    int result = 0;
+    funcookie *c = (funcookie *)cookie;
+    if(c->closefn) {
+        errno = 0;
+        if((result = c->closefn(c->cookie)) < 0 && errno) ptr->_errno = errno;
     }
-  _free_r (ptr, c);
-  return result;
+    _free_r(ptr, c);
+    return result;
 }
 
-FILE *
-_funopen_r (struct _reent *ptr,
-       const void *cookie,
-       funread readfn,
-       funwrite writefn,
-       funseek seekfn,
-       funclose closefn)
-{
-  FILE *fp;
-  funcookie *c;
+FILE *_funopen_r(struct _reent *ptr, const void *cookie, funread readfn, funwrite writefn,
+                 funseek seekfn, funclose closefn) {
+    FILE *fp;
+    funcookie *c;
 
-  if (!readfn && !writefn)
-    {
-      ptr->_errno = EINVAL;
-      return NULL;
+    if(!readfn && !writefn) {
+        ptr->_errno = EINVAL;
+        return NULL;
     }
-  if ((fp = __sfp (ptr)) == NULL)
-    return NULL;
-  if ((c = (funcookie *) _malloc_r (ptr, sizeof *c)) == NULL)
-    {
-      _newlib_sfp_lock_start ();
-      fp->_flags = 0;		/* release */
+    if((fp = __sfp(ptr)) == NULL) return NULL;
+    if((c = (funcookie *)_malloc_r(ptr, sizeof *c)) == NULL) {
+        _newlib_sfp_lock_start();
+        fp->_flags = 0; /* release */
 #ifndef __SINGLE_THREAD__
-      __lock_close_recursive (fp->_lock);
+        __lock_close_recursive(fp->_lock);
 #endif
-      _newlib_sfp_lock_end ();
-      return NULL;
+        _newlib_sfp_lock_end();
+        return NULL;
     }
 
-  _newlib_flockfile_start (fp);
-  fp->_file = -1;
-  c->cookie = (void *) cookie; /* cast away const */
-  fp->_cookie = c;
-  if (readfn)
-    {
-      c->readfn = readfn;
-      fp->_read = funreader;
-      if (writefn)
-	{
-	  fp->_flags = __SRW;
-	  c->writefn = writefn;
-	  fp->_write = funwriter;
-	}
-      else
-	{
-	  fp->_flags = __SRD;
-	  c->writefn = NULL;
-	  fp->_write = NULL;
-	}
+    _newlib_flockfile_start(fp);
+    fp->_file = -1;
+    c->cookie = (void *)cookie; /* cast away const */
+    fp->_cookie = c;
+    if(readfn) {
+        c->readfn = readfn;
+        fp->_read = funreader;
+        if(writefn) {
+            fp->_flags = __SRW;
+            c->writefn = writefn;
+            fp->_write = funwriter;
+        } else {
+            fp->_flags = __SRD;
+            c->writefn = NULL;
+            fp->_write = NULL;
+        }
+    } else {
+        fp->_flags = __SWR;
+        c->writefn = writefn;
+        fp->_write = funwriter;
+        c->readfn = NULL;
+        fp->_read = NULL;
     }
-  else
-    {
-      fp->_flags = __SWR;
-      c->writefn = writefn;
-      fp->_write = funwriter;
-      c->readfn = NULL;
-      fp->_read = NULL;
-    }
-  c->seekfn = seekfn;
-  fp->_seek = seekfn ? funseeker : NULL;
+    c->seekfn = seekfn;
+    fp->_seek = seekfn ? funseeker : NULL;
 #ifdef __LARGE64_FILES
-  fp->_seek64 = seekfn ? funseeker64 : NULL;
-  fp->_flags |= __SL64;
+    fp->_seek64 = seekfn ? funseeker64 : NULL;
+    fp->_flags |= __SL64;
 #endif
-  c->closefn = closefn;
-  fp->_close = funcloser;
-  _newlib_flockfile_end (fp);
-  return fp;
+    c->closefn = closefn;
+    fp->_close = funcloser;
+    _newlib_flockfile_end(fp);
+    return fp;
 }
 
 #ifndef _REENT_ONLY
-FILE *
-funopen (const void *cookie,
-       funread readfn,
-       funwrite writefn,
-       funseek seekfn,
-       funclose closefn)
-{
-  return _funopen_r (_REENT, cookie, readfn, writefn, seekfn, closefn);
+FILE *funopen(const void *cookie, funread readfn, funwrite writefn, funseek seekfn,
+              funclose closefn) {
+    return _funopen_r(_REENT, cookie, readfn, writefn, seekfn, closefn);
 }
 #endif /* !_REENT_ONLY */

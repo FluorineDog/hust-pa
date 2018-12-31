@@ -39,9 +39,7 @@ PORTABILITY
 #include <_ansi.h>
 #include <wchar.h>
 
-size_t
-wcsxfrm_l (wchar_t *__restrict a, const wchar_t *__restrict b, size_t n,
-	   struct __locale_t *locale)
-{
-  return wcslcpy (a, b, n);
+size_t wcsxfrm_l(wchar_t *__restrict a, const wchar_t *__restrict b, size_t n,
+                 struct __locale_t *locale) {
+    return wcslcpy(a, b, n);
 }

@@ -574,56 +574,47 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <limits.h>
 #include "local.h"
 
-int
-_sprintf_r (struct _reent *ptr,
-       char *__restrict str,
-       const char *__restrict fmt, ...)
-{
-  int ret;
-  va_list ap;
-  FILE f;
+int _sprintf_r(struct _reent *ptr, char *__restrict str, const char *__restrict fmt,
+               ...) {
+    int ret;
+    va_list ap;
+    FILE f;
 
-  f._flags = __SWR | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._w = INT_MAX;
-  f._file = -1;  /* No file. */
-  va_start (ap, fmt);
-  ret = _svfprintf_r (ptr, &f, fmt, ap);
-  va_end (ap);
-  *f._p = '\0';	/* terminate the string */
-  return (ret);
+    f._flags = __SWR | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._w = INT_MAX;
+    f._file = -1; /* No file. */
+    va_start(ap, fmt);
+    ret = _svfprintf_r(ptr, &f, fmt, ap);
+    va_end(ap);
+    *f._p = '\0'; /* terminate the string */
+    return (ret);
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-_siprintf_r (struct _reent *, char *, const char *, ...)
-       _ATTRIBUTE ((__alias__("_sprintf_r")));
+int _siprintf_r(struct _reent *, char *, const char *, ...)
+    _ATTRIBUTE((__alias__("_sprintf_r")));
 #endif
 
 #ifndef _REENT_ONLY
 
-int
-sprintf (char *__restrict str,
-       const char *__restrict fmt, ...)
-{
-  int ret;
-  va_list ap;
-  FILE f;
+int sprintf(char *__restrict str, const char *__restrict fmt, ...) {
+    int ret;
+    va_list ap;
+    FILE f;
 
-  f._flags = __SWR | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._w = INT_MAX;
-  f._file = -1;  /* No file. */
-  va_start (ap, fmt);
-  ret = _svfprintf_r (_REENT, &f, fmt, ap);
-  va_end (ap);
-  *f._p = '\0';	/* terminate the string */
-  return (ret);
+    f._flags = __SWR | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._w = INT_MAX;
+    f._file = -1; /* No file. */
+    va_start(ap, fmt);
+    ret = _svfprintf_r(_REENT, &f, fmt, ap);
+    va_end(ap);
+    *f._p = '\0'; /* terminate the string */
+    return (ret);
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-siprintf (char *, const char *, ...)
-       _ATTRIBUTE ((__alias__("sprintf")));
+int siprintf(char *, const char *, ...) _ATTRIBUTE((__alias__("sprintf")));
 #endif
 #endif

@@ -30,24 +30,16 @@
 
 #include <stdlib.h>
 
-void *
-_reallocf_r (struct _reent *reentptr,
-	void *ptr,
-	size_t size)
-{
-	void *nptr;
+void *_reallocf_r(struct _reent *reentptr, void *ptr, size_t size) {
+    void *nptr;
 
-	nptr = _realloc_r(reentptr, ptr, size);
-	if (!nptr && ptr)
-		_free_r(reentptr, ptr);
-	return (nptr);
+    nptr = _realloc_r(reentptr, ptr, size);
+    if(!nptr && ptr) _free_r(reentptr, ptr);
+    return (nptr);
 }
 
 #ifndef _REENT_ONLY
-void *
-reallocf (void *ptr,
-	size_t size)
-{
-  return _reallocf_r(_REENT, ptr, size);
+void *reallocf(void *ptr, size_t size) {
+    return _reallocf_r(_REENT, ptr, size);
 }
 #endif

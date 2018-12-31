@@ -11,9 +11,6 @@
 #include <complex.h>
 #include <math.h>
 
-float
-cargf(float complex z)
-{
-
-	return atan2f( cimagf(z), crealf(z) );
+float cargf(float complex z) {
+    return atan2f(cimagf(z), crealf(z));
 }

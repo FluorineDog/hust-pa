@@ -60,21 +60,16 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #undef putchar_unlocked
 
-int
-_putchar_unlocked_r (struct _reent *ptr,
-       int c)
-{
-  return putc_unlocked (c, _stdout_r (ptr));
+int _putchar_unlocked_r(struct _reent *ptr, int c) {
+    return putc_unlocked(c, _stdout_r(ptr));
 }
 
 #ifndef _REENT_ONLY
 
-int
-putchar_unlocked (int c)
-{
-  /* CHECK_INIT is (eventually) called by __swbuf.  */
+int putchar_unlocked(int c) {
+    /* CHECK_INIT is (eventually) called by __swbuf.  */
 
-  return _putchar_unlocked_r (_REENT, c);
+    return _putchar_unlocked_r(_REENT, c);
 }
 
 #endif

@@ -31,11 +31,8 @@ QUICKREF
 #include <string.h>
 #include <strings.h>
 
-int
-bcmp (const void *m1,
-	const void *m2,
-	size_t n)
+int bcmp(const void *m1, const void *m2, size_t n)
 
 {
-  return memcmp (m1, m2, n);
+    return memcmp(m1, m2, n);
 }

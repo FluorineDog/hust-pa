@@ -29,21 +29,14 @@
 #include <wchar.h>
 #include "local.h"
 
-wint_t
-_fputwc_unlocked_r (struct _reent *ptr,
-	wchar_t wc,
-	FILE *fp)
-{
-  ORIENT(fp, 1);
-  return __fputwc(ptr, wc, fp);
+wint_t _fputwc_unlocked_r(struct _reent *ptr, wchar_t wc, FILE *fp) {
+    ORIENT(fp, 1);
+    return __fputwc(ptr, wc, fp);
 }
 
-wint_t
-fputwc_unlocked (wchar_t wc,
-	FILE *fp)
-{
-  struct _reent *reent = _REENT;
+wint_t fputwc_unlocked(wchar_t wc, FILE *fp) {
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT(reent, fp);
-  return _fputwc_unlocked_r (reent, wc, fp);
+    CHECK_INIT(reent, fp);
+    return _fputwc_unlocked_r(reent, wc, fp);
 }

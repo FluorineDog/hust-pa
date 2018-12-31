@@ -5,8 +5,8 @@
 #include <common.h>
 
 #define FPS 60
-#define W   256
-#define H   240
+#define W 256
+#define H 240
 
 int fce_load_rom(char *rom);
 void fce_init();

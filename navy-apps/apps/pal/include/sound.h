@@ -25,52 +25,30 @@
 #include "_common.h"
 
 #ifndef PAL_SAMPLE_RATE
-#define PAL_SAMPLE_RATE     44100 /*49716*/
+#define PAL_SAMPLE_RATE 44100 /*49716*/
 #endif
 
 #ifndef PAL_CHANNELS
-#define PAL_CHANNELS        1
+#define PAL_CHANNELS 1
 #endif
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-INT
-SOUND_OpenAudio(
-   VOID
-);
+INT SOUND_OpenAudio(VOID);
 
-VOID
-SOUND_CloseAudio(
-   VOID
-);
+VOID SOUND_CloseAudio(VOID);
 
-VOID
-SOUND_PlayChannel(
-   INT    iSoundNum,
-   INT    iChannel
-);
+VOID SOUND_PlayChannel(INT iSoundNum, INT iChannel);
 
 #ifdef __SYMBIAN32__
-VOID
-SOUND_AdjustVolume(
-   INT    iDirectory
-);
+VOID SOUND_AdjustVolume(INT iDirectory);
 #endif
 
-VOID
-PAL_PlayMUS(
-   INT       iNumRIX,
-   BOOL      fLoop,
-   FLOAT     flFadeTime
-);
+VOID PAL_PlayMUS(INT iNumRIX, BOOL fLoop, FLOAT flFadeTime);
 
-BOOL
-SOUND_PlayCDA(
-   INT    iNumTrack
-);
+BOOL SOUND_PlayCDA(INT iNumTrack);
 
 #ifdef PAL_CLASSIC
 extern int g_iCurrChannel;
@@ -79,10 +57,10 @@ extern int g_iCurrChannel;
 #define SOUND_Play(i) SOUND_PlayChannel((i), 0)
 #endif
 
-extern BOOL       g_fNoSound;
-extern BOOL       g_fNoMusic;
+extern BOOL g_fNoSound;
+extern BOOL g_fNoMusic;
 #ifdef PAL_HAS_NATIVEMIDI
-extern BOOL       g_fUseMidi;
+extern BOOL g_fUseMidi;
 #endif
 
 #ifdef __cplusplus

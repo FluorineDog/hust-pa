@@ -37,18 +37,12 @@ DESCRIPTION
 	<<errno>>.
 */
 
-_off_t
-_lseek_r (struct _reent *ptr,
-     int fd,
-     _off_t pos,
-     int whence)
-{
-  _off_t ret;
+_off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence) {
+    _off_t ret;
 
-  errno = 0;
-  if ((ret = _lseek (fd, pos, whence)) == (_off_t) -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _lseek(fd, pos, whence)) == (_off_t)-1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

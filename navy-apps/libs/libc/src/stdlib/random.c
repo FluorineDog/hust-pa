@@ -56,27 +56,23 @@ algorithm as <<rand>>.
 #include <stdlib.h>
 #include <reent.h>
 
-void
-srandom (unsigned int seed)
-{
-  struct _reent *reent = _REENT;
+void srandom(unsigned int seed) {
+    struct _reent *reent = _REENT;
 
-  _REENT_CHECK_RAND48(reent);
-  _REENT_RAND_NEXT(reent) = seed;
+    _REENT_CHECK_RAND48(reent);
+    _REENT_RAND_NEXT(reent) = seed;
 }
 
-long int
-random (void)
-{
-  struct _reent *reent = _REENT;
+long int random(void) {
+    struct _reent *reent = _REENT;
 
-  /* This multiplier was obtained from Knuth, D.E., "The Art of
+    /* This multiplier was obtained from Knuth, D.E., "The Art of
      Computer Programming," Vol 2, Seminumerical Algorithms, Third
      Edition, Addison-Wesley, 1998, p. 106 (line 26) & p. 108 */
-  _REENT_CHECK_RAND48(reent);
-  _REENT_RAND_NEXT(reent) =
-     _REENT_RAND_NEXT(reent) * __extension__ 6364136223846793005LL + 1;
-  return (long int)((_REENT_RAND_NEXT(reent) >> 32) & RAND_MAX);
+    _REENT_CHECK_RAND48(reent);
+    _REENT_RAND_NEXT(reent) =
+        _REENT_RAND_NEXT(reent) * __extension__ 6364136223846793005LL + 1;
+    return (long int)((_REENT_RAND_NEXT(reent) >> 32) & RAND_MAX);
 }
 
 #endif /* _REENT_ONLY */

@@ -22,29 +22,27 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	float copysignf(float x, float y)
+float copysignf(float x, float y)
 #else
-	float copysignf(x,y)
-	float x,y;
+float copysignf(x, y) float x, y;
 #endif
 {
-	__uint32_t ix,iy;
-	GET_FLOAT_WORD(ix,x);
-	GET_FLOAT_WORD(iy,y);
-	SET_FLOAT_WORD(x,(ix&0x7fffffff)|(iy&0x80000000));
-        return x;
+    __uint32_t ix, iy;
+    GET_FLOAT_WORD(ix, x);
+    GET_FLOAT_WORD(iy, y);
+    SET_FLOAT_WORD(x, (ix & 0x7fffffff) | (iy & 0x80000000));
+    return x;
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double copysign(double x, double y)
+double copysign(double x, double y)
 #else
-	double copysign(x,y)
-	double x,y;
+double copysign(x, y) double x, y;
 #endif
 {
-	return (double) copysignf((float) x, (float) y);
+    return (double)copysignf((float)x, (float)y);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

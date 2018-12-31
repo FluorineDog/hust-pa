@@ -63,62 +63,52 @@ PORTABILITY
 
 static const double INV_LN2 = 1.4426950408889634074;
 static const double LN2 = 0.6931471805599453094172321;
-static const double p[] = { 0.25, 0.75753180159422776666e-2,
-                     0.31555192765684646356e-4 };
-static const double q[] = { 0.5, 0.56817302698551221787e-1,
-                     0.63121894374398504557e-3,
-                     0.75104028399870046114e-6 };
+static const double p[] = {0.25, 0.75753180159422776666e-2, 0.31555192765684646356e-4};
+static const double q[] = {0.5, 0.56817302698551221787e-1, 0.63121894374398504557e-3,
+                           0.75104028399870046114e-6};
 
-double
-exp (double x)
-{
-  int N;
-  double g, z, R, P, Q;
+double exp(double x) {
+    int N;
+    double g, z, R, P, Q;
 
-  switch (numtest (x))
-    {
-      case NAN:
-        errno = EDOM;
-        return (x);
-      case INF:
+    switch(numtest(x)) {
+        case NAN: errno = EDOM; return (x);
+        case INF:
+            errno = ERANGE;
+            if(ispos(x))
+                return (z_infinity.d);
+            else
+                return (0.0);
+        case 0: return (1.0);
+    }
+
+    /* Check for out of bounds. */
+    if(x > BIGX || x < SMALLX) {
         errno = ERANGE;
-        if (ispos (x))
-          return (z_infinity.d);
-        else
-          return (0.0);
-      case 0:
+        return (x);
+    }
+
+    /* Check for a value too small to calculate. */
+    if(-z_rooteps < x && x < z_rooteps) {
         return (1.0);
     }
 
-  /* Check for out of bounds. */
-  if (x > BIGX || x < SMALLX)
-    {
-      errno = ERANGE;
-      return (x);
-    }
+    /* Calculate the exponent. */
+    if(x < 0.0)
+        N = (int)(x * INV_LN2 - 0.5);
+    else
+        N = (int)(x * INV_LN2 + 0.5);
 
-  /* Check for a value too small to calculate. */
-  if (-z_rooteps < x && x < z_rooteps)
-    {
-      return (1.0);
-    }
+    /* Construct the mantissa. */
+    g = x - N * LN2;
+    z = g * g;
+    P = g * ((p[2] * z + p[1]) * z + p[0]);
+    Q = ((q[3] * z + q[2]) * z + q[1]) * z + q[0];
+    R = 0.5 + P / (Q - P);
 
-  /* Calculate the exponent. */
-  if (x < 0.0)
-    N = (int) (x * INV_LN2 - 0.5);
-  else
-    N = (int) (x * INV_LN2 + 0.5);
-
-  /* Construct the mantissa. */
-  g = x - N * LN2;
-  z = g * g;
-  P = g * ((p[2] * z + p[1]) * z + p[0]);
-  Q = ((q[3] * z + q[2]) * z + q[1]) * z + q[0];
-  R = 0.5 + P / (Q - P);
-
-  /* Return the floating point value. */
-  N++;
-  return (ldexp (R, N));
+    /* Return the floating point value. */
+    N++;
+    return (ldexp(R, N));
 }
 
 #endif /* _DOUBLE_IS_32BITS */

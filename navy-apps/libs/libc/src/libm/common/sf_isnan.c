@@ -20,26 +20,22 @@
 
 #include "fdlibm.h"
 #include <ieeefp.h>
- 
+
 #undef isnanf
 
-int
-isnanf (float x)
-{
-	__int32_t ix;
-	GET_FLOAT_WORD(ix,x);
-	ix &= 0x7fffffff;
-	return FLT_UWORD_IS_NAN(ix);
+int isnanf(float x) {
+    __int32_t ix;
+    GET_FLOAT_WORD(ix, x);
+    ix &= 0x7fffffff;
+    return FLT_UWORD_IS_NAN(ix);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #undef isnan
 
-int
-isnan (double x)
-{
-	return isnanf((float) x);
+int isnan(double x) {
+    return isnanf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

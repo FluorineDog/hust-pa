@@ -67,30 +67,30 @@
 	exception based error handling.
 */
 
-#if (defined(__arm__) || defined(__thumb__)) && !defined(__MAVERICK__)
+#if(defined(__arm__) || defined(__thumb__)) && !defined(__MAVERICK__)
 /* ARM traditionally used big-endian words; and within those words the
    byte ordering was big or little endian depending upon the target.
    Modern floating-point formats are naturally ordered; in this case
    __VFP_FP__ will be defined, even if soft-float.  */
 #ifdef __VFP_FP__
-# ifdef __ARMEL__
-#  define __IEEE_LITTLE_ENDIAN
-# else
-#  define __IEEE_BIG_ENDIAN
-# endif
-# if __ARM_FP & 0x8
-#  define __OBSOLETE_MATH_DEFAULT 0
-# endif
+#ifdef __ARMEL__
+#define __IEEE_LITTLE_ENDIAN
 #else
-# define __IEEE_BIG_ENDIAN
-# ifdef __ARMEL__
-#  define __IEEE_BYTES_LITTLE_ENDIAN
-# endif
+#define __IEEE_BIG_ENDIAN
+#endif
+#if __ARM_FP & 0x8
+#define __OBSOLETE_MATH_DEFAULT 0
+#endif
+#else
+#define __IEEE_BIG_ENDIAN
+#ifdef __ARMEL__
+#define __IEEE_BYTES_LITTLE_ENDIAN
+#endif
 #endif
 #endif
 
-#if defined (__aarch64__)
-#if defined (__AARCH64EL__)
+#if defined(__aarch64__)
+#if defined(__AARCH64EL__)
 #define __IEEE_LITTLE_ENDIAN
 #else
 #define __IEEE_BIG_ENDIAN
@@ -118,22 +118,25 @@
 #ifdef __SPU__
 #define __IEEE_BIG_ENDIAN
 
-#define isfinite(__y) \
-	(__extension__ ({int __cy; \
-		(sizeof (__y) == sizeof (float))  ? (1) : \
-		(__cy = fpclassify(__y)) != FP_INFINITE && __cy != FP_NAN;}))
+#define isfinite(__y)                                                   \
+    (__extension__({                                                    \
+        int __cy;                                                       \
+        (sizeof(__y) == sizeof(float))                                  \
+            ? (1)                                                       \
+            : (__cy = fpclassify(__y)) != FP_INFINITE&& __cy != FP_NAN; \
+    }))
 
-#define isinf(__x) ((sizeof (__x) == sizeof (float))  ?  (0) : __isinfd(__x))
-#define isnan(__x) ((sizeof (__x) == sizeof (float))  ?  (0) : __isnand(__x))
+#define isinf(__x) ((sizeof(__x) == sizeof(float)) ? (0) : __isinfd(__x))
+#define isnan(__x) ((sizeof(__x) == sizeof(float)) ? (0) : __isnand(__x))
 
 /*
  * Macros for use in ieeefp.h. We can't just define the real ones here
  * (like those above) as we have name space issues when this is *not*
  * included via generic the ieeefp.h.
  */
-#define __ieeefp_isnanf(x)	0
-#define __ieeefp_isinff(x)	0
-#define __ieeefp_finitef(x)	1
+#define __ieeefp_isnanf(x) 0
+#define __ieeefp_isinff(x) 0
+#define __ieeefp_finitef(x) 1
 #endif
 
 #ifdef __sparc__
@@ -151,22 +154,22 @@
 #if defined(__mc68hc11__) || defined(__mc68hc12__) || defined(__mc68hc1x__)
 #define __IEEE_BIG_ENDIAN
 #ifdef __HAVE_SHORT_DOUBLE__
-# define _DOUBLE_IS_32BITS
+#define _DOUBLE_IS_32BITS
 #endif
 #endif
 
-#if defined (__H8300__) || defined (__H8300H__) || defined (__H8300S__) || defined (__H8500__) || defined (__H8300SX__)
+#if defined(__H8300__) || defined(__H8300H__) || defined(__H8300S__) || \
+    defined(__H8500__) || defined(__H8300SX__)
 #define __IEEE_BIG_ENDIAN
 #define _FLOAT_ARG float
 #define _DOUBLE_IS_32BITS
 #endif
 
-#if defined (__xc16x__) || defined (__xc16xL__) || defined (__xc16xS__)
+#if defined(__xc16x__) || defined(__xc16xL__) || defined(__xc16xS__)
 #define __IEEE_LITTLE_ENDIAN
 #define _FLOAT_ARG float
 #define _DOUBLE_IS_32BITS
 #endif
-
 
 #ifdef __sh__
 #ifdef __LITTLE_ENDIAN__
@@ -174,7 +177,8 @@
 #else
 #define __IEEE_BIG_ENDIAN
 #endif
-#if defined(__SH2E__) || defined(__SH3E__) || defined(__SH4_SINGLE_ONLY__) || defined(__SH2A_SINGLE_ONLY__)
+#if defined(__SH2E__) || defined(__SH3E__) || defined(__SH4_SINGLE_ONLY__) || \
+    defined(__SH2A_SINGLE_ONLY__)
 #define _DOUBLE_IS_32BITS
 #endif
 #endif
@@ -283,10 +287,11 @@
 #endif
 
 #ifdef __PPC__
-#if (defined(_BIG_ENDIAN) && _BIG_ENDIAN) || (defined(_AIX) && _AIX)
+#if(defined(_BIG_ENDIAN) && _BIG_ENDIAN) || (defined(_AIX) && _AIX)
 #define __IEEE_BIG_ENDIAN
 #else
-#if (defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN) || (defined(__sun__) && __sun__) || (defined(_WIN32) && _WIN32)
+#if(defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN) || (defined(__sun__) && __sun__) || \
+    (defined(_WIN32) && _WIN32)
 #define __IEEE_LITTLE_ENDIAN
 #endif
 #endif
@@ -365,9 +370,9 @@
 
 #ifdef __MAVERICK__
 #ifdef __ARMEL__
-#  define __IEEE_LITTLE_ENDIAN
-#else  /* must be __ARMEB__ */
-#  define __IEEE_BIG_ENDIAN
+#define __IEEE_LITTLE_ENDIAN
+#else /* must be __ARMEB__ */
+#define __IEEE_BIG_ENDIAN
 #endif /* __ARMEL__ */
 #endif /* __MAVERICK__ */
 
@@ -406,12 +411,12 @@
 
 #ifdef __MSP430__
 #define __IEEE_LITTLE_ENDIAN
-#define __SMALL_BITFIELDS	/* 16 Bit INT */
+#define __SMALL_BITFIELDS /* 16 Bit INT */
 #endif
 
 #ifdef __RL78__
 #define __IEEE_LITTLE_ENDIAN
-#define __SMALL_BITFIELDS	/* 16 Bit INT */
+#define __SMALL_BITFIELDS /* 16 Bit INT */
 #ifndef __RL78_64BIT_DOUBLES__
 #define _DOUBLE_IS_32BITS
 #endif
@@ -435,17 +440,17 @@
 
 #endif
 
-#if (defined(__CR16__) || defined(__CR16C__) ||defined(__CR16CP__))
+#if(defined(__CR16__) || defined(__CR16C__) || defined(__CR16CP__))
 #define __IEEE_LITTLE_ENDIAN
-#define __SMALL_BITFIELDS	/* 16 Bit INT */
+#define __SMALL_BITFIELDS /* 16 Bit INT */
 #endif
 
 #ifdef __NIOS2__
-# ifdef __nios2_big_endian__
-#  define __IEEE_BIG_ENDIAN
-# else
-#  define __IEEE_LITTLE_ENDIAN
-# endif
+#ifdef __nios2_big_endian__
+#define __IEEE_BIG_ENDIAN
+#else
+#define __IEEE_LITTLE_ENDIAN
+#endif
 #endif
 
 #ifdef __VISIUM__
@@ -472,4 +477,3 @@
 
 #endif /* not __IEEE_LITTLE_ENDIAN */
 #endif /* not __IEEE_BIG_ENDIAN */
-

@@ -77,23 +77,21 @@ QUICKREF
 #include <complex.h>
 #include <math.h>
 
-double complex
-cacos(double complex z)
-{
-	double complex w;
+double complex cacos(double complex z) {
+    double complex w;
 
-	/* FIXME: The original NetBSD code results in an ICE when trying to
+    /* FIXME: The original NetBSD code results in an ICE when trying to
 	   build this function on ARM/Thumb using gcc 4.5.1.  For now we use
 	   a hopefully temporary workaround. */
 #if 0
 	w = casin(z);
 	w = (M_PI_2 - creal(w)) - cimag(w) * I;
 #else
-	double complex tmp0, tmp1;
+    double complex tmp0, tmp1;
 
-	tmp0 = casin(z);
-	tmp1 = M_PI_2 - creal(tmp0);
-	w = tmp1 - (cimag(tmp0) * I);
+    tmp0 = casin(z);
+    tmp1 = M_PI_2 - creal(tmp0);
+    w = tmp1 - (cimag(tmp0) * I);
 #endif
-	return w;
+    return w;
 }

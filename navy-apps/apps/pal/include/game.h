@@ -24,12 +24,9 @@
 
 #include "_common.h"
 
-#define    FPS             10
-#define    FRAME_TIME      (1000 / FPS)
+#define FPS 10
+#define FRAME_TIME (1000 / FPS)
 
-VOID
-PAL_GameMain(
-   VOID
-);
+VOID PAL_GameMain(VOID);
 
 #endif

@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-truncl (long double x)
-{
-  return trunc(x);
+long double truncl(long double x) {
+    return trunc(x);
 }
 #endif
-

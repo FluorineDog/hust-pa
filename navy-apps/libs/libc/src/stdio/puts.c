@@ -64,69 +64,60 @@ static char sccsid[] = "%W% (Berkeley) %G%";
  * Write the given string to stdout, appending a newline.
  */
 
-int
-_puts_r (struct _reent *ptr,
-       const char * s)
-{
+int _puts_r(struct _reent *ptr, const char *s) {
 #ifdef _FVWRITE_IN_STREAMIO
-  int result;
-  size_t c = strlen (s);
-  struct __suio uio;
-  struct __siov iov[2];
-  FILE *fp;
+    int result;
+    size_t c = strlen(s);
+    struct __suio uio;
+    struct __siov iov[2];
+    FILE *fp;
 
-  iov[0].iov_base = s;
-  iov[0].iov_len = c;
-  iov[1].iov_base = "\n";
-  iov[1].iov_len = 1;
-  uio.uio_resid = c + 1;
-  uio.uio_iov = &iov[0];
-  uio.uio_iovcnt = 2;
+    iov[0].iov_base = s;
+    iov[0].iov_len = c;
+    iov[1].iov_base = "\n";
+    iov[1].iov_len = 1;
+    uio.uio_resid = c + 1;
+    uio.uio_iov = &iov[0];
+    uio.uio_iovcnt = 2;
 
-  _REENT_SMALL_CHECK_INIT (ptr);
-  fp = _stdout_r (ptr);
-  CHECK_INIT (ptr, fp);
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, -1);
-  result = (__sfvwrite_r (ptr, fp, &uio) ? EOF : '\n');
-  _newlib_flockfile_end (fp);
-  return result;
+    _REENT_SMALL_CHECK_INIT(ptr);
+    fp = _stdout_r(ptr);
+    CHECK_INIT(ptr, fp);
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, -1);
+    result = (__sfvwrite_r(ptr, fp, &uio) ? EOF : '\n');
+    _newlib_flockfile_end(fp);
+    return result;
 #else
-  int result = EOF;
-  const char *p = s;
-  FILE *fp;
-  _REENT_SMALL_CHECK_INIT (ptr);
+    int result = EOF;
+    const char *p = s;
+    FILE *fp;
+    _REENT_SMALL_CHECK_INIT(ptr);
 
-  fp = _stdout_r (ptr);
-  CHECK_INIT (ptr, fp);
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, -1);
-  /* Make sure we can write.  */
-  if (cantwrite (ptr, fp))
-    goto err;
+    fp = _stdout_r(ptr);
+    CHECK_INIT(ptr, fp);
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, -1);
+    /* Make sure we can write.  */
+    if(cantwrite(ptr, fp)) goto err;
 
-  while (*p)
-    {
-      if (__sputc_r (ptr, *p++, fp) == EOF)
-	goto err;
+    while(*p) {
+        if(__sputc_r(ptr, *p++, fp) == EOF) goto err;
     }
-  if (__sputc_r (ptr, '\n', fp) == EOF)
-    goto err;
+    if(__sputc_r(ptr, '\n', fp) == EOF) goto err;
 
-  result = '\n';
+    result = '\n';
 
 err:
-  _newlib_flockfile_end (fp);
-  return result;
+    _newlib_flockfile_end(fp);
+    return result;
 #endif
 }
 
 #ifndef _REENT_ONLY
 
-int
-puts (char const * s)
-{
-  return _puts_r (_REENT, s);
+int puts(char const *s) {
+    return _puts_r(_REENT, s);
 }
 
 #endif

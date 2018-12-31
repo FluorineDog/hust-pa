@@ -93,106 +93,86 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
  * Return first argument, or NULL if no characters were read.
  */
 
-char *
-_fgets_r (struct _reent * ptr,
-       char *__restrict buf,
-       int n,
-       FILE *__restrict fp)
-{
-  size_t len;
-  char *s;
-  unsigned char *p, *t;
+char *_fgets_r(struct _reent *ptr, char *__restrict buf, int n, FILE *__restrict fp) {
+    size_t len;
+    char *s;
+    unsigned char *p, *t;
 
-  if (n < 2)			/* sanity check */
-    return 0;
+    if(n < 2) /* sanity check */
+        return 0;
 
-  s = buf;
+    s = buf;
 
-  CHECK_INIT(ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  _newlib_flockfile_start (fp);
+    _newlib_flockfile_start(fp);
 #ifdef __SCLE
-  if (fp->_flags & __SCLE)
-    {
-      int c = 0;
-      /* Sorry, have to do it the slow way */
-      while (--n > 0 && (c = __sgetc_r (ptr, fp)) != EOF)
-	{
-	  *s++ = c;
-	  if (c == '\n')
-	    break;
-	}
-      if (c == EOF && s == buf)
-        {
-          _newlib_flockfile_exit (fp);
-          return NULL;
+    if(fp->_flags & __SCLE) {
+        int c = 0;
+        /* Sorry, have to do it the slow way */
+        while(--n > 0 && (c = __sgetc_r(ptr, fp)) != EOF) {
+            *s++ = c;
+            if(c == '\n') break;
         }
-      *s = 0;
-      _newlib_flockfile_exit (fp);
-      return buf;
+        if(c == EOF && s == buf) {
+            _newlib_flockfile_exit(fp);
+            return NULL;
+        }
+        *s = 0;
+        _newlib_flockfile_exit(fp);
+        return buf;
     }
 #endif
 
-  n--;				/* leave space for NUL */
-  do
-    {
-      /*
+    n--; /* leave space for NUL */
+    do {
+        /*
        * If the buffer is empty, refill it.
        */
-      if ((len = fp->_r) <= 0)
-	{
-	  if (__srefill_r (ptr, fp))
-	    {
-	      /* EOF: stop with partial or no line */
-	      if (s == buf)
-                {
-                  _newlib_flockfile_exit (fp);
-                  return 0;
+        if((len = fp->_r) <= 0) {
+            if(__srefill_r(ptr, fp)) {
+                /* EOF: stop with partial or no line */
+                if(s == buf) {
+                    _newlib_flockfile_exit(fp);
+                    return 0;
                 }
-	      break;
-	    }
-	  len = fp->_r;
-	}
-      p = fp->_p;
+                break;
+            }
+            len = fp->_r;
+        }
+        p = fp->_p;
 
-      /*
+        /*
        * Scan through at most n bytes of the current buffer,
        * looking for '\n'.  If found, copy up to and including
        * newline, and stop.  Otherwise, copy entire chunk
        * and loop.
        */
-      if (len > n)
-	len = n;
-      t = (unsigned char *) memchr ((void *) p, '\n', len);
-      if (t != 0)
-	{
-	  len = ++t - p;
-	  fp->_r -= len;
-	  fp->_p = t;
-	  (void) memcpy ((void *) s, (void *) p, len);
-	  s[len] = 0;
-          _newlib_flockfile_exit (fp);
-	  return (buf);
-	}
-      fp->_r -= len;
-      fp->_p += len;
-      (void) memcpy ((void *) s, (void *) p, len);
-      s += len;
-    }
-  while ((n -= len) != 0);
-  *s = 0;
-  _newlib_flockfile_end (fp);
-  return buf;
+        if(len > n) len = n;
+        t = (unsigned char *)memchr((void *)p, '\n', len);
+        if(t != 0) {
+            len = ++t - p;
+            fp->_r -= len;
+            fp->_p = t;
+            (void)memcpy((void *)s, (void *)p, len);
+            s[len] = 0;
+            _newlib_flockfile_exit(fp);
+            return (buf);
+        }
+        fp->_r -= len;
+        fp->_p += len;
+        (void)memcpy((void *)s, (void *)p, len);
+        s += len;
+    } while((n -= len) != 0);
+    *s = 0;
+    _newlib_flockfile_end(fp);
+    return buf;
 }
 
 #ifndef _REENT_ONLY
 
-char *
-fgets (char *__restrict buf,
-       int n,
-       FILE *__restrict fp)
-{
-  return _fgets_r (_REENT, buf, n, fp);
+char *fgets(char *__restrict buf, int n, FILE *__restrict fp) {
+    return _fgets_r(_REENT, buf, n, fp);
 }
 
 #endif /* !_REENT_ONLY */

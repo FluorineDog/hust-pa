@@ -36,7 +36,8 @@
 static char sccsid[] = "from @(#)strtol.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/lib/libc/stdlib/strtoimax.c 251672 2013-06-13 00:19:30Z emaste $");
+__FBSDID(
+    "$FreeBSD: head/lib/libc/stdlib/strtoimax.c 251672 2013-06-13 00:19:30Z emaste $");
 
 #include <ctype.h>
 #include <errno.h>
@@ -56,45 +57,39 @@ __FBSDID("$FreeBSD: head/lib/libc/stdlib/strtoimax.c 251672 2013-06-13 00:19:30Z
 /*
  *Reentrant version of strtoimax.
  */
-static intmax_t
-_strtoimax_l(struct _reent *rptr, const char * __restrict nptr,
-	     char ** __restrict endptr, int base, locale_t loc)
-{
-	const char *s = nptr;
-	uintmax_t acc = 0;
-	char c;
-	uintmax_t cutoff;
-	int neg = 0, any = 0, cutlim;
+static intmax_t _strtoimax_l(struct _reent *rptr, const char *__restrict nptr,
+                             char **__restrict endptr, int base, locale_t loc) {
+    const char *s = nptr;
+    uintmax_t acc = 0;
+    char c;
+    uintmax_t cutoff;
+    int neg = 0, any = 0, cutlim;
 
-	/*
+    /*
 	 * Skip white space and pick up leading +/- sign if any.
 	 * If base is 0, allow 0x for hex and 0 for octal, else
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
-	do {
-		c = *s++;
-	} while (isspace_l(c, loc));
-	if (c == '-') {
-		neg = 1;
-		c = *s++;
-	} else {
-		neg = 0;
-		if (c == '+')
-			c = *s++;
-	}
-	if ((base == 0 || base == 16) &&
-	    c == '0' && (*s == 'x' || *s == 'X')) {
-		c = s[1];
-		s += 2;
-		base = 16;
-	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+    do {
+        c = *s++;
+    } while(isspace_l(c, loc));
+    if(c == '-') {
+        neg = 1;
+        c = *s++;
+    } else {
+        neg = 0;
+        if(c == '+') c = *s++;
+    }
+    if((base == 0 || base == 16) && c == '0' && (*s == 'x' || *s == 'X')) {
+        c = s[1];
+        s += 2;
+        base = 16;
+    }
+    if(base == 0) base = c == '0' ? 8 : 10;
 
-	if (base < 2 || base > 36)
-		goto noconv;
+    if(base < 2 || base > 36) goto noconv;
 
-	/*
+    /*
 	 * Compute the cutoff value between legal numbers and illegal
 	 * numbers.  That is the largest legal value, divided by the
 	 * base.  An input number that is greater than this value, if
@@ -112,61 +107,53 @@ _strtoimax_l(struct _reent *rptr, const char * __restrict nptr,
 	 * Set 'any' if any `digits' consumed; make it negative to indicate
 	 * overflow.
 	 */
-	cutoff = neg ? -(uintmax_t)INTMAX_MIN : INTMAX_MAX;
-	cutlim = cutoff % base;
-	cutoff /= base;
-	for ( ; ; c = *s++) {
-		if (c >= '0' && c <= '9')
-			c -= '0';
-		else if (c >= 'A' && c <= 'Z')
-			c -= 'A' - 10;
-		else if (c >= 'a' && c <= 'z')
-			c -= 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
-			any = -1;
-		else {
-			any = 1;
-			acc *= base;
-			acc += c;
-		}
-	}
-	if (any < 0) {
-		acc = neg ? INTMAX_MIN : INTMAX_MAX;
-		rptr->_errno = ERANGE;
-	} else if (!any) {
-noconv:
-		rptr->_errno = EINVAL;
-	} else if (neg)
-		acc = -acc;
-	if (endptr != NULL)
-		*endptr = (char *)(any ? s - 1 : nptr);
-	return (acc);
+    cutoff = neg ? -(uintmax_t)INTMAX_MIN : INTMAX_MAX;
+    cutlim = cutoff % base;
+    cutoff /= base;
+    for(;; c = *s++) {
+        if(c >= '0' && c <= '9')
+            c -= '0';
+        else if(c >= 'A' && c <= 'Z')
+            c -= 'A' - 10;
+        else if(c >= 'a' && c <= 'z')
+            c -= 'a' - 10;
+        else
+            break;
+        if(c >= base) break;
+        if(any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
+            any = -1;
+        else {
+            any = 1;
+            acc *= base;
+            acc += c;
+        }
+    }
+    if(any < 0) {
+        acc = neg ? INTMAX_MIN : INTMAX_MAX;
+        rptr->_errno = ERANGE;
+    } else if(!any) {
+    noconv:
+        rptr->_errno = EINVAL;
+    } else if(neg)
+        acc = -acc;
+    if(endptr != NULL) *endptr = (char *)(any ? s - 1 : nptr);
+    return (acc);
 }
 
-intmax_t
-_strtoimax_r(struct _reent *rptr, const char *__restrict nptr,
-	     char **__restrict endptr, int base)
-{
-	return _strtoimax_l(rptr, nptr, endptr, base, __get_current_locale());
+intmax_t _strtoimax_r(struct _reent *rptr, const char *__restrict nptr,
+                      char **__restrict endptr, int base) {
+    return _strtoimax_l(rptr, nptr, endptr, base, __get_current_locale());
 }
 
 #ifndef _REENT_ONLY
 
-intmax_t
-strtoimax_l(const char * __restrict nptr, char ** __restrict endptr, int base,
-	    locale_t loc)
-{
-	return _strtoimax_l(_REENT, nptr, endptr, base, loc);
+intmax_t strtoimax_l(const char *__restrict nptr, char **__restrict endptr, int base,
+                     locale_t loc) {
+    return _strtoimax_l(_REENT, nptr, endptr, base, loc);
 }
 
-intmax_t
-strtoimax(const char* __restrict nptr, char** __restrict endptr, int base)
-{
-	return _strtoimax_l(_REENT, nptr, endptr, base, __get_current_locale());
+intmax_t strtoimax(const char *__restrict nptr, char **__restrict endptr, int base) {
+    return _strtoimax_l(_REENT, nptr, endptr, base, __get_current_locale());
 }
 
 #endif

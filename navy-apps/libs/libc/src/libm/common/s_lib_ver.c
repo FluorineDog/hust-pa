@@ -28,7 +28,7 @@ _LIB_VERSION_TYPE _LIB_VERSION = _XOPEN_;
 #else
 #ifdef _SVID3_MODE
 _LIB_VERSION_TYPE _LIB_VERSION = _SVID_;
-#else					/* default _IEEE_MODE */
+#else /* default _IEEE_MODE */
 _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
 #endif
 #endif

@@ -124,70 +124,55 @@ PORTABILITY
 #include <wchar.h>
 #include "local.h"
 
-wint_t
-__fgetwc (struct _reent *ptr,
-	register FILE *fp)
-{
-  wchar_t wc;
-  size_t nconv;
+wint_t __fgetwc(struct _reent *ptr, register FILE *fp) {
+    wchar_t wc;
+    size_t nconv;
 
-  if (fp->_r <= 0 && __srefill_r (ptr, fp))
-    return (WEOF);
-  if (MB_CUR_MAX == 1)
-    {
-      /* Fast path for single-byte encodings. */
-      wc = *fp->_p++;
-      fp->_r--;
-      return (wc);
+    if(fp->_r <= 0 && __srefill_r(ptr, fp)) return (WEOF);
+    if(MB_CUR_MAX == 1) {
+        /* Fast path for single-byte encodings. */
+        wc = *fp->_p++;
+        fp->_r--;
+        return (wc);
     }
-  do
-    {
-      nconv = _mbrtowc_r (ptr, &wc, (char *) fp->_p, fp->_r, &fp->_mbstate);
-      if (nconv == (size_t)-1)
-	break;
-      else if (nconv == (size_t)-2)
-	continue;
-      else if (nconv == 0)
-	{
-	  /*
+    do {
+        nconv = _mbrtowc_r(ptr, &wc, (char *)fp->_p, fp->_r, &fp->_mbstate);
+        if(nconv == (size_t)-1)
+            break;
+        else if(nconv == (size_t)-2)
+            continue;
+        else if(nconv == 0) {
+            /*
 	   * Assume that the only valid representation of
 	   * the null wide character is a single null byte.
 	   */
-	  fp->_p++;
-	  fp->_r--;
-	  return (L'\0');
-	}
-      else
-        {
-	  fp->_p += nconv;
-	  fp->_r -= nconv;
-	  return (wc);
-	}
-    }
-  while (__srefill_r(ptr, fp) == 0);
-  fp->_flags |= __SERR;
-  errno = EILSEQ;
-  return (WEOF);
+            fp->_p++;
+            fp->_r--;
+            return (L'\0');
+        } else {
+            fp->_p += nconv;
+            fp->_r -= nconv;
+            return (wc);
+        }
+    } while(__srefill_r(ptr, fp) == 0);
+    fp->_flags |= __SERR;
+    errno = EILSEQ;
+    return (WEOF);
 }
 
-wint_t
-_fgetwc_r (struct _reent *ptr,
-	register FILE *fp)
-{
-  wint_t r;
+wint_t _fgetwc_r(struct _reent *ptr, register FILE *fp) {
+    wint_t r;
 
-  _newlib_flockfile_start (fp);
-  ORIENT(fp, 1);
-  r = __fgetwc (ptr, fp);
-  _newlib_flockfile_end (fp);
-  return r;
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, 1);
+    r = __fgetwc(ptr, fp);
+    _newlib_flockfile_end(fp);
+    return r;
 }
 
-wint_t
-fgetwc (FILE *fp)
-{
-  struct _reent *reent = _REENT;
+wint_t fgetwc(FILE *fp) {
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT(reent, fp);
-  return _fgetwc_r (reent, fp);
+    CHECK_INIT(reent, fp);
+    return _fgetwc_r(reent, fp);
 }

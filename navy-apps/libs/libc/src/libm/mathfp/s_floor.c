@@ -61,20 +61,16 @@ PORTABILITY
 
 #ifndef _DOUBLE_IS_32BITS
 
-double 
-floor (double x)
-{
-  double f, y;
+double floor(double x) {
+    double f, y;
 
-  if (x > -1.0 && x < 1.0)
-    return (x >= 0 ? 0 : -1.0);
+    if(x > -1.0 && x < 1.0) return (x >= 0 ? 0 : -1.0);
 
-  y = modf (x, &f);
+    y = modf(x, &f);
 
-  if (y == 0.0)
-    return (x);
+    if(y == 0.0) return (x);
 
-  return (x >= 0 ? f : f - 1.0);
+    return (x >= 0 ? f : f - 1.0);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

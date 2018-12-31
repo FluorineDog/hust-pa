@@ -1,7 +1,6 @@
 #pragma once
 #include "common.h"
 
-
 enum { R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI };
 enum { R_AX, R_CX, R_DX, R_BX, R_SP, R_BP, R_SI, R_DI };
 enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
@@ -14,34 +13,34 @@ enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
  */
 
 typedef union {
-  union {
-    uint32_t _32;
-    uint16_t _16;
-    uint8_t _8[2];
-  } gpr[8];
+    union {
+        uint32_t _32;
+        uint16_t _16;
+        uint8_t _8[2];
+    } gpr[8];
 
-  /* Do NOT change the order of the GPRs' definitions. */
+    /* Do NOT change the order of the GPRs' definitions. */
 
-  /* In NEMU, rtlreg_t is exactly uint32_t. This makes RTL instructions
+    /* In NEMU, rtlreg_t is exactly uint32_t. This makes RTL instructions
    * in PA2 able to directly access these registers.
    */
-  struct {
-      rtlreg_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
-      vaddr_t eip;
-      rtlreg_t eflags;
-      rtlreg_t cs;
-      struct{
-          rtlreg_t limit;
-          rtlreg_t base;
-      }idtr;
-  };
+    struct {
+        rtlreg_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
+        vaddr_t eip;
+        rtlreg_t eflags;
+        rtlreg_t cs;
+        struct {
+            rtlreg_t limit;
+            rtlreg_t base;
+        } idtr;
+    };
 } CPU_state;
 
 extern CPU_state cpu;
 
 static inline int check_reg_index(int index) {
-  assert(index >= 0 && index < 8);
-  return index;
+    assert(index >= 0 && index < 8);
+    return index;
 }
 
 #define reg_l(index) (cpu.gpr[check_reg_index(index)]._32)
@@ -57,12 +56,11 @@ extern const char* regsb[];
 std::optional<std::tuple<const char*, size_t>> parse_cpuname(std::string_view str);
 
 static inline const char* reg_name(int index, int width) {
-  assert(index >= 0 && index < 8);
-  switch (width) {
-    case 4: return regsl[index];
-    case 1: return regsb[index];
-    case 2: return regsw[index];
-    default: panic("wtf");
-  }
+    assert(index >= 0 && index < 8);
+    switch(width) {
+        case 4: return regsl[index];
+        case 1: return regsb[index];
+        case 2: return regsw[index];
+        default: panic("wtf");
+    }
 }
-

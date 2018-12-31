@@ -32,10 +32,8 @@ PORTABILITY
 #include <_ansi.h>
 #include <wchar.h>
 
-int
-wcscoll (const wchar_t *a,
-	const wchar_t *b)
+int wcscoll(const wchar_t *a, const wchar_t *b)
 
 {
-  return wcscmp (a, b);
+    return wcscmp(a, b);
 }

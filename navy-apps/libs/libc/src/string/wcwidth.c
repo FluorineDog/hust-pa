@@ -96,33 +96,28 @@ PORTABILITY
 #include "local.h"
 
 #ifdef _MB_CAPABLE
-struct interval
-{
-  int first;
-  int last;
+struct interval {
+    int first;
+    int last;
 };
 
 /* auxiliary function for binary search in interval table */
-static int
-bisearch(wint_t ucs, const struct interval *table, int max)
-{
-  int min = 0;
-  int mid;
+static int bisearch(wint_t ucs, const struct interval *table, int max) {
+    int min = 0;
+    int mid;
 
-  if (ucs < table[0].first || ucs > table[max].last)
-    return 0;
-  while (max >= min)
-    {
-      mid = (min + max) / 2;
-      if (ucs > table[mid].last)
-	min = mid + 1;
-      else if (ucs < table[mid].first)
-	max = mid - 1;
-      else
-	return 1;
+    if(ucs < table[0].first || ucs > table[max].last) return 0;
+    while(max >= min) {
+        mid = (min + max) / 2;
+        if(ucs > table[mid].last)
+            min = mid + 1;
+        else if(ucs < table[mid].first)
+            max = mid - 1;
+        else
+            return 1;
     }
 
-  return 0;
+    return 0;
 }
 #endif /* _MB_CAPABLE */
 
@@ -163,75 +158,62 @@ bisearch(wint_t ucs, const struct interval *table, int max)
  * in ISO 10646.
  */
 
-int
-__wcwidth (const wint_t ucs)
-{
+int __wcwidth(const wint_t ucs) {
 #ifdef _MB_CAPABLE
-  /* sorted list of non-overlapping intervals of East Asian Ambiguous chars */
-  static const struct interval ambiguous[] =
+    /* sorted list of non-overlapping intervals of East Asian Ambiguous chars */
+    static const struct interval ambiguous[] =
 #include "ambiguous.t"
 
-  /* sorted list of non-overlapping intervals of non-spacing characters */
-  static const struct interval combining[] =
+        /* sorted list of non-overlapping intervals of non-spacing characters */
+        static const struct interval combining[] =
 #include "combining.t"
 
-  /* sorted list of non-overlapping intervals of wide characters,
+            /* sorted list of non-overlapping intervals of wide characters,
      ranges extended to Blocks where possible
    */
-  static const struct interval wide[] =
+        static const struct interval wide[] =
 #include "wide.t"
 
-  /* Test for NUL character */
-  if (ucs == 0)
-    return 0;
+            /* Test for NUL character */
+        if(ucs == 0) return 0;
 
-  /* Test for printable ASCII characters */
-  if (ucs >= 0x20 && ucs < 0x7f)
-    return 1;
+    /* Test for printable ASCII characters */
+    if(ucs >= 0x20 && ucs < 0x7f) return 1;
 
-  /* Test for control characters */
-  if (ucs < 0xa0)
+    /* Test for control characters */
+    if(ucs < 0xa0) return -1;
+
+    /* Test for surrogate pair values. */
+    if(ucs >= 0xd800 && ucs <= 0xdfff) return -1;
+
+    /* binary search in table of ambiguous characters */
+    if(__locale_cjk_lang() &&
+       bisearch(ucs, ambiguous, sizeof(ambiguous) / sizeof(struct interval) - 1))
+        return 2;
+
+    /* binary search in table of non-spacing characters */
+    if(bisearch(ucs, combining, sizeof(combining) / sizeof(struct interval) - 1))
+        return 0;
+
+    /* if we arrive here, ucs is not a combining or C0/C1 control character */
+
+    /* binary search in table of wide character codes */
+    if(bisearch(ucs, wide, sizeof(wide) / sizeof(struct interval) - 1))
+        return 2;
+    else
+        return 1;
+#else  /* !_MB_CAPABLE */
+    if(iswprint(ucs)) return 1;
+    if(iswcntrl(ucs) || ucs == L'\0') return 0;
     return -1;
-
-  /* Test for surrogate pair values. */
-  if (ucs >= 0xd800 && ucs <= 0xdfff)
-    return -1;
-
-  /* binary search in table of ambiguous characters */
-  if (__locale_cjk_lang ()
-      && bisearch(ucs, ambiguous,
-		  sizeof(ambiguous) / sizeof(struct interval) - 1))
-    return 2;
-
-  /* binary search in table of non-spacing characters */
-  if (bisearch(ucs, combining,
-	       sizeof(combining) / sizeof(struct interval) - 1))
-    return 0;
-
-  /* if we arrive here, ucs is not a combining or C0/C1 control character */
-
-  /* binary search in table of wide character codes */
-  if (bisearch(ucs, wide,
-	       sizeof(wide) / sizeof(struct interval) - 1))
-    return 2;
-  else
-    return 1;
-#else /* !_MB_CAPABLE */
-  if (iswprint (ucs))
-    return 1;
-  if (iswcntrl (ucs) || ucs == L'\0')
-    return 0;
-  return -1;
 #endif /* _MB_CAPABLE */
 }
 
-int
-wcwidth (const wint_t wc)
-{
-  wint_t wi = wc;
+int wcwidth(const wint_t wc) {
+    wint_t wi = wc;
 
 #ifdef _MB_CAPABLE
-  wi = _jp2uc (wi);
+    wi = _jp2uc(wi);
 #endif /* _MB_CAPABLE */
-  return __wcwidth (wi);
+    return __wcwidth(wi);
 }

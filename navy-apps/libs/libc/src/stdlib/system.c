@@ -52,38 +52,32 @@ Supporting OS subroutines required: <<_exit>>, <<_execve>>, <<_fork_r>>,
 #include <_syslist.h>
 #include <reent.h>
 
-#if defined (unix) || defined (__CYGWIN__)
-static int do_system (struct _reent *ptr, const char *s);
+#if defined(unix) || defined(__CYGWIN__)
+static int do_system(struct _reent *ptr, const char *s);
 #endif
 
-int
-_system_r (struct _reent *ptr,
-     const char *s)
-{
+int _system_r(struct _reent *ptr, const char *s) {
 #if defined(HAVE_SYSTEM)
-  return _system (s);
-  ptr = ptr;
+    return _system(s);
+    ptr = ptr;
 #elif defined(NO_EXEC)
-  if (s == NULL)
-    return 0;
-  errno = ENOSYS;
-  return -1;
+    if(s == NULL) return 0;
+    errno = ENOSYS;
+    return -1;
 #else
 
-  /* ??? How to handle (s == NULL) here is not exactly clear.
+    /* ??? How to handle (s == NULL) here is not exactly clear.
      If _fork_r fails, that's not really a justification for returning 0.
      For now we always return 0 and leave it to each target to explicitly
      handle otherwise (this can always be relaxed in the future).  */
 
-#if defined (unix) || defined (__CYGWIN__)
-  if (s == NULL)
-    return 1;
-  return do_system (ptr, s);
+#if defined(unix) || defined(__CYGWIN__)
+    if(s == NULL) return 1;
+    return do_system(ptr, s);
 #else
-  if (s == NULL)
-    return 0;
-  errno = ENOSYS;
-  return -1;
+    if(s == NULL) return 0;
+    errno = ENOSYS;
+    return -1;
 #endif
 
 #endif
@@ -91,15 +85,13 @@ _system_r (struct _reent *ptr,
 
 #ifndef _REENT_ONLY
 
-int
-system (const char *s)
-{
-  return _system_r (_REENT, s);
+int system(const char *s) {
+    return _system_r(_REENT, s);
 }
 
 #endif
-
-#if defined (unix) && !defined (__CYGWIN__) && !defined(__rtems__)
+
+#if defined(unix) && !defined(__CYGWIN__) && !defined(__rtems__)
 extern char **environ;
 
 /* Only deal with a pointer to environ, to work around subtle bugs with shared
@@ -107,72 +99,57 @@ extern char **environ;
    'environ'.  */
 static char ***p_environ = &environ;
 
-static int
-do_system (struct _reent *ptr,
-     const char *s)
-{
-  char *argv[4];
-  int pid, status;
+static int do_system(struct _reent *ptr, const char *s) {
+    char *argv[4];
+    int pid, status;
 
-  argv[0] = "sh";
-  argv[1] = "-c";
-  argv[2] = (char *) s;
-  argv[3] = NULL;
+    argv[0] = "sh";
+    argv[1] = "-c";
+    argv[2] = (char *)s;
+    argv[3] = NULL;
 
-  if ((pid = _fork_r (ptr)) == 0)
-    {
-      _execve ("/bin/sh", argv, *p_environ);
-      exit (100);
-    }
-  else if (pid == -1)
-    return -1;
-  else
-    {
-      int rc = _wait_r (ptr, &status);
-      if (rc == -1)
-	return -1;
-      status = (status >> 8) & 0xff;
-      return status;
+    if((pid = _fork_r(ptr)) == 0) {
+        _execve("/bin/sh", argv, *p_environ);
+        exit(100);
+    } else if(pid == -1)
+        return -1;
+    else {
+        int rc = _wait_r(ptr, &status);
+        if(rc == -1) return -1;
+        status = (status >> 8) & 0xff;
+        return status;
     }
 }
 #endif
 
-#if defined (__CYGWIN__)
-static int
-do_system (struct _reent *ptr,
-     const char *s)
-{
-  char *argv[4];
-  int pid, status;
+#if defined(__CYGWIN__)
+static int do_system(struct _reent *ptr, const char *s) {
+    char *argv[4];
+    int pid, status;
 
-  argv[0] = "sh";
-  argv[1] = "-c";
-  argv[2] = (char *) s;
-  argv[3] = NULL;
+    argv[0] = "sh";
+    argv[1] = "-c";
+    argv[2] = (char *)s;
+    argv[3] = NULL;
 
-  if ((pid = vfork ()) == 0)
-    {
-      /* ??? It's not clear what's the right path to take (pun intended :-).
+    if((pid = vfork()) == 0) {
+        /* ??? It's not clear what's the right path to take (pun intended :-).
 	 There won't be an "sh" in any fixed location so we need each user
 	 to be able to say where to find "sh".  That suggests using an
 	 environment variable, but after a few more such situations we may
 	 have too many of them.  */
-      char *sh = getenv ("SH_PATH");
-      if (sh == NULL)
-	sh = "/bin/sh";
-      _execve (sh, argv, environ);
-      exit (100);
-    }
-  else if (pid == -1)
-    return -1;
-  else
-    {
-      extern int _wait (int *);
-      int rc = _wait (&status);
-      if (rc == -1)
-	return -1;
-      status = (status >> 8) & 0xff;
-      return status;
+        char *sh = getenv("SH_PATH");
+        if(sh == NULL) sh = "/bin/sh";
+        _execve(sh, argv, environ);
+        exit(100);
+    } else if(pid == -1)
+        return -1;
+    else {
+        extern int _wait(int *);
+        int rc = _wait(&status);
+        if(rc == -1) return -1;
+        status = (status >> 8) & 0xff;
+        return status;
     }
 }
 #endif

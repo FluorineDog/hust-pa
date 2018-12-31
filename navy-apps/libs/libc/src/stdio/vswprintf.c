@@ -30,51 +30,41 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #include "local.h"
 
-int
-_vswprintf_r (struct _reent *ptr,
-       wchar_t *str,
-       size_t size,
-       const wchar_t *fmt,
-       va_list ap)
-{
-  int ret;
-  FILE f;
+int _vswprintf_r(struct _reent *ptr, wchar_t *str, size_t size, const wchar_t *fmt,
+                 va_list ap) {
+    int ret;
+    FILE f;
 
-  if (size > INT_MAX / sizeof (wchar_t))
-    {
-      ptr->_errno = EOVERFLOW;	/* POSIX extension */
-      return EOF;
+    if(size > INT_MAX / sizeof(wchar_t)) {
+        ptr->_errno = EOVERFLOW; /* POSIX extension */
+        return EOF;
     }
-  f._flags = __SWR | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._w = (size > 0 ? (size - 1) * sizeof (wchar_t) : 0);
-  f._file = -1;  /* No file. */
-  ret = _svfwprintf_r (ptr, &f, fmt, ap);
-  /* _svfwprintf_r() does not put in a terminating NUL, so add one if
+    f._flags = __SWR | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._w = (size > 0 ? (size - 1) * sizeof(wchar_t) : 0);
+    f._file = -1; /* No file. */
+    ret = _svfwprintf_r(ptr, &f, fmt, ap);
+    /* _svfwprintf_r() does not put in a terminating NUL, so add one if
    * appropriate, which is whenever size is > 0.  _svfwprintf_r() stops
    * after n-1, so always just put at the end.  */
-  if (size > 0)  {
-    *(wchar_t *)f._p = L'\0';	/* terminate the string */
-  }
-  if(ret >= size)  {
-    /* _svfwprintf_r() returns how many wide characters it would have printed
+    if(size > 0) {
+        *(wchar_t *)f._p = L'\0'; /* terminate the string */
+    }
+    if(ret >= size) {
+        /* _svfwprintf_r() returns how many wide characters it would have printed
      * if there were enough space.  Return an error if too big to fit in str,
      * unlike snprintf, which returns the size needed.  */
-    ptr->_errno = EOVERFLOW;	/* POSIX extension */
-    ret = -1;
-  }
-  return ret;
+        ptr->_errno = EOVERFLOW; /* POSIX extension */
+        ret = -1;
+    }
+    return ret;
 }
 
 #ifndef _REENT_ONLY
 
-int
-vswprintf (wchar_t *__restrict str,
-       size_t size,
-       const wchar_t *__restrict fmt,
-       va_list ap)
-{
-  return _vswprintf_r (_REENT, str, size, fmt, ap);
+int vswprintf(wchar_t *__restrict str, size_t size, const wchar_t *__restrict fmt,
+              va_list ap) {
+    return _vswprintf_r(_REENT, str, size, fmt, ap);
 }
 
 #endif /* !_REENT_ONLY */

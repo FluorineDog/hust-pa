@@ -44,17 +44,12 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_stat_r (struct _reent *ptr,
-     const char *file,
-     struct stat *pstat)
-{
-  int ret;
+int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _stat (file, pstat)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _stat(file, pstat)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

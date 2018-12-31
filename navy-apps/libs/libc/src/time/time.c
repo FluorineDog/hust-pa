@@ -32,15 +32,11 @@ Supporting OS subroutine required: Some implementations require
 #include <sys/types.h>
 #include <sys/time.h>
 
-time_t
-time (time_t * t)
-{
-  struct timeval now;
+time_t time(time_t* t) {
+    struct timeval now;
 
-  if (_gettimeofday_r (_REENT, &now, NULL) < 0)
-    now.tv_sec = (time_t) -1;
+    if(_gettimeofday_r(_REENT, &now, NULL) < 0) now.tv_sec = (time_t)-1;
 
-  if (t)
-    *t = now.tv_sec;
-  return now.tv_sec;
+    if(t) *t = now.tv_sec;
+    return now.tv_sec;
 }

@@ -42,8 +42,6 @@ No supporting OS subroutines are required.
 #include <ctype.h>
 
 #undef islower
-int
-islower (int c)
-{
-	return ((__CTYPE_PTR[c+1] & (_U|_L)) == _L);
+int islower(int c) {
+    return ((__CTYPE_PTR[c + 1] & (_U | _L)) == _L);
 }

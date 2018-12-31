@@ -141,21 +141,18 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <math.h>
 #include "mprec.h"
 
-double
-_wcstod_l (struct _reent *ptr, const wchar_t *nptr, wchar_t **endptr,
-	   locale_t loc)
-{
-        static const mbstate_t initial;
-        mbstate_t mbs;
-        double val;
-        char *buf, *end;
-        const wchar_t *wcp;
-        size_t len;
+double _wcstod_l(struct _reent *ptr, const wchar_t *nptr, wchar_t **endptr,
+                 locale_t loc) {
+    static const mbstate_t initial;
+    mbstate_t mbs;
+    double val;
+    char *buf, *end;
+    const wchar_t *wcp;
+    size_t len;
 
-        while (iswspace_l(*nptr, loc))
-                nptr++;
+    while(iswspace_l(*nptr, loc)) nptr++;
 
-        /*
+    /*
          * Convert the supplied numeric wide char. string to multibyte.
          *
          * We could attempt to find the end of the numeric portion of the
@@ -165,30 +162,27 @@ _wcstod_l (struct _reent *ptr, const wchar_t *nptr, wchar_t **endptr,
          * duplicates a lot of strtod()'s functionality and slows down the
          * most common cases.
          */
-        wcp = nptr;
-        mbs = initial;
-        if ((len = _wcsnrtombs_l(ptr, NULL, &wcp, (size_t) -1, 0, &mbs, loc))
-	    == (size_t) -1) {
-                if (endptr != NULL)
-                        *endptr = (wchar_t *)nptr;
-                return (0.0);
-        }
-        if ((buf = _malloc_r(ptr, len + 1)) == NULL)
-                return (0.0);
-        mbs = initial;
-        _wcsnrtombs_l(ptr, buf, &wcp, (size_t) -1, len + 1, &mbs, loc);
+    wcp = nptr;
+    mbs = initial;
+    if((len = _wcsnrtombs_l(ptr, NULL, &wcp, (size_t)-1, 0, &mbs, loc)) == (size_t)-1) {
+        if(endptr != NULL) *endptr = (wchar_t *)nptr;
+        return (0.0);
+    }
+    if((buf = _malloc_r(ptr, len + 1)) == NULL) return (0.0);
+    mbs = initial;
+    _wcsnrtombs_l(ptr, buf, &wcp, (size_t)-1, len + 1, &mbs, loc);
 
-        /* Let strtod() do most of the work for us. */
-        val = _strtod_l(ptr, buf, &end, loc);
+    /* Let strtod() do most of the work for us. */
+    val = _strtod_l(ptr, buf, &end, loc);
 
-        /*
+    /*
          * We only know where the number ended in the _multibyte_
          * representation of the string. If the caller wants to know
          * where it ended, count multibyte characters to find the
          * corresponding position in the wide char string.
          */
-        if (endptr != NULL) {
-		/* The only valid multibyte char in a float converted by
+    if(endptr != NULL) {
+        /* The only valid multibyte char in a float converted by
 		   strtod/wcstod is the radix char.  What we do here is,
 		   figure out if the radix char was in the valid leading
 		   float sequence in the incoming string.  If so, the
@@ -198,84 +192,60 @@ _wcstod_l (struct _reent *ptr, const wchar_t *nptr, wchar_t **endptr,
 		   just one byte long.  The resulting difference (end - buf)
 		   is then equivalent to the number of valid wide characters
 		   in the input string. */
-		len = strlen (__localeconv_l (loc)->decimal_point);
-		if (len > 1) {
-			char *d = strstr (buf,
-					  __localeconv_l (loc)->decimal_point);
-			if (d && d < end)
-				end -= len - 1;
-		}
-                *endptr = (wchar_t *)nptr + (end - buf);
-	}
+        len = strlen(__localeconv_l(loc)->decimal_point);
+        if(len > 1) {
+            char *d = strstr(buf, __localeconv_l(loc)->decimal_point);
+            if(d && d < end) end -= len - 1;
+        }
+        *endptr = (wchar_t *)nptr + (end - buf);
+    }
 
-        _free_r(ptr, buf);
+    _free_r(ptr, buf);
 
-        return (val);
+    return (val);
 }
 
-double
-_wcstod_r (struct _reent *ptr,
-	const wchar_t *nptr,
-	wchar_t **endptr)
-{
-  return _wcstod_l (ptr, nptr, endptr, __get_current_locale ());
+double _wcstod_r(struct _reent *ptr, const wchar_t *nptr, wchar_t **endptr) {
+    return _wcstod_l(ptr, nptr, endptr, __get_current_locale());
 }
 
-float
-_wcstof_r (struct _reent *ptr,
-	const wchar_t *nptr,
-	wchar_t **endptr)
-{
-  double retval = _wcstod_l (ptr, nptr, endptr, __get_current_locale ());
-  if (isnan (retval))
-    return nanf ("");
-  return (float)retval;
+float _wcstof_r(struct _reent *ptr, const wchar_t *nptr, wchar_t **endptr) {
+    double retval = _wcstod_l(ptr, nptr, endptr, __get_current_locale());
+    if(isnan(retval)) return nanf("");
+    return (float)retval;
 }
 
 #ifndef _REENT_ONLY
 
-double
-wcstod_l (const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
-	  locale_t loc)
-{
-  return _wcstod_l (_REENT, nptr, endptr, loc);
+double wcstod_l(const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
+                locale_t loc) {
+    return _wcstod_l(_REENT, nptr, endptr, loc);
 }
 
-double
-wcstod (const wchar_t *__restrict nptr, wchar_t **__restrict endptr)
-{
-  return _wcstod_l (_REENT, nptr, endptr, __get_current_locale ());
+double wcstod(const wchar_t *__restrict nptr, wchar_t **__restrict endptr) {
+    return _wcstod_l(_REENT, nptr, endptr, __get_current_locale());
 }
 
-float
-wcstof_l (const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
-	  locale_t loc)
-{
-  double val = _wcstod_l (_REENT, nptr, endptr, loc);
-  if (isnan (val))
-    return nanf ("");
-  float retval = (float) val;
+float wcstof_l(const wchar_t *__restrict nptr, wchar_t **__restrict endptr,
+               locale_t loc) {
+    double val = _wcstod_l(_REENT, nptr, endptr, loc);
+    if(isnan(val)) return nanf("");
+    float retval = (float)val;
 #ifndef NO_ERRNO
-  if (isinf (retval) && !isinf (val))
-    _REENT->_errno = ERANGE;
+    if(isinf(retval) && !isinf(val)) _REENT->_errno = ERANGE;
 #endif
-  return retval;
+    return retval;
 }
 
-float
-wcstof (const wchar_t *__restrict nptr,
-	wchar_t **__restrict endptr)
-{
-  double val = _wcstod_l (_REENT, nptr, endptr, __get_current_locale ());
-  if (isnan (val))
-    return nanf ("");
-  float retval = (float) val;
+float wcstof(const wchar_t *__restrict nptr, wchar_t **__restrict endptr) {
+    double val = _wcstod_l(_REENT, nptr, endptr, __get_current_locale());
+    if(isnan(val)) return nanf("");
+    float retval = (float)val;
 #ifndef NO_ERRNO
-  if (isinf (retval) && !isinf (val))
-    _REENT->_errno = ERANGE;
+    if(isinf(retval) && !isinf(val)) _REENT->_errno = ERANGE;
 #endif
 
-  return retval;
+    return retval;
 }
 
 #endif

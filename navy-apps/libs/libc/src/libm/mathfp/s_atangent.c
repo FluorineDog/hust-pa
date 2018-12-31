@@ -73,123 +73,95 @@ PORTABILITY
 #ifndef _DOUBLE_IS_32BITS
 
 static const double ROOT3 = 1.73205080756887729353;
-static const double a[] = { 0.0, 0.52359877559829887308, 1.57079632679489661923,
-                     1.04719755119659774615 };
-static const double q[] = { 0.41066306682575781263e+2,
-                     0.86157349597130242515e+2,
-                     0.59578436142597344465e+2,
-                     0.15024001160028576121e+2 };
-static const double p[] = { -0.13688768894191926929e+2,
-                     -0.20505855195861651981e+2,
-                     -0.84946240351320683534e+1,
-                     -0.83758299368150059274 };
+static const double a[] = {0.0, 0.52359877559829887308, 1.57079632679489661923,
+                           1.04719755119659774615};
+static const double q[] = {0.41066306682575781263e+2, 0.86157349597130242515e+2,
+                           0.59578436142597344465e+2, 0.15024001160028576121e+2};
+static const double p[] = {-0.13688768894191926929e+2, -0.20505855195861651981e+2,
+                           -0.84946240351320683534e+1, -0.83758299368150059274};
 
-double
-atangent (double x,
-        double v,
-        double u,
-        int arctan2)
-{
-  double f, g, R, P, Q, A, res;
-  int N;
-  int branch = 0;
-  int expv, expu;
+double atangent(double x, double v, double u, int arctan2) {
+    double f, g, R, P, Q, A, res;
+    int N;
+    int branch = 0;
+    int expv, expu;
 
-  /* Preparation for calculating arctan2. */
-  if (arctan2)
-    {
-      if (u == 0.0)
-        if (v == 0.0)
-          {
-            errno = ERANGE;
-            return (z_notanum.d);
-          }
+    /* Preparation for calculating arctan2. */
+    if(arctan2) {
+        if(u == 0.0)
+            if(v == 0.0) {
+                errno = ERANGE;
+                return (z_notanum.d);
+            } else {
+                branch = 1;
+                res = __PI_OVER_TWO;
+            }
+
+        if(!branch) {
+            int e;
+            /* Get the exponent values of the inputs. */
+            g = frexp(v, &expv);
+            g = frexp(u, &expu);
+
+            /* See if a divide will overflow. */
+            e = expv - expu;
+            if(e > DBL_MAX_EXP) {
+                branch = 1;
+                res = __PI_OVER_TWO;
+            }
+
+            /* Also check for underflow. */
+            else if(e < DBL_MIN_EXP) {
+                branch = 2;
+                res = 0.0;
+            }
+        }
+    }
+
+    if(!branch) {
+        if(arctan2)
+            f = fabs(v / u);
         else
-          {
-            branch = 1;
-            res = __PI_OVER_TWO;
-          }
+            f = fabs(x);
 
-      if (!branch)
-        {
-          int e;
-          /* Get the exponent values of the inputs. */
-          g = frexp (v, &expv);
-          g = frexp (u, &expu);
+        if(f > 1.0) {
+            f = 1.0 / f;
+            N = 2;
+        } else
+            N = 0;
 
-          /* See if a divide will overflow. */
-          e = expv - expu;
-          if (e > DBL_MAX_EXP)
-            {
-               branch = 1;
-               res = __PI_OVER_TWO;
-            }
+        if(f > (2.0 - ROOT3)) {
+            A = ROOT3 - 1.0;
+            f = (((A * f - 0.5) - 0.5) + f) / (ROOT3 + f);
+            N++;
+        }
 
-          /* Also check for underflow. */
-          else if (e < DBL_MIN_EXP)
-            {
-               branch = 2;
-               res = 0.0;
-            }
-         }
+        /* Check for values that are too small. */
+        if(-z_rooteps < f && f < z_rooteps) res = f;
+
+        /* Calculate the Taylor series. */
+        else {
+            g = f * f;
+            P = (((p[3] * g + p[2]) * g + p[1]) * g + p[0]) * g;
+            Q = (((g + q[3]) * g + q[2]) * g + q[1]) * g + q[0];
+            R = P / Q;
+
+            res = f + f * R;
+        }
+
+        if(N > 1) res = -res;
+
+        res += a[N];
     }
 
-  if (!branch)
-    {
-      if (arctan2)
-        f = fabs (v / u);
-      else
-        f = fabs (x);
-
-      if (f > 1.0)
-        {
-          f = 1.0 / f;
-          N = 2;
-        }
-      else
-        N = 0;
-
-      if (f > (2.0 - ROOT3))
-        {
-          A = ROOT3 - 1.0;
-          f = (((A * f - 0.5) - 0.5) + f) / (ROOT3 + f);
-          N++;
-        }
-
-      /* Check for values that are too small. */
-      if (-z_rooteps < f && f < z_rooteps)
-        res = f;
-
-      /* Calculate the Taylor series. */
-      else
-        {
-          g = f * f;
-          P = (((p[3] * g + p[2]) * g + p[1]) * g + p[0]) * g;
-          Q = (((g + q[3]) * g + q[2]) * g + q[1]) * g + q[0];
-          R = P / Q;
-
-          res = f + f * R;
-        }
-
-      if (N > 1)
-        res = -res;
-
-      res += a[N];
-    }
-
-  if (arctan2)
-    {
-      if (u < 0.0)
-        res = __PI - res;
-      if (v < 0.0)
+    if(arctan2) {
+        if(u < 0.0) res = __PI - res;
+        if(v < 0.0) res = -res;
+    } else if(x < 0.0) {
         res = -res;
     }
-  else if (x < 0.0)
-    {
-      res = -res;
-    }
 
-  return (res);
+    return (res);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

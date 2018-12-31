@@ -32,15 +32,13 @@
 #include <complex.h>
 #include <math.h>
 
-long double complex
-cexpl(long double complex z)
-{
-	long double complex w;
-	long double r, x, y;
+long double complex cexpl(long double complex z) {
+    long double complex w;
+    long double r, x, y;
 
-	x = creall(z);
-	y = cimagl(z);
-	r = expl(x);
-	w = r * cosl(y) + r * sinl(y) * I;
-	return w;
+    x = creall(z);
+    y = cimagl(z);
+    r = expl(x);
+    w = r * cosl(y) + r * sinl(y) * I;
+    return w;
 }

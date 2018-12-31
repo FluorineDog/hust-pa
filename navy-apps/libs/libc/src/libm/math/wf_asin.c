@@ -18,54 +18,51 @@
  * wrapper asinf(x)
  */
 
-
 #include "fdlibm.h"
 #include <errno.h>
 
 #ifdef __STDC__
-	float asinf(float x)		/* wrapper asinf */
+float asinf(float x) /* wrapper asinf */
 #else
-	float asinf(x)			/* wrapper asinf */
-	float x;
+float asinf(x) /* wrapper asinf */
+    float x;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_asinf(x);
+    return __ieee754_asinf(x);
 #else
-	float z;
-	struct exception exc;
-	z = __ieee754_asinf(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(fabsf(x)>(float)1.0) {
-	    /* asinf(|x|>1) */
-	    exc.type = DOMAIN;
-	    exc.name = "asinf";
-	    exc.err = 0;
-	    exc.arg1 = exc.arg2 = (double)x;
-	    exc.retval = nan("");
-	    if(_LIB_VERSION == _POSIX_)
-	      errno = EDOM;
-	    else if (!matherr(&exc)) {
-	      errno = EDOM;
-	    }
-	    if (exc.err != 0)
-	      errno = exc.err;
-	    return (float)exc.retval; 
-	} else
-	    return z;
+    float z;
+    struct exception exc;
+    z = __ieee754_asinf(x);
+    if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
+    if(fabsf(x) > (float)1.0) {
+        /* asinf(|x|>1) */
+        exc.type = DOMAIN;
+        exc.name = "asinf";
+        exc.err = 0;
+        exc.arg1 = exc.arg2 = (double)x;
+        exc.retval = nan("");
+        if(_LIB_VERSION == _POSIX_)
+            errno = EDOM;
+        else if(!matherr(&exc)) {
+            errno = EDOM;
+        }
+        if(exc.err != 0) errno = exc.err;
+        return (float)exc.retval;
+    } else
+        return z;
 #endif
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double asin(double x)
+double asin(double x)
 #else
-	double asin(x)
-	double x;
+double asin(x) double x;
 #endif
 {
-	return (double) asinf((float) x);
+    return (double)asinf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

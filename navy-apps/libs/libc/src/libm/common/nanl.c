@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-nanl (const char *tagp)
-{
-  return nan(tagp);
+long double nanl(const char *tagp) {
+    return nan(tagp);
 }
 #endif
-

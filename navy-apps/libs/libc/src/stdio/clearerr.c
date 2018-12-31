@@ -69,13 +69,11 @@ No supporting OS subroutines are required.
 
 /* A subroutine version of the macro clearerr.  */
 
-#undef	clearerr
+#undef clearerr
 
-void
-clearerr (FILE * fp)
-{
-  CHECK_INIT(_REENT, fp);
-  _newlib_flockfile_start (fp);
-  __sclearerr (fp);
-  _newlib_flockfile_end (fp);
+void clearerr(FILE* fp) {
+    CHECK_INIT(_REENT, fp);
+    _newlib_flockfile_start(fp);
+    __sclearerr(fp);
+    _newlib_flockfile_end(fp);
 }

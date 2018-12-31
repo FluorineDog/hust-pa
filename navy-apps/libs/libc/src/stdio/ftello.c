@@ -82,79 +82,63 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 #include <errno.h>
 #include "local.h"
 
-_off_t
-_ftello_r (struct _reent * ptr,
-       register FILE * fp)
-{
-  _fpos_t pos;
+_off_t _ftello_r(struct _reent* ptr, register FILE* fp) {
+    _fpos_t pos;
 
-  /* Ensure stdio is set up.  */
+    /* Ensure stdio is set up.  */
 
-  CHECK_INIT (ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  _newlib_flockfile_start (fp);
+    _newlib_flockfile_start(fp);
 
-  if (fp->_seek == NULL)
-    {
-      ptr->_errno = ESPIPE;
-      _newlib_flockfile_exit (fp);
-      return (_off_t) -1;
+    if(fp->_seek == NULL) {
+        ptr->_errno = ESPIPE;
+        _newlib_flockfile_exit(fp);
+        return (_off_t)-1;
     }
 
-  /* Find offset of underlying I/O object, then adjust for buffered bytes. */
-  if (!(fp->_flags & __SRD) && (fp->_flags & __SWR) &&
-      fp->_p != NULL && fp->_p - fp->_bf._base > 0 &&
-      (fp->_flags & __SAPP))
-    {
-      pos = fp->_seek (ptr, fp->_cookie, (_fpos_t) 0, SEEK_END);
-      if (pos == (_fpos_t) -1)
-	{
-          _newlib_flockfile_exit (fp);
-          return (_off_t) -1;
-	}
-    }
-  else if (fp->_flags & __SOFF)
-    pos = fp->_offset;
-  else
-    {
-      pos = fp->_seek (ptr, fp->_cookie, (_fpos_t) 0, SEEK_CUR);
-      if (pos == (_fpos_t) -1)
-        {
-          _newlib_flockfile_exit (fp);
-          return (_off_t) -1;
+    /* Find offset of underlying I/O object, then adjust for buffered bytes. */
+    if(!(fp->_flags & __SRD) && (fp->_flags & __SWR) && fp->_p != NULL &&
+       fp->_p - fp->_bf._base > 0 && (fp->_flags & __SAPP)) {
+        pos = fp->_seek(ptr, fp->_cookie, (_fpos_t)0, SEEK_END);
+        if(pos == (_fpos_t)-1) {
+            _newlib_flockfile_exit(fp);
+            return (_off_t)-1;
+        }
+    } else if(fp->_flags & __SOFF)
+        pos = fp->_offset;
+    else {
+        pos = fp->_seek(ptr, fp->_cookie, (_fpos_t)0, SEEK_CUR);
+        if(pos == (_fpos_t)-1) {
+            _newlib_flockfile_exit(fp);
+            return (_off_t)-1;
         }
     }
-  if (fp->_flags & __SRD)
-    {
-      /*
+    if(fp->_flags & __SRD) {
+        /*
        * Reading.  Any unread characters (including
        * those from ungetc) cause the position to be
        * smaller than that in the underlying object.
        */
-      pos -= fp->_r;
-      if (HASUB (fp))
-	pos -= fp->_ur;
-    }
-  else if ((fp->_flags & __SWR) && fp->_p != NULL)
-    {
-      /*
+        pos -= fp->_r;
+        if(HASUB(fp)) pos -= fp->_ur;
+    } else if((fp->_flags & __SWR) && fp->_p != NULL) {
+        /*
        * Writing.  Any buffered characters cause the
        * position to be greater than that in the
        * underlying object.
        */
-      pos += fp->_p - fp->_bf._base;
+        pos += fp->_p - fp->_bf._base;
     }
 
-  _newlib_flockfile_end (fp);
-  return (_off_t) pos;
+    _newlib_flockfile_end(fp);
+    return (_off_t)pos;
 }
 
 #ifndef _REENT_ONLY
 
-_off_t
-ftello (register FILE * fp)
-{
-  return _ftello_r (_REENT, fp);
+_off_t ftello(register FILE* fp) {
+    return _ftello_r(_REENT, fp);
 }
 
 #endif /* !_REENT_ONLY */

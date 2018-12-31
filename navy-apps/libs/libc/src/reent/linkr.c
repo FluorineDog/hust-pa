@@ -42,17 +42,12 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_link_r (struct _reent *ptr,
-     const char *old,
-     const char *new)
-{
-  int ret;
+int _link_r(struct _reent *ptr, const char *old, const char *new) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _link (old, new)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _link(old, new)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

@@ -68,11 +68,8 @@ PORTABILITY
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-atan2 (double v,
-        double u)
-{
-  return (atangent (0.0, v, u, 1));
+double atan2(double v, double u) {
+    return (atangent(0.0, v, u, 1));
 }
 
 #endif /* _DOUBLE_IS_32BITS */

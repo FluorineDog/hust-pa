@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-remquol (long double x, long double y, int *quo)
-{
-  return remquo(x, y, quo);
+long double remquol(long double x, long double y, int *quo) {
+    return remquo(x, y, quo);
 }
 #endif
-

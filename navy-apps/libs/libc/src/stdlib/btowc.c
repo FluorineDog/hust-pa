@@ -5,28 +5,24 @@
 #include <string.h>
 #include "local.h"
 
-wint_t
-btowc (int c)
-{
-  mbstate_t mbs;
-  int retval = 0;
-  wchar_t pwc;
-  unsigned char b;
+wint_t btowc(int c) {
+    mbstate_t mbs;
+    int retval = 0;
+    wchar_t pwc;
+    unsigned char b;
 
-  if (c == EOF)
-    return WEOF;
+    if(c == EOF) return WEOF;
 
-  b = (unsigned char)c;
+    b = (unsigned char)c;
 
-  /* Put mbs in initial state. */
-  memset (&mbs, '\0', sizeof (mbs));
+    /* Put mbs in initial state. */
+    memset(&mbs, '\0', sizeof(mbs));
 
-  _REENT_CHECK_MISC(_REENT);
+    _REENT_CHECK_MISC(_REENT);
 
-  retval = __MBTOWC (_REENT, &pwc, (const char *) &b, 1, &mbs);
+    retval = __MBTOWC(_REENT, &pwc, (const char *)&b, 1, &mbs);
 
-  if (retval != 0 && retval != 1)
-    return WEOF;
+    if(retval != 0 && retval != 1) return WEOF;
 
-  return (wint_t)pwc;
+    return (wint_t)pwc;
 }

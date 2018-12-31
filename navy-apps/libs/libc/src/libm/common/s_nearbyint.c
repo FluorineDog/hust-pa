@@ -52,13 +52,12 @@ SEEALSO
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double nearbyint(double x)
+double nearbyint(double x)
 #else
-	double nearbyint(x)
-	double x;
+double nearbyint(x) double x;
 #endif
 {
-  return rint(x);
+    return rint(x);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

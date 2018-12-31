@@ -24,10 +24,7 @@
 
 #include "main.h"
 
-VOID
-PAL_GameUpdate(
-   BOOL       fTrigger
-)
+VOID PAL_GameUpdate(BOOL fTrigger)
 /*++
   Purpose:
 
@@ -43,214 +40,200 @@ PAL_GameUpdate(
 
 --*/
 {
-   WORD            wEventObjectID, wDir;
-   int             i;
-   LPEVENTOBJECT   p;
+    WORD wEventObjectID, wDir;
+    int i;
+    LPEVENTOBJECT p;
 
-   //
-   // Check for trigger events
-   //
-   if (fTrigger)
-   {
-      //
-      // Check if we are entering a new scene
-      //
-      if (gpGlobals->fEnteringScene)
-      {
-         //
-         // Run the script for entering the scene
-         //
-         gpGlobals->fEnteringScene = FALSE;
-
-         i = gpGlobals->wNumScene - 1;
-         gpGlobals->g.rgScene[i].wScriptOnEnter =
-            PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
-
-         if (gpGlobals->fEnteringScene || gpGlobals->fGameStart)
-         {
+    //
+    // Check for trigger events
+    //
+    if(fTrigger) {
+        //
+        // Check if we are entering a new scene
+        //
+        if(gpGlobals->fEnteringScene) {
             //
-            // Don't go further as we're switching to another scene
+            // Run the script for entering the scene
             //
-            return;
-         }
+            gpGlobals->fEnteringScene = FALSE;
 
-         PAL_ClearKeyState();
-         PAL_MakeScene();
-      }
+            i = gpGlobals->wNumScene - 1;
+            gpGlobals->g.rgScene[i].wScriptOnEnter =
+                PAL_RunTriggerScript(gpGlobals->g.rgScene[i].wScriptOnEnter, 0xFFFF);
 
-      //
-      // Update the vanish time for all event objects
-      //
-      for (wEventObjectID = 0; wEventObjectID < gpGlobals->g.nEventObject; wEventObjectID++)
-      {
-         p = &gpGlobals->g.lprgEventObject[wEventObjectID];
-
-         if (p->sVanishTime != 0)
-         {
-            p->sVanishTime += ((p->sVanishTime < 0) ? 1 : -1);
-         }
-      }
-
-      //
-      // Loop through all event objects in the current scene
-      //
-      for (wEventObjectID = gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex + 1;
-         wEventObjectID <= gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex;
-         wEventObjectID++)
-      {
-         p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
-
-         if (p->sVanishTime != 0)
-         {
-            continue;
-         }
-
-         if (p->sState < 0)
-         {
-            if (p->x < PAL_X(gpGlobals->viewport) ||
-               p->x > PAL_X(gpGlobals->viewport) + 320 ||
-               p->y < PAL_Y(gpGlobals->viewport) ||
-               p->y > PAL_Y(gpGlobals->viewport) + 320)
-            {
-               p->sState = abs(p->sState);
-               p->wCurrentFrameNum = 0;
-            }
-         }
-         else if (p->sState > 0 && p->wTriggerMode >= kTriggerTouchNear)
-         {
-            //
-            // This event object can be triggered without manually exploring
-            //
-            if (abs(PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset) - p->x) +
-               abs(PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset) - p->y) * 2 <
-               (p->wTriggerMode - kTriggerTouchNear) * 32 + 16)
-            {
-               //
-               // Player is in the trigger zone.
-               //
-
-               if (p->nSpriteFrames)
-               {
-                  //
-                  // The sprite has multiple frames. Try to adjust the direction.
-                  //
-                  int                xOffset, yOffset;
-
-                  p->wCurrentFrameNum = 0;
-
-                  xOffset = PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset) - p->x;
-                  yOffset = PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset) - p->y;
-
-                  if (xOffset > 0)
-                  {
-                     p->wDirection = ((yOffset > 0) ? kDirEast : kDirNorth);
-                  }
-                  else
-                  {
-                     p->wDirection = ((yOffset > 0) ? kDirSouth : kDirWest);
-                  }
-
-                  //
-                  // Redraw the scene
-                  //
-                  PAL_UpdatePartyGestures(FALSE);
-
-                  PAL_MakeScene();
-                  VIDEO_UpdateScreen(NULL);
-               }
-
-               //
-               // Execute the script.
-               //
-               p->wTriggerScript = PAL_RunTriggerScript(p->wTriggerScript, wEventObjectID);
-
-               PAL_ClearKeyState();
-
-               if (gpGlobals->fEnteringScene || gpGlobals->fGameStart)
-               {
-                  //
-                  // Don't go further on scene switching
-                  //
-                  return;
-               }
-            }
-         }
-      }
-   }
-
-   //
-   // Run autoscript for each event objects
-   //
-   for (wEventObjectID = gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex + 1;
-      wEventObjectID <= gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex;
-      wEventObjectID++)
-   {
-      p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
-
-      if (p->sState > 0 && p->sVanishTime == 0)
-      {
-         WORD wScriptEntry = p->wAutoScript;
-         if (wScriptEntry != 0)
-         {
-            p->wAutoScript = PAL_RunAutoScript(wScriptEntry, wEventObjectID);
-            if (gpGlobals->fEnteringScene || gpGlobals->fGameStart)
-            {
-               //
-               // Don't go further on scene switching
-               //
-               return;
-            }
-         }
-      }
-
-      //
-      // Check if the player is in the way
-      //
-      if (fTrigger && p->sState >= kObjStateBlocker && p->wSpriteNum != 0 &&
-         abs(p->x - PAL_X(gpGlobals->viewport) - PAL_X(gpGlobals->partyoffset)) +
-         abs(p->y - PAL_Y(gpGlobals->viewport) - PAL_Y(gpGlobals->partyoffset)) * 2 <= 12)
-      {
-         //
-         // Player is in the way, try to move a step
-         //
-         wDir = (p->wDirection + 1) % 4;
-         for (i = 0; i < 4; i++)
-         {
-            int              x, y;
-            PAL_POS          pos;
-
-            x = PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset);
-            y = PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset);
-
-            x += ((wDir == kDirWest || wDir == kDirSouth) ? -16 : 16);
-            y += ((wDir == kDirWest || wDir == kDirNorth) ? -8 : 8);
-
-            pos = PAL_XY(x, y);
-
-            if (!PAL_CheckObstacle(pos, TRUE, 0))
-            {
-               //
-               // move here
-               //
-               gpGlobals->viewport = PAL_XY(
-                  PAL_X(pos) - PAL_X(gpGlobals->partyoffset),
-                  PAL_Y(pos) - PAL_Y(gpGlobals->partyoffset));
-
-               break;
+            if(gpGlobals->fEnteringScene || gpGlobals->fGameStart) {
+                //
+                // Don't go further as we're switching to another scene
+                //
+                return;
             }
 
-            wDir = (wDir + 1) % 4;
-         }
-      }
-   }
+            PAL_ClearKeyState();
+            PAL_MakeScene();
+        }
 
-   gpGlobals->dwFrameNum++;
+        //
+        // Update the vanish time for all event objects
+        //
+        for(wEventObjectID = 0; wEventObjectID < gpGlobals->g.nEventObject;
+            wEventObjectID++) {
+            p = &gpGlobals->g.lprgEventObject[wEventObjectID];
+
+            if(p->sVanishTime != 0) {
+                p->sVanishTime += ((p->sVanishTime < 0) ? 1 : -1);
+            }
+        }
+
+        //
+        // Loop through all event objects in the current scene
+        //
+        for(wEventObjectID =
+                gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex + 1;
+            wEventObjectID <=
+            gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex;
+            wEventObjectID++) {
+            p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
+
+            if(p->sVanishTime != 0) {
+                continue;
+            }
+
+            if(p->sState < 0) {
+                if(p->x < PAL_X(gpGlobals->viewport) ||
+                   p->x > PAL_X(gpGlobals->viewport) + 320 ||
+                   p->y < PAL_Y(gpGlobals->viewport) ||
+                   p->y > PAL_Y(gpGlobals->viewport) + 320) {
+                    p->sState = abs(p->sState);
+                    p->wCurrentFrameNum = 0;
+                }
+            } else if(p->sState > 0 && p->wTriggerMode >= kTriggerTouchNear) {
+                //
+                // This event object can be triggered without manually exploring
+                //
+                if(abs(PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset) -
+                       p->x) +
+                       abs(PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset) -
+                           p->y) *
+                           2 <
+                   (p->wTriggerMode - kTriggerTouchNear) * 32 + 16) {
+                    //
+                    // Player is in the trigger zone.
+                    //
+
+                    if(p->nSpriteFrames) {
+                        //
+                        // The sprite has multiple frames. Try to adjust the direction.
+                        //
+                        int xOffset, yOffset;
+
+                        p->wCurrentFrameNum = 0;
+
+                        xOffset = PAL_X(gpGlobals->viewport) +
+                                  PAL_X(gpGlobals->partyoffset) - p->x;
+                        yOffset = PAL_Y(gpGlobals->viewport) +
+                                  PAL_Y(gpGlobals->partyoffset) - p->y;
+
+                        if(xOffset > 0) {
+                            p->wDirection = ((yOffset > 0) ? kDirEast : kDirNorth);
+                        } else {
+                            p->wDirection = ((yOffset > 0) ? kDirSouth : kDirWest);
+                        }
+
+                        //
+                        // Redraw the scene
+                        //
+                        PAL_UpdatePartyGestures(FALSE);
+
+                        PAL_MakeScene();
+                        VIDEO_UpdateScreen(NULL);
+                    }
+
+                    //
+                    // Execute the script.
+                    //
+                    p->wTriggerScript =
+                        PAL_RunTriggerScript(p->wTriggerScript, wEventObjectID);
+
+                    PAL_ClearKeyState();
+
+                    if(gpGlobals->fEnteringScene || gpGlobals->fGameStart) {
+                        //
+                        // Don't go further on scene switching
+                        //
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    //
+    // Run autoscript for each event objects
+    //
+    for(wEventObjectID =
+            gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex + 1;
+        wEventObjectID <= gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex;
+        wEventObjectID++) {
+        p = &gpGlobals->g.lprgEventObject[wEventObjectID - 1];
+
+        if(p->sState > 0 && p->sVanishTime == 0) {
+            WORD wScriptEntry = p->wAutoScript;
+            if(wScriptEntry != 0) {
+                p->wAutoScript = PAL_RunAutoScript(wScriptEntry, wEventObjectID);
+                if(gpGlobals->fEnteringScene || gpGlobals->fGameStart) {
+                    //
+                    // Don't go further on scene switching
+                    //
+                    return;
+                }
+            }
+        }
+
+        //
+        // Check if the player is in the way
+        //
+        if(fTrigger && p->sState >= kObjStateBlocker && p->wSpriteNum != 0 &&
+           abs(p->x - PAL_X(gpGlobals->viewport) - PAL_X(gpGlobals->partyoffset)) +
+                   abs(p->y - PAL_Y(gpGlobals->viewport) -
+                       PAL_Y(gpGlobals->partyoffset)) *
+                       2 <=
+               12) {
+            //
+            // Player is in the way, try to move a step
+            //
+            wDir = (p->wDirection + 1) % 4;
+            for(i = 0; i < 4; i++) {
+                int x, y;
+                PAL_POS pos;
+
+                x = PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset);
+                y = PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset);
+
+                x += ((wDir == kDirWest || wDir == kDirSouth) ? -16 : 16);
+                y += ((wDir == kDirWest || wDir == kDirNorth) ? -8 : 8);
+
+                pos = PAL_XY(x, y);
+
+                if(!PAL_CheckObstacle(pos, TRUE, 0)) {
+                    //
+                    // move here
+                    //
+                    gpGlobals->viewport =
+                        PAL_XY(PAL_X(pos) - PAL_X(gpGlobals->partyoffset),
+                               PAL_Y(pos) - PAL_Y(gpGlobals->partyoffset));
+
+                    break;
+                }
+
+                wDir = (wDir + 1) % 4;
+            }
+        }
+    }
+
+    gpGlobals->dwFrameNum++;
 }
 
-VOID
-PAL_GameUseItem(
-   VOID
-)
+VOID PAL_GameUseItem(VOID)
 /*++
   Purpose:
 
@@ -266,75 +249,63 @@ PAL_GameUseItem(
 
 --*/
 {
-   WORD         wObject;
+    WORD wObject;
 
-   while (TRUE)
-   {
-      wObject = PAL_ItemSelectMenu(NULL, kItemFlagUsable);
+    while(TRUE) {
+        wObject = PAL_ItemSelectMenu(NULL, kItemFlagUsable);
 
-      if (wObject == 0)
-      {
-         return;
-      }
+        if(wObject == 0) {
+            return;
+        }
 
-      if (!(gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagApplyToAll))
-      {
-         //
-         // Select the player to use the item on
-         //
-         WORD     wPlayer = 0;
+        if(!(gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagApplyToAll)) {
+            //
+            // Select the player to use the item on
+            //
+            WORD wPlayer = 0;
 
-         while (TRUE)
-         {
-            wPlayer = PAL_ItemUseMenu(wObject);
+            while(TRUE) {
+                wPlayer = PAL_ItemUseMenu(wObject);
 
-            if (wPlayer == MENUITEM_VALUE_CANCELLED)
-            {
-               break;
+                if(wPlayer == MENUITEM_VALUE_CANCELLED) {
+                    break;
+                }
+
+                //
+                // Run the script
+                //
+                gpGlobals->g.rgObject[wObject].item.wScriptOnUse = PAL_RunTriggerScript(
+                    gpGlobals->g.rgObject[wObject].item.wScriptOnUse, wPlayer);
+
+                //
+                // Remove the item if the item is consuming and the script succeeded
+                //
+                if((gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagConsuming) &&
+                   g_fScriptSuccess) {
+                    PAL_AddItemToInventory(wObject, -1);
+                }
             }
-
+        } else {
             //
             // Run the script
             //
-            gpGlobals->g.rgObject[wObject].item.wScriptOnUse =
-               PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].item.wScriptOnUse, wPlayer);
+            gpGlobals->g.rgObject[wObject].item.wScriptOnUse = PAL_RunTriggerScript(
+                gpGlobals->g.rgObject[wObject].item.wScriptOnUse, 0xFFFF);
 
             //
             // Remove the item if the item is consuming and the script succeeded
             //
-            if ((gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagConsuming) &&
-               g_fScriptSuccess)
-            {
-               PAL_AddItemToInventory(wObject, -1);
+            if((gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagConsuming) &&
+               g_fScriptSuccess) {
+                PAL_AddItemToInventory(wObject, -1);
             }
-         }
-      }
-      else
-      {
-         //
-         // Run the script
-         //
-         gpGlobals->g.rgObject[wObject].item.wScriptOnUse =
-            PAL_RunTriggerScript(gpGlobals->g.rgObject[wObject].item.wScriptOnUse, 0xFFFF);
 
-         //
-         // Remove the item if the item is consuming and the script succeeded
-         //
-         if ((gpGlobals->g.rgObject[wObject].item.wFlags & kItemFlagConsuming) &&
-            g_fScriptSuccess)
-         {
-            PAL_AddItemToInventory(wObject, -1);
-         }
-
-         return;
-      }
-   }
+            return;
+        }
+    }
 }
 
-VOID
-PAL_GameEquipItem(
-   VOID
-)
+VOID PAL_GameEquipItem(VOID)
 /*++
   Purpose:
 
@@ -350,25 +321,20 @@ PAL_GameEquipItem(
 
 --*/
 {
-   WORD      wObject;
+    WORD wObject;
 
-   while (TRUE)
-   {
-      wObject = PAL_ItemSelectMenu(NULL, kItemFlagEquipable);
+    while(TRUE) {
+        wObject = PAL_ItemSelectMenu(NULL, kItemFlagEquipable);
 
-      if (wObject == 0)
-      {
-         return;
-      }
+        if(wObject == 0) {
+            return;
+        }
 
-      PAL_EquipItemMenu(wObject);
-   }
+        PAL_EquipItemMenu(wObject);
+    }
 }
 
-VOID
-PAL_Search(
-   VOID
-)
+VOID PAL_Search(VOID)
 /*++
   Purpose:
 
@@ -384,114 +350,101 @@ PAL_Search(
 
 --*/
 {
-   int                x, y, xOffset, yOffset, dx, dy, dh, ex, ey, eh, i, k, l;
-   LPEVENTOBJECT      p;
-   PAL_POS            rgPos[13];
+    int x, y, xOffset, yOffset, dx, dy, dh, ex, ey, eh, i, k, l;
+    LPEVENTOBJECT p;
+    PAL_POS rgPos[13];
 
-   //
-   // Get the party location
-   //
-   x = PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset);
-   y = PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset);
+    //
+    // Get the party location
+    //
+    x = PAL_X(gpGlobals->viewport) + PAL_X(gpGlobals->partyoffset);
+    y = PAL_Y(gpGlobals->viewport) + PAL_Y(gpGlobals->partyoffset);
 
-   if (gpGlobals->wPartyDirection == kDirNorth || gpGlobals->wPartyDirection == kDirEast)
-   {
-      xOffset = 16;
-   }
-   else
-   {
-      xOffset = -16;
-   }
+    if(gpGlobals->wPartyDirection == kDirNorth ||
+       gpGlobals->wPartyDirection == kDirEast) {
+        xOffset = 16;
+    } else {
+        xOffset = -16;
+    }
 
-   if (gpGlobals->wPartyDirection == kDirEast || gpGlobals->wPartyDirection == kDirSouth)
-   {
-      yOffset = 8;
-   }
-   else
-   {
-      yOffset = -8;
-   }
+    if(gpGlobals->wPartyDirection == kDirEast ||
+       gpGlobals->wPartyDirection == kDirSouth) {
+        yOffset = 8;
+    } else {
+        yOffset = -8;
+    }
 
-   rgPos[0] = PAL_XY(x, y);
+    rgPos[0] = PAL_XY(x, y);
 
-   for (i = 0; i < 4; i++)
-   {
-      rgPos[i * 3 + 1] = PAL_XY(x + xOffset, y + yOffset);
-      rgPos[i * 3 + 2] = PAL_XY(x, y + yOffset * 2);
-      rgPos[i * 3 + 3] = PAL_XY(x + xOffset, y);
-      x += xOffset;
-      y += yOffset;
-   }
+    for(i = 0; i < 4; i++) {
+        rgPos[i * 3 + 1] = PAL_XY(x + xOffset, y + yOffset);
+        rgPos[i * 3 + 2] = PAL_XY(x, y + yOffset * 2);
+        rgPos[i * 3 + 3] = PAL_XY(x + xOffset, y);
+        x += xOffset;
+        y += yOffset;
+    }
 
-   for (i = 0; i < 13; i++)
-   {
-      //
-      // Convert to map location
-      //
-      dh = ((PAL_X(rgPos[i]) % 32) ? 1 : 0);
-      dx = PAL_X(rgPos[i]) / 32;
-      dy = PAL_Y(rgPos[i]) / 16;
+    for(i = 0; i < 13; i++) {
+        //
+        // Convert to map location
+        //
+        dh = ((PAL_X(rgPos[i]) % 32) ? 1 : 0);
+        dx = PAL_X(rgPos[i]) / 32;
+        dy = PAL_Y(rgPos[i]) / 16;
 
-      //
-      // Loop through all event objects
-      //
-      for (k = gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex;
-         k < gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex; k++)
-      {
-         p = &(gpGlobals->g.lprgEventObject[k]);
-         ex = p->x / 32;
-         ey = p->y / 16;
-         eh = ((p->x % 32) ? 1 : 0);
+        //
+        // Loop through all event objects
+        //
+        for(k = gpGlobals->g.rgScene[gpGlobals->wNumScene - 1].wEventObjectIndex;
+            k < gpGlobals->g.rgScene[gpGlobals->wNumScene].wEventObjectIndex; k++) {
+            p = &(gpGlobals->g.lprgEventObject[k]);
+            ex = p->x / 32;
+            ey = p->y / 16;
+            eh = ((p->x % 32) ? 1 : 0);
 
-         if (p->sState <= 0 || p->wTriggerMode >= kTriggerTouchNear ||
-            p->wTriggerMode * 6 - 4 < i || dx != ex || dy != ey || dh != eh)
-         {
-            continue;
-         }
-
-         //
-         // Adjust direction/gesture for party members and the event object
-         //
-         if (p->nSpriteFrames * 4 > p->wCurrentFrameNum)
-         {
-            p->wCurrentFrameNum = 0; // use standing gesture
-            p->wDirection = (gpGlobals->wPartyDirection + 2) % 4; // face the party
-
-            for (l = 0; l <= gpGlobals->wMaxPartyMemberIndex; l++)
-            {
-               //
-               // All party members should face the event object
-               //
-               gpGlobals->rgParty[l].wFrame = gpGlobals->wPartyDirection * 3;
+            if(p->sState <= 0 || p->wTriggerMode >= kTriggerTouchNear ||
+               p->wTriggerMode * 6 - 4 < i || dx != ex || dy != ey || dh != eh) {
+                continue;
             }
 
             //
-            // Redraw everything
+            // Adjust direction/gesture for party members and the event object
             //
-            PAL_MakeScene();
-            VIDEO_UpdateScreen(NULL);
-         }
+            if(p->nSpriteFrames * 4 > p->wCurrentFrameNum) {
+                p->wCurrentFrameNum = 0;    // use standing gesture
+                p->wDirection = (gpGlobals->wPartyDirection + 2) % 4;    // face the party
 
-         //
-         // Execute the script
-         //
-         p->wTriggerScript = PAL_RunTriggerScript(p->wTriggerScript, k + 1);
+                for(l = 0; l <= gpGlobals->wMaxPartyMemberIndex; l++) {
+                    //
+                    // All party members should face the event object
+                    //
+                    gpGlobals->rgParty[l].wFrame = gpGlobals->wPartyDirection * 3;
+                }
 
-         //
-         // Clear inputs and delay for a short time
-         //
-         UTIL_Delay(50);
-         PAL_ClearKeyState();
+                //
+                // Redraw everything
+                //
+                PAL_MakeScene();
+                VIDEO_UpdateScreen(NULL);
+            }
 
-         return; // don't go further
-      }
-   }
+            //
+            // Execute the script
+            //
+            p->wTriggerScript = PAL_RunTriggerScript(p->wTriggerScript, k + 1);
+
+            //
+            // Clear inputs and delay for a short time
+            //
+            UTIL_Delay(50);
+            PAL_ClearKeyState();
+
+            return;    // don't go further
+        }
+    }
 }
 
-VOID
-PAL_StartFrame(
-   VOID
-)
+VOID PAL_StartFrame(VOID)
 /*++
   Purpose:
 
@@ -507,92 +460,73 @@ PAL_StartFrame(
 
 --*/
 {
-   //
-   // Run the game logic of one frame
-   //
-   PAL_GameUpdate(TRUE);
-   if (gpGlobals->fEnteringScene)
-   {
-      return;
-   }
+    //
+    // Run the game logic of one frame
+    //
+    PAL_GameUpdate(TRUE);
+    if(gpGlobals->fEnteringScene) {
+        return;
+    }
 
-   //
-   // Update the positions and gestures of party members
-   //
-   PAL_UpdateParty();
+    //
+    // Update the positions and gestures of party members
+    //
+    PAL_UpdateParty();
 
-   //
-   // Update the scene
-   //
-   PAL_MakeScene();
-   VIDEO_UpdateScreen(NULL);
+    //
+    // Update the scene
+    //
+    PAL_MakeScene();
+    VIDEO_UpdateScreen(NULL);
 
-   if (g_InputState.dwKeyPress & kKeyMenu)
-   {
-      //
-      // Show the in-game menu
-      //
-      PAL_InGameMenu();
-   }
-   else if (g_InputState.dwKeyPress & kKeyUseItem)
-   {
-      //
-      // Show the use item menu
-      //
-      PAL_GameUseItem();
-   }
-   else if (g_InputState.dwKeyPress & kKeyThrowItem)
-   {
-      //
-      // Show the equipment menu
-      //
-      PAL_GameEquipItem();
-   }
-   else if (g_InputState.dwKeyPress & kKeyForce)
-   {
-      //
-      // Show the magic menu
-      //
-      PAL_InGameMagicMenu();
-   }
-   else if (g_InputState.dwKeyPress & kKeyStatus)
-   {
-      //
-      // Show the player status
-      //
-      PAL_PlayerStatus();
-   }
-   else if (g_InputState.dwKeyPress & kKeySearch)
-   {
-      //
-      // Process search events
-      //
-      PAL_Search();
-   }
-   else if (g_InputState.dwKeyPress & kKeyFlee)
-   {
-      //
-      // Quit Game
-      //
-      if (PAL_ConfirmMenu())
-      {
-         PAL_PlayMUS(0, FALSE, 2);
-         PAL_FadeOut(2);
-         PAL_Shutdown();
-         exit(0);
-      }
-   }
+    if(g_InputState.dwKeyPress & kKeyMenu) {
+        //
+        // Show the in-game menu
+        //
+        PAL_InGameMenu();
+    } else if(g_InputState.dwKeyPress & kKeyUseItem) {
+        //
+        // Show the use item menu
+        //
+        PAL_GameUseItem();
+    } else if(g_InputState.dwKeyPress & kKeyThrowItem) {
+        //
+        // Show the equipment menu
+        //
+        PAL_GameEquipItem();
+    } else if(g_InputState.dwKeyPress & kKeyForce) {
+        //
+        // Show the magic menu
+        //
+        PAL_InGameMagicMenu();
+    } else if(g_InputState.dwKeyPress & kKeyStatus) {
+        //
+        // Show the player status
+        //
+        PAL_PlayerStatus();
+    } else if(g_InputState.dwKeyPress & kKeySearch) {
+        //
+        // Process search events
+        //
+        PAL_Search();
+    } else if(g_InputState.dwKeyPress & kKeyFlee) {
+        //
+        // Quit Game
+        //
+        if(PAL_ConfirmMenu()) {
+            PAL_PlayMUS(0, FALSE, 2);
+            PAL_FadeOut(2);
+            PAL_Shutdown();
+            exit(0);
+        }
+    }
 
-   if (--gpGlobals->wChasespeedChangeCycles == 0)
-   {
-      gpGlobals->wChaseRange = 1;
-   }
+    if(--gpGlobals->wChasespeedChangeCycles == 0) {
+        gpGlobals->wChaseRange = 1;
+    }
 }
 
-VOID
-PAL_WaitForKey(
-   WORD      wTimeOut
-)
+VOID PAL_WaitForKey(WORD wTimeOut)
 /*++
   Purpose:
 
@@ -608,17 +542,15 @@ PAL_WaitForKey(
 
 --*/
 {
-   DWORD     dwTimeOut = SDL_GetTicks() + wTimeOut;
+    DWORD dwTimeOut = SDL_GetTicks() + wTimeOut;
 
-   PAL_ClearKeyState();
+    PAL_ClearKeyState();
 
-   while (wTimeOut == 0 || SDL_GetTicks() < dwTimeOut)
-   {
-      UTIL_Delay(5);
+    while(wTimeOut == 0 || SDL_GetTicks() < dwTimeOut) {
+        UTIL_Delay(5);
 
-      if (g_InputState.dwKeyPress & (kKeySearch | kKeyMenu))
-      {
-         break;
-      }
-   }
+        if(g_InputState.dwKeyPress & (kKeySearch | kKeyMenu)) {
+            break;
+        }
+    }
 }

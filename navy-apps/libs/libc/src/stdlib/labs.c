@@ -32,12 +32,9 @@ No supporting OS subroutine calls are required.
 
 #include <stdlib.h>
 
-long
-labs (long x)
-{
-  if (x < 0)
-    {
-      x = -x;
+long labs(long x) {
+    if(x < 0) {
+        x = -x;
     }
-  return x;
+    return x;
 }

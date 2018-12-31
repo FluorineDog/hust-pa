@@ -13,19 +13,15 @@
 
 #include "rand48.h"
 
-long
-_lrand48_r (struct _reent *r)
-{
-  _REENT_CHECK_RAND48(r);
-  __dorand48(r, __rand48_seed);
-  return (long)((unsigned long) __rand48_seed[2] << 15) +
-    ((unsigned long) __rand48_seed[1] >> 1);
+long _lrand48_r(struct _reent *r) {
+    _REENT_CHECK_RAND48(r);
+    __dorand48(r, __rand48_seed);
+    return (long)((unsigned long)__rand48_seed[2] << 15) +
+           ((unsigned long)__rand48_seed[1] >> 1);
 }
 
 #ifndef _REENT_ONLY
-long
-lrand48 (void)
-{
-  return _lrand48_r (_REENT);
+long lrand48(void) {
+    return _lrand48_r(_REENT);
 }
 #endif /* !_REENT_ONLY */

@@ -60,41 +60,32 @@ PORTABILITY
 #include <stddef.h>
 #include <wchar.h>
 
-wchar_t *
-wcsstr (const wchar_t *__restrict big,
-	const wchar_t *__restrict little)
-{
-  const wchar_t *p;
-  const wchar_t *q;
-  const wchar_t *r;
+wchar_t *wcsstr(const wchar_t *__restrict big, const wchar_t *__restrict little) {
+    const wchar_t *p;
+    const wchar_t *q;
+    const wchar_t *r;
 
-  if (!*little)
-    {
-      /* LINTED interface specification */
-      return (wchar_t *) big;
+    if(!*little) {
+        /* LINTED interface specification */
+        return (wchar_t *)big;
     }
-  if (wcslen (big) < wcslen (little))
+    if(wcslen(big) < wcslen(little)) return NULL;
+
+    p = big;
+    q = little;
+    while(*p) {
+        q = little;
+        r = p;
+        while(*q) {
+            if(*r != *q) break;
+            q++;
+            r++;
+        }
+        if(!*q) {
+            /* LINTED interface specification */
+            return (wchar_t *)p;
+        }
+        p++;
+    }
     return NULL;
-
-  p = big;
-  q = little;
-  while (*p)
-    {
-      q = little;
-      r = p;
-      while (*q)
-	{
-	  if (*r != *q)
-	    break;
-	  q++;
-	  r++;
-	}
-      if (!*q)
-	{
-	  /* LINTED interface specification */
-	  return (wchar_t *) p;
-	}
-      p++;
-    }
-  return NULL;
 }

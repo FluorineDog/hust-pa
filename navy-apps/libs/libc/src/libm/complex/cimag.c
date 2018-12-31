@@ -46,14 +46,11 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 #include "fdlibm.h"
 
-double
-cimag(double complex z)
-{
-	double_complex w = { .z = z };
+double cimag(double complex z) {
+    double_complex w = {.z = z};
 
-	return (IMAG_PART(w));
+    return (IMAG_PART(w));
 }

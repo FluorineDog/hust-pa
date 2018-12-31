@@ -48,11 +48,7 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #include <stdio.h>
 
-int
-putw (int w,
-       register FILE *fp)
-{
-  if (fwrite ((const char*)&w, sizeof (w), 1, fp) != 1)
-    return EOF;
-  return 0;
+int putw(int w, register FILE *fp) {
+    if(fwrite((const char *)&w, sizeof(w), 1, fp) != 1) return EOF;
+    return 0;
 }

@@ -8,11 +8,8 @@
 
 #ifndef _REENT_ONLY
 
-void *
-memalign (size_t align,
-	size_t nbytes)
-{
-  return _memalign_r (_REENT, align, nbytes);
+void* memalign(size_t align, size_t nbytes) {
+    return _memalign_r(_REENT, align, nbytes);
 }
 
 #endif

@@ -20,18 +20,14 @@
    note that the seed value of 0 cannot be used in the calculation as
    it results in 0 itself
 */
-      
-int
-rand_r (unsigned int *seed)
-{
-        long k;
-        long s = (long)(*seed);
-        if (s == 0)
-          s = 0x12345987;
-        k = s / 127773;
-        s = 16807 * (s - k * 127773) - 2836 * k;
-        if (s < 0)
-          s += 2147483647;
-        (*seed) = (unsigned int)s;
-        return (int)(s & RAND_MAX);
+
+int rand_r(unsigned int *seed) {
+    long k;
+    long s = (long)(*seed);
+    if(s == 0) s = 0x12345987;
+    k = s / 127773;
+    s = 16807 * (s - k * 127773) - 2836 * k;
+    if(s < 0) s += 2147483647;
+    (*seed) = (unsigned int)s;
+    return (int)(s & RAND_MAX);
 }

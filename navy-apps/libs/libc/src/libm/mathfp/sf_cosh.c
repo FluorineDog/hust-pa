@@ -17,16 +17,13 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-coshf (float x)
-{
-  return (sinehf (x, 1));
+float coshf(float x) {
+    return (sinehf(x, 1));
 }
 
 #ifdef _DOUBLE_IS_32BITS
-double cosh (double x)
-{
-  return (double) sinehf ((float) x, 1);
+double cosh(double x) {
+    return (double)sinehf((float)x, 1);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

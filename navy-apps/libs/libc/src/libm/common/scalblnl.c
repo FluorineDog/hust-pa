@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-scalblnl (long double x, long n)
-{
-  return scalbln(x, n);
+long double scalblnl(long double x, long n) {
+    return scalbln(x, n);
 }
 #endif
-

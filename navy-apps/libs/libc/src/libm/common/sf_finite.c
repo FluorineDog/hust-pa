@@ -21,28 +21,26 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	int finitef(float x)
+int finitef(float x)
 #else
-	int finitef(x)
-	float x;
+int finitef(x) float x;
 #endif
 {
-	__int32_t ix;
-	GET_FLOAT_WORD(ix,x);
-	ix &= 0x7fffffff;
-	return (FLT_UWORD_IS_FINITE(ix));
+    __int32_t ix;
+    GET_FLOAT_WORD(ix, x);
+    ix &= 0x7fffffff;
+    return (FLT_UWORD_IS_FINITE(ix));
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	int finite(double x)
+int finite(double x)
 #else
-	int finite(x)
-	double x;
+int finite(x) double x;
 #endif
 {
-	return finitef((float) x);
+    return finitef((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

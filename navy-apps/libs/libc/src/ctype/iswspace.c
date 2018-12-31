@@ -65,8 +65,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswspace (wint_t c)
-{
-  return iswspace_l (c, 0);
+int iswspace(wint_t c) {
+    return iswspace_l(c, 0);
 }

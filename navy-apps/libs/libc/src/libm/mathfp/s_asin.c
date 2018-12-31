@@ -19,10 +19,8 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-asin (double x)
-{
-  return (asine (x, 0));
+double asin(double x) {
+    return (asine(x, 0));
 }
 
 #endif /* _DOUBLE_IS_32BITS */

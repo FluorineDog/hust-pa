@@ -24,39 +24,33 @@
 #include <stdlib.h>
 #include <reent.h>
 
-static const char R64_ARRAY[] = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+static const char R64_ARRAY[] =
+    "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-char *
-l64a (long value)
-{
-  return _l64a_r (_REENT, value);
+char *l64a(long value) {
+    return _l64a_r(_REENT, value);
 }
 
-char *
-_l64a_r (struct _reent *rptr,
-     long value)
-{
-  char *ptr;
-  char *result;
-  int i, index;
-  unsigned long tmp = (unsigned long)value & 0xffffffff;
+char *_l64a_r(struct _reent *rptr, long value) {
+    char *ptr;
+    char *result;
+    int i, index;
+    unsigned long tmp = (unsigned long)value & 0xffffffff;
 
-  _REENT_CHECK_MISC(rptr);
-  result = _REENT_L64A_BUF(rptr);
-  ptr = result;
+    _REENT_CHECK_MISC(rptr);
+    result = _REENT_L64A_BUF(rptr);
+    ptr = result;
 
-  for (i = 0; i < 6; ++i)
-    {
-      if (tmp == 0)
-	{
-	  *ptr = '\0';
-	  break;
-	}
+    for(i = 0; i < 6; ++i) {
+        if(tmp == 0) {
+            *ptr = '\0';
+            break;
+        }
 
-      index = tmp & (64 - 1);
-      *ptr++ = R64_ARRAY[index];
-      tmp >>= 6;
+        index = tmp & (64 - 1);
+        *ptr++ = R64_ARRAY[index];
+        tmp >>= 6;
     }
 
-  return result;
+    return result;
 }

@@ -31,27 +31,21 @@ static char sccsid[] = "%W% (Berkeley) %G%";
  * in the newly-filled buffer.
  */
 
-int
-__srget_r (struct _reent *ptr,
-       register FILE *fp)
-{
-  /* Ensure that any fake std stream is resolved before
+int __srget_r(struct _reent *ptr, register FILE *fp) {
+    /* Ensure that any fake std stream is resolved before
      we call __srefill_r so we may access the true read buffer. */
-  CHECK_INIT(ptr, fp);
+    CHECK_INIT(ptr, fp);
 
-  if (__srefill_r (ptr, fp) == 0)
-    {
-      fp->_r--;
-      return *fp->_p++;
+    if(__srefill_r(ptr, fp) == 0) {
+        fp->_r--;
+        return *fp->_p++;
     }
-  return EOF;
+    return EOF;
 }
 
 /* This function isn't any longer declared in stdio.h, but it's
    required for backward compatibility with applications built against
    earlier dynamically built newlib libraries. */
-int
-__srget (register FILE *fp)
-{
-  return __srget_r (_REENT, fp);
+int __srget(register FILE *fp) {
+    return __srget_r(_REENT, fp);
 }

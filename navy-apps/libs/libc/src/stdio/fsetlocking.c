@@ -64,26 +64,17 @@ No supporting OS subroutines are required.
 #include <stdio_ext.h>
 #include "local.h"
 
-int
-__fsetlocking (FILE * fp,
-       int type)
-{
-  int result;
-  CHECK_INIT(_REENT, fp);
-  result = (fp->_flags2 & __SNLK) ? FSETLOCKING_BYCALLER : FSETLOCKING_INTERNAL;
-  switch (type)
-    {
-    case FSETLOCKING_BYCALLER:
-      fp->_flags2 |= __SNLK;
-      break;
-    case FSETLOCKING_INTERNAL:
-      fp->_flags2 &= ~__SNLK;
-      break;
-    case FSETLOCKING_QUERY:
-    default:
-      break;
+int __fsetlocking(FILE* fp, int type) {
+    int result;
+    CHECK_INIT(_REENT, fp);
+    result = (fp->_flags2 & __SNLK) ? FSETLOCKING_BYCALLER : FSETLOCKING_INTERNAL;
+    switch(type) {
+        case FSETLOCKING_BYCALLER: fp->_flags2 |= __SNLK; break;
+        case FSETLOCKING_INTERNAL: fp->_flags2 &= ~__SNLK; break;
+        case FSETLOCKING_QUERY:
+        default: break;
     }
-  return result;
+    return result;
 }
 
 #endif /* __rtems__ */

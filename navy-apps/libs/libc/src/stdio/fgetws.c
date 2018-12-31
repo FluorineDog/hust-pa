@@ -98,85 +98,66 @@ PORTABILITY
 #define fgetws fgetws_unlocked
 #endif
 
-wchar_t *
-_fgetws_r (struct _reent *ptr,
-	wchar_t * ws,
-	int n,
-	FILE * fp)
-{
-  wchar_t *wsp;
-  size_t nconv;
-  const char *src;
-  unsigned char *nl;
+wchar_t *_fgetws_r(struct _reent *ptr, wchar_t *ws, int n, FILE *fp) {
+    wchar_t *wsp;
+    size_t nconv;
+    const char *src;
+    unsigned char *nl;
 
-  _newlib_flockfile_start (fp);
-  ORIENT (fp, 1);
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, 1);
 
-  if (n <= 0)
-    {
-      errno = EINVAL;
-      goto error;
+    if(n <= 0) {
+        errno = EINVAL;
+        goto error;
     }
 
-  if (fp->_r <= 0 && __srefill_r (ptr, fp))
-    /* EOF */
-    goto error;
-  wsp = ws;
-  do
-    {
-      src = (char *) fp->_p;
-      nl = memchr (fp->_p, '\n', fp->_r);
-      nconv = _mbsnrtowcs_r (ptr, wsp, &src,
-			     /* Read all bytes up to the next NL, or up to the
+    if(fp->_r <= 0 && __srefill_r(ptr, fp)) /* EOF */
+        goto error;
+    wsp = ws;
+    do {
+        src = (char *)fp->_p;
+        nl = memchr(fp->_p, '\n', fp->_r);
+        nconv = _mbsnrtowcs_r(ptr, wsp, &src,
+                              /* Read all bytes up to the next NL, or up to the
 				end of the buffer if there is no NL. */
-			     nl != NULL ? (nl - fp->_p + 1) : fp->_r,
-			     /* But never more than n - 1 wide chars. */
-			     n - 1,
-			     &fp->_mbstate);
-      if (nconv == (size_t) -1)
-	/* Conversion error */
-	goto error;
-      if (src == NULL)
-	{
-	  /*
+                              nl != NULL ? (nl - fp->_p + 1) : fp->_r,
+                              /* But never more than n - 1 wide chars. */
+                              n - 1, &fp->_mbstate);
+        if(nconv == (size_t)-1) /* Conversion error */
+            goto error;
+        if(src == NULL) {
+            /*
 	   * We hit a null byte. Increment the character count,
 	   * since mbsnrtowcs()'s return value doesn't include
 	   * the terminating null, then resume conversion
 	   * after the null.
 	   */
-	  nconv++;
-	  src = memchr (fp->_p, '\0', fp->_r);
-	  src++;
-	}
-      fp->_r -= (unsigned char *) src - fp->_p;
-      fp->_p = (unsigned char *) src;
-      n -= nconv;
-      wsp += nconv;
-    }
-  while (wsp[-1] != L'\n' && n > 1 && (fp->_r > 0
-	 || __srefill_r (ptr, fp) == 0));
-  if (wsp == ws)
-    /* EOF */
-    goto error;
-  if (!mbsinit (&fp->_mbstate))
-    /* Incomplete character */
-    goto error;
-  *wsp++ = L'\0';
-  _newlib_flockfile_exit (fp);
-  return ws;
+            nconv++;
+            src = memchr(fp->_p, '\0', fp->_r);
+            src++;
+        }
+        fp->_r -= (unsigned char *)src - fp->_p;
+        fp->_p = (unsigned char *)src;
+        n -= nconv;
+        wsp += nconv;
+    } while(wsp[-1] != L'\n' && n > 1 && (fp->_r > 0 || __srefill_r(ptr, fp) == 0));
+    if(wsp == ws) /* EOF */
+        goto error;
+    if(!mbsinit(&fp->_mbstate)) /* Incomplete character */
+        goto error;
+    *wsp++ = L'\0';
+    _newlib_flockfile_exit(fp);
+    return ws;
 
 error:
-  _newlib_flockfile_end (fp);
-  return NULL;
+    _newlib_flockfile_end(fp);
+    return NULL;
 }
 
-wchar_t *
-fgetws (wchar_t *__restrict ws,
-	int n,
-	FILE *__restrict fp)
-{
-  struct _reent *reent = _REENT;
+wchar_t *fgetws(wchar_t *__restrict ws, int n, FILE *__restrict fp) {
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT (reent, fp);
-  return _fgetws_r (reent, ws, n, fp);
+    CHECK_INIT(reent, fp);
+    return _fgetws_r(reent, ws, n, fp);
 }

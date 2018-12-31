@@ -43,28 +43,26 @@ static char sccsid[] = "@(#)closedir.c	5.9 (Berkeley) 2/23/91";
 #include <unistd.h>
 #include <sys/lock.h>
 
-extern void _cleanupdir (DIR *dirp);
+extern void _cleanupdir(DIR *dirp);
 
 /*
  * close a directory.
  */
-int
-closedir (register DIR *dirp)
-{
-	int rc;
+int closedir(register DIR *dirp) {
+    int rc;
 
 #ifdef HAVE_DD_LOCK
-	__lock_acquire_recursive(dirp->dd_lock);
+    __lock_acquire_recursive(dirp->dd_lock);
 #endif
-	rc = close(dirp->dd_fd);
-	_cleanupdir(dirp);
-	free((void *)dirp->dd_buf);
+    rc = close(dirp->dd_fd);
+    _cleanupdir(dirp);
+    free((void *)dirp->dd_buf);
 #ifdef HAVE_DD_LOCK
-	__lock_release_recursive(dirp->dd_lock);
-	__lock_close_recursive(dirp->dd_lock);
+    __lock_release_recursive(dirp->dd_lock);
+    __lock_close_recursive(dirp->dd_lock);
 #endif
-	free((void *)dirp);
-	return rc;
+    free((void *)dirp);
+    return rc;
 }
 
 #endif /* ! HAVE_OPENDIR */

@@ -3,8 +3,6 @@
 
 #undef isascii_l
 
-int
-isascii_l (int c, struct __locale_t *locale)
-{
-  return c >= 0 && c < 128;
+int isascii_l(int c, struct __locale_t *locale) {
+    return c >= 0 && c < 128;
 }

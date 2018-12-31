@@ -17,28 +17,18 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-fabsf (float x)
-{
-  switch (numtestf (x))
-    {
-      case NAN:
-        errno = EDOM;
-        return (x);
-      case INF:
-        errno = ERANGE;
-        return (x);
-      case 0:
-        return (0.0);
-      default:
-        return (x < 0.0 ? -x : x);
+float fabsf(float x) {
+    switch(numtestf(x)) {
+        case NAN: errno = EDOM; return (x);
+        case INF: errno = ERANGE; return (x);
+        case 0: return (0.0);
+        default: return (x < 0.0 ? -x : x);
     }
 }
 
 #ifdef _DOUBLE_IS_32BITS
-double fabs (double x)
-{
-  return (double) fabsf ((float) x);
+double fabs(double x) {
+    return (double)fabsf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

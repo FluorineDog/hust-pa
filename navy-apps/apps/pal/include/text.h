@@ -22,81 +22,40 @@
 #ifndef _TEXT_H
 #define _TEXT_H
 
-typedef enum tagDIALOGPOSITION
-{
-   kDialogUpper       = 0,
-   kDialogCenter,
-   kDialogLower,
-   kDialogCenterWindow
+typedef enum tagDIALOGPOSITION {
+    kDialogUpper = 0,
+    kDialogCenter,
+    kDialogLower,
+    kDialogCenterWindow
 } DIALOGLOCATION;
 
-#define PAL_ADDITIONAL_WORD_FIRST           10000
+#define PAL_ADDITIONAL_WORD_FIRST 10000
 
-INT
-PAL_InitText(
-   VOID
-);
+INT PAL_InitText(VOID);
 
-VOID
-PAL_FreeText(
-   VOID
-);
+VOID PAL_FreeText(VOID);
 
 LPCSTR
-PAL_GetWord(
-   WORD       wNumWord
-);
+PAL_GetWord(WORD wNumWord);
 
 LPCSTR
-PAL_GetMsg(
-   WORD       wNumMsg
-);
+PAL_GetMsg(WORD wNumMsg);
 
-VOID
-PAL_DrawText(
-   LPCSTR     lpszText,
-   PAL_POS    pos,
-   BYTE       bColor,
-   BOOL       fShadow,
-   BOOL       fUpdate
-);
+VOID PAL_DrawText(LPCSTR lpszText, PAL_POS pos, BYTE bColor, BOOL fShadow, BOOL fUpdate);
 
-VOID
-PAL_DialogSetDelayTime(
-   INT          iDelayTime
-);
+VOID PAL_DialogSetDelayTime(INT iDelayTime);
 
-VOID
-PAL_StartDialog(
-   BYTE         bDialogLocation,
-   BYTE         bFontColor,
-   INT          iNumCharFace,
-   BOOL         fPlayingRNG
-);
+VOID PAL_StartDialog(BYTE bDialogLocation, BYTE bFontColor, INT iNumCharFace,
+                     BOOL fPlayingRNG);
 
-VOID
-PAL_ShowDialogText(
-   LPCSTR       szText
-);
+VOID PAL_ShowDialogText(LPCSTR szText);
 
-VOID
-PAL_ClearDialog(
-   BOOL         fWaitForKey
-);
+VOID PAL_ClearDialog(BOOL fWaitForKey);
 
-VOID
-PAL_EndDialog(
-   VOID
-);
+VOID PAL_EndDialog(VOID);
 
-BOOL
-PAL_IsInDialog(
-   VOID
-);
+BOOL PAL_IsInDialog(VOID);
 
-BOOL
-PAL_DialogIsPlayingRNG(
-   VOID
-);
+BOOL PAL_DialogIsPlayingRNG(VOID);
 
 #endif

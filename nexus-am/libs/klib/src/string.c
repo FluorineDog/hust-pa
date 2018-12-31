@@ -10,33 +10,35 @@ size_t strlen(const char* s) {
 
 char* strcpy(char* dst, const char* src) {
     char* iter = dst;
-    while((*iter++ = *src++)){}
+    while((*iter++ = *src++)) {
+    }
     return dst;
 }
 
 char* strncpy(char* dst, const char* src, size_t n) {
     char* iter = dst;
-    while((n-- && (*iter++ = *src++))){}
+    while((n-- && (*iter++ = *src++))) {
+    }
     return dst;
 }
 
 char* strcat(char* dst, const char* src) {
     char* iter = dst;
-    while((*iter))++iter;
-    while((*iter++ = *src++)){}
+    while((*iter)) ++iter;
+    while((*iter++ = *src++)) {
+    }
     return dst;
 }
 
 int strcmp(const char* s1, const char* s2) {
-    return strncmp(s1, s2, -1);    
+    return strncmp(s1, s2, -1);
 }
 
 int strncmp(const char* s1, const char* s2, size_t n) {
-    for(int i = 0 ; i < n; ++i){
+    for(int i = 0; i < n; ++i) {
         if(s1[i] == s2[i] && s1[i]) {
             continue;
-        }
-        else {
+        } else {
             return s1[i] - s2[i];
         }
     }
@@ -44,15 +46,15 @@ int strncmp(const char* s1, const char* s2, size_t n) {
 }
 
 void* memset(void* v, int c, size_t n) {
-    for(int i = 0; i < n; ++i){
-        ((char* )v)[i] = (char)c;
+    for(int i = 0; i < n; ++i) {
+        ((char*)v)[i] = (char)c;
     }
     return v;
 }
 
 void* memcpy(void* out, const void* in, size_t n) {
-    for(int i = 0; i < n; ++i){
-        ((char*)out)[i] = ((char*)in)[i]; 
+    for(int i = 0; i < n; ++i) {
+        ((char*)out)[i] = ((char*)in)[i];
     }
     return out;
 }

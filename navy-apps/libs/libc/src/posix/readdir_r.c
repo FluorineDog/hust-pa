@@ -44,61 +44,54 @@ static char sccsid[] = "@(#)readdir.c	5.7 (Berkeley) 6/1/90";
 #include <string.h>
 #include <sys/param.h>
 
-extern int getdents (int fd, void *dp, int count);
+extern int getdents(int fd, void *dp, int count);
 
 /*
  * get next entry in a directory using supplied dirent structure.
  */
-int
-readdir_r (register DIR *__restrict dirp,
-	struct dirent *__restrict dp,
-	struct dirent **__restrict dpp) {
+int readdir_r(register DIR *__restrict dirp, struct dirent *__restrict dp,
+              struct dirent **__restrict dpp) {
+    struct dirent *tmpdp;
 
-struct dirent *tmpdp;
- 
 #ifdef HAVE_DD_LOCK
-  __lock_acquire_recursive(dirp->dd_lock);
+    __lock_acquire_recursive(dirp->dd_lock);
 #endif
- 
-  for (;;) {
-    if (dirp->dd_loc == 0) {
-      dirp->dd_size = getdents (dirp->dd_fd,
-				dirp->dd_buf,
-				dirp->dd_len);
-      
-      if (dirp->dd_size <= 0) {
+
+    for(;;) {
+        if(dirp->dd_loc == 0) {
+            dirp->dd_size = getdents(dirp->dd_fd, dirp->dd_buf, dirp->dd_len);
+
+            if(dirp->dd_size <= 0) {
+#ifdef HAVE_DD_LOCK
+                __lock_release_recursive(dirp->dd_lock);
+#endif
+                *dpp = NULL;
+                return dirp->dd_size == 0 ? 0 : errno;
+            }
+        }
+        if(dirp->dd_loc >= dirp->dd_size) {
+            dirp->dd_loc = 0;
+            continue;
+        }
+        tmpdp = (struct dirent *)(dirp->dd_buf + dirp->dd_loc);
+
+        if(tmpdp->d_reclen <= 0 || tmpdp->d_reclen > dirp->dd_len + 1 - dirp->dd_loc) {
+#ifdef HAVE_DD_LOCK
+            __lock_release_recursive(dirp->dd_lock);
+#endif
+            *dpp = NULL;
+            return -1;
+        }
+        memcpy(dp, tmpdp, MIN(tmpdp->d_reclen, sizeof(struct dirent)));
+
+        dirp->dd_loc += dp->d_reclen;
+        if(dp->d_ino == 0) continue;
 #ifdef HAVE_DD_LOCK
         __lock_release_recursive(dirp->dd_lock);
 #endif
-        *dpp = NULL;
-        return dirp->dd_size == 0 ? 0 : errno;
-      }
+        *dpp = dp;
+        return 0;
     }
-    if (dirp->dd_loc >= dirp->dd_size) {
-      dirp->dd_loc = 0;
-      continue;
-    }
-    tmpdp = (struct dirent *)(dirp->dd_buf + dirp->dd_loc);
-
-    if (tmpdp->d_reclen <= 0 ||
-	tmpdp->d_reclen > dirp->dd_len + 1 - dirp->dd_loc) {
-#ifdef HAVE_DD_LOCK
-      __lock_release_recursive(dirp->dd_lock);
-#endif
-      *dpp = NULL;
-      return -1;
-    }
-    memcpy (dp, tmpdp, MIN (tmpdp->d_reclen, sizeof (struct dirent)));
-    
-    dirp->dd_loc += dp->d_reclen;
-    if (dp->d_ino == 0)
-      continue;
-#ifdef HAVE_DD_LOCK
-    __lock_release_recursive(dirp->dd_lock);
-#endif
-    *dpp = dp;
-    return 0;
-  }
 }
 
 #endif /* ! HAVE_OPENDIR */

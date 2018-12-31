@@ -131,39 +131,35 @@ No supporting OS subroutines are required.
 /*
  * Convert a wide string to a long long integer.
  */
-long long
-_wcstoll_l (struct _reent *rptr, const wchar_t *nptr, wchar_t **endptr,
-	    int base, locale_t loc)
-{
-	register const wchar_t *s = nptr;
-	register unsigned long long acc;
-	register int c;
-	register unsigned long long cutoff;
-	register int neg = 0, any, cutlim;
+long long _wcstoll_l(struct _reent *rptr, const wchar_t *nptr, wchar_t **endptr, int base,
+                     locale_t loc) {
+    register const wchar_t *s = nptr;
+    register unsigned long long acc;
+    register int c;
+    register unsigned long long cutoff;
+    register int neg = 0, any, cutlim;
 
-	/*
+    /*
 	 * Skip white space and pick up leading +/- sign if any.
 	 * If base is 0, allow 0x for hex and 0 for octal, else
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
-	do {
-		c = *s++;
-	} while (iswspace_l(c, loc));
-	if (c == L'-') {
-		neg = 1;
-		c = *s++;
-	} else if (c == L'+')
-		c = *s++;
-	if ((base == 0 || base == 16) &&
-	    c == L'0' && (*s == L'x' || *s == L'X')) {
-		c = s[1];
-		s += 2;
-		base = 16;
-	}
-	if (base == 0)
-		base = c == L'0' ? 8 : 10;
+    do {
+        c = *s++;
+    } while(iswspace_l(c, loc));
+    if(c == L'-') {
+        neg = 1;
+        c = *s++;
+    } else if(c == L'+')
+        c = *s++;
+    if((base == 0 || base == 16) && c == L'0' && (*s == L'x' || *s == L'X')) {
+        c = s[1];
+        s += 2;
+        base = 16;
+    }
+    if(base == 0) base = c == L'0' ? 8 : 10;
 
-	/*
+    /*
 	 * Compute the cutoff value between legal numbers and illegal
 	 * numbers.  That is the largest legal value, divided by the
 	 * base.  An input number that is greater than this value, if
@@ -180,62 +176,50 @@ _wcstoll_l (struct _reent *rptr, const wchar_t *nptr, wchar_t **endptr,
 	 * Set any if any `digits' consumed; make it negative to indicate
 	 * overflow.
 	 */
-	cutoff = neg ? -(unsigned long long)LONG_LONG_MIN : LONG_LONG_MAX;
-	cutlim = cutoff % (unsigned long long)base;
-	cutoff /= (unsigned long long)base;
-	for (acc = 0, any = 0;; c = *s++) {
-		if (c >= L'0' && c <= L'9')
-			c -= L'0';
-		else if (c >= L'A' && c <= L'Z')
-			c -= L'A' - 10;
-		else if (c >= L'a' && c <= L'z')
-			c -= L'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-               if (any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
-			any = -1;
-		else {
-			any = 1;
-			acc *= base;
-			acc += c;
-		}
-	}
-	if (any < 0) {
-		acc = neg ? LONG_LONG_MIN : LONG_LONG_MAX;
-		rptr->_errno = ERANGE;
-	} else if (neg)
-		acc = -acc;
-	if (endptr != 0)
-		*endptr = (wchar_t *) (any ? s - 1 : nptr);
-	return (acc);
+    cutoff = neg ? -(unsigned long long)LONG_LONG_MIN : LONG_LONG_MAX;
+    cutlim = cutoff % (unsigned long long)base;
+    cutoff /= (unsigned long long)base;
+    for(acc = 0, any = 0;; c = *s++) {
+        if(c >= L'0' && c <= L'9')
+            c -= L'0';
+        else if(c >= L'A' && c <= L'Z')
+            c -= L'A' - 10;
+        else if(c >= L'a' && c <= L'z')
+            c -= L'a' - 10;
+        else
+            break;
+        if(c >= base) break;
+        if(any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
+            any = -1;
+        else {
+            any = 1;
+            acc *= base;
+            acc += c;
+        }
+    }
+    if(any < 0) {
+        acc = neg ? LONG_LONG_MIN : LONG_LONG_MAX;
+        rptr->_errno = ERANGE;
+    } else if(neg)
+        acc = -acc;
+    if(endptr != 0) *endptr = (wchar_t *)(any ? s - 1 : nptr);
+    return (acc);
 }
 
-long long
-_wcstoll_r (struct _reent *rptr,
-	const wchar_t *nptr,
-	wchar_t **endptr,
-	int base)
-{
-	return _wcstoll_l (rptr, nptr, endptr, base, __get_current_locale ());
+long long _wcstoll_r(struct _reent *rptr, const wchar_t *nptr, wchar_t **endptr,
+                     int base) {
+    return _wcstoll_l(rptr, nptr, endptr, base, __get_current_locale());
 }
 
 #ifndef _REENT_ONLY
 
-long long
-wcstoll_l (const wchar_t *__restrict s, wchar_t **__restrict ptr, int base,
-	   locale_t loc)
-{
-	return _wcstoll_l (_REENT, s, ptr, base, loc);
+long long wcstoll_l(const wchar_t *__restrict s, wchar_t **__restrict ptr, int base,
+                    locale_t loc) {
+    return _wcstoll_l(_REENT, s, ptr, base, loc);
 }
 
-long long
-wcstoll (const wchar_t *__restrict s,
-	wchar_t **__restrict ptr,
-	int base)
-{
-	return _wcstoll_l (_REENT, s, ptr, base, __get_current_locale ());
+long long wcstoll(const wchar_t *__restrict s, wchar_t **__restrict ptr, int base) {
+    return _wcstoll_l(_REENT, s, ptr, base, __get_current_locale());
 }
 
 #endif

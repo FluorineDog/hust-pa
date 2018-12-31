@@ -40,62 +40,55 @@ static char sccsid[] = "@(#)getpass.c	5.9 (Berkeley) 5/6/91";
 #include <_syslist.h>
 
 #ifndef _PATH_PASSWD
-#define _PATH_PASSWD            "/etc/passwd"
+#define _PATH_PASSWD "/etc/passwd"
 #endif
 
 #ifndef _PASSWORD_LEN
-#define _PASSWORD_LEN           128     /* max length, not counting NULL */
+#define _PASSWORD_LEN 128 /* max length, not counting NULL */
 #endif
 
-char *
-getpass (prompt)
-     const char *prompt;
+char *getpass(prompt) const char *prompt;
 {
-  struct termios term;
-  register int ch;
-  register char *p;
-  FILE *fp, *outfp;
-  long omask;
-  int echo;
-  static char buf[_PASSWORD_LEN + 1];
+    struct termios term;
+    register int ch;
+    register char *p;
+    FILE *fp, *outfp;
+    long omask;
+    int echo;
+    static char buf[_PASSWORD_LEN + 1];
 
-  /*
+    /*
    * read and write to /dev/tty if possible; else read from
    * stdin and write to stderr.
    */
 
-  if ((outfp = fp = fopen ("/dev/tty", "w+")) == NULL)
-    {
-      outfp = stderr;
-      fp = stdin;
+    if((outfp = fp = fopen("/dev/tty", "w+")) == NULL) {
+        outfp = stderr;
+        fp = stdin;
     }
-  /*
+    /*
    * note - blocking signals isn't necessarily the
    * right thing, but we leave it for now.
    */
-  omask = sigblock (sigmask (SIGINT) | sigmask (SIGTSTP));
-  (void) tcgetattr (fileno (fp), &term);
-  echo = (term.c_lflag & ECHO);
-  if (echo)
-    {
-      term.c_lflag &= ~ECHO;
-      (void) tcsetattr (fileno (fp), TCSAFLUSH, &term);
+    omask = sigblock(sigmask(SIGINT) | sigmask(SIGTSTP));
+    (void)tcgetattr(fileno(fp), &term);
+    echo = (term.c_lflag & ECHO);
+    if(echo) {
+        term.c_lflag &= ~ECHO;
+        (void)tcsetattr(fileno(fp), TCSAFLUSH, &term);
     }
-  (void) fputs (prompt, outfp);
-  rewind (outfp);		/* implied flush */
-  for (p = buf; (ch = getc (fp)) != EOF && ch != '\n';)
-    if (p < buf + _PASSWORD_LEN)
-      *p++ = ch;
-  *p = '\0';
-  (void) write (fileno (outfp), "\n", 1);
-  if (echo)
-    {
-      term.c_lflag |= ECHO;
-      tcsetattr (fileno (fp), TCSAFLUSH, &term);
+    (void)fputs(prompt, outfp);
+    rewind(outfp); /* implied flush */
+    for(p = buf; (ch = getc(fp)) != EOF && ch != '\n';)
+        if(p < buf + _PASSWORD_LEN) *p++ = ch;
+    *p = '\0';
+    (void)write(fileno(outfp), "\n", 1);
+    if(echo) {
+        term.c_lflag |= ECHO;
+        tcsetattr(fileno(fp), TCSAFLUSH, &term);
     }
-  (void) sigsetmask (omask);
-  if (fp != stdin)
-    (void) fclose (fp);
-  return buf;
+    (void)sigsetmask(omask);
+    if(fp != stdin) (void)fclose(fp);
+    return buf;
 }
 #endif /* !_NO_GETPASS  */

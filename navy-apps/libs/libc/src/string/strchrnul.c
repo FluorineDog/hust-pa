@@ -30,11 +30,8 @@ QUICKREF
 
 #include <string.h>
 
-char *
-strchrnul (const char *s1,
-	int i)
-{
-  char *s = strchr(s1, i);
+char *strchrnul(const char *s1, int i) {
+    char *s = strchr(s1, i);
 
-  return s ? s : (char *)s1 + strlen(s1);
+    return s ? s : (char *)s1 + strlen(s1);
 }

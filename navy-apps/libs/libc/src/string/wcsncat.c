@@ -61,25 +61,19 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wchar.h>
 
-wchar_t *
-wcsncat (wchar_t *__restrict s1,
-	const wchar_t *__restrict s2,
-	size_t n)
-{
-  wchar_t *p;
-  wchar_t *q;
-  const wchar_t *r;
+wchar_t *wcsncat(wchar_t *__restrict s1, const wchar_t *__restrict s2, size_t n) {
+    wchar_t *p;
+    wchar_t *q;
+    const wchar_t *r;
 
-  p = s1;
-  while (*p)
-    p++;
-  q = p;
-  r = s2;
-  while (*r && n)
-    {
-      *q++ = *r++;
-      n--;
+    p = s1;
+    while(*p) p++;
+    q = p;
+    r = s2;
+    while(*r && n) {
+        *q++ = *r++;
+        n--;
     }
-  *q = '\0';
-  return s1;
+    *q = '\0';
+    return s1;
 }

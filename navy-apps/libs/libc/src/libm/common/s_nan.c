@@ -32,16 +32,15 @@ QUICKREF
 
 #ifndef _DOUBLE_IS_32BITS
 
-	double nan(const char *unused)
-{
-	double x;
+double nan(const char *unused) {
+    double x;
 
-#if __GNUC_PREREQ (3, 3)
-	x = __builtin_nan("");
+#if __GNUC_PREREQ(3, 3)
+    x = __builtin_nan("");
 #else
-	INSERT_WORDS(x,0x7ff80000,0);
+    INSERT_WORDS(x, 0x7ff80000, 0);
 #endif
-	return x;
+    return x;
 }
 
 #endif /* _DOUBLE_IS_32BITS */

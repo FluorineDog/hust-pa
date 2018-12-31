@@ -5,13 +5,14 @@
 #include "expr.h"
 
 struct WatchPoint {
-private:
+  private:
     int value_;
     std::string expr_str_;
     std::unique_ptr<Tree> tree_;
-public:
+
+  public:
     WatchPoint(std::string_view expr_str, std::unique_ptr<Tree>&& tree)
-            : expr_str_(expr_str), tree_(std::move(tree)) {
+        : expr_str_(expr_str), tree_(std::move(tree)) {
         value_ = this->tree_->eval();
     }
     std::string get_expr_str() {
@@ -24,7 +25,7 @@ public:
 
     bool update() {
         int new_value = tree_->eval();
-        if (new_value != this->value_) {
+        if(new_value != this->value_) {
             this->value_ = new_value;
             return true;
         } else {

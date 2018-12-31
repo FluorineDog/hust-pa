@@ -50,21 +50,12 @@ PORTABILITY
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-fabs (double x)
-{
-  switch (numtest (x))
-    {
-      case NAN:
-        errno = EDOM;
-        return (x);
-      case INF:
-        errno = ERANGE;
-        return (x);
-      case 0:
-        return (0.0);
-      default:
-        return (x < 0.0 ? -x : x);
+double fabs(double x) {
+    switch(numtest(x)) {
+        case NAN: errno = EDOM; return (x);
+        case INF: errno = ERANGE; return (x);
+        case 0: return (0.0);
+        default: return (x < 0.0 ? -x : x);
     }
 }
 

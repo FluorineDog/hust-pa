@@ -41,17 +41,14 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_isatty_r (ptr, fd)
-     struct _reent *ptr;
-     int fd;
+int _isatty_r(ptr, fd) struct _reent *ptr;
+int fd;
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _isatty (fd)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _isatty(fd)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

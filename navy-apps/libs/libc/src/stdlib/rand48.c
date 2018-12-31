@@ -129,24 +129,22 @@ No supporting OS subroutines are required.
 
 #include "rand48.h"
 
-void
-__dorand48 (struct _reent *r,
-       unsigned short xseed[3])
-{
-  unsigned long accu;
-  unsigned short temp[2];
+void __dorand48(struct _reent *r, unsigned short xseed[3]) {
+    unsigned long accu;
+    unsigned short temp[2];
 
-  _REENT_CHECK_RAND48(r);
-  accu = (unsigned long) __rand48_mult[0] * (unsigned long) xseed[0] +
-    (unsigned long) __rand48_add;
-  temp[0] = (unsigned short) accu;     /* lower 16 bits */
-  accu >>= sizeof(unsigned short) * 8;
-  accu += (unsigned long) __rand48_mult[0] * (unsigned long) xseed[1] +
-    (unsigned long) __rand48_mult[1] * (unsigned long) xseed[0];
-  temp[1] = (unsigned short) accu;     /* middle 16 bits */
-  accu >>= sizeof(unsigned short) * 8;
-  accu += __rand48_mult[0] * xseed[2] + __rand48_mult[1] * xseed[1] + __rand48_mult[2] * xseed[0];
-  xseed[0] = temp[0];
-  xseed[1] = temp[1];
-  xseed[2] = (unsigned short) accu;
+    _REENT_CHECK_RAND48(r);
+    accu = (unsigned long)__rand48_mult[0] * (unsigned long)xseed[0] +
+           (unsigned long)__rand48_add;
+    temp[0] = (unsigned short)accu; /* lower 16 bits */
+    accu >>= sizeof(unsigned short) * 8;
+    accu += (unsigned long)__rand48_mult[0] * (unsigned long)xseed[1] +
+            (unsigned long)__rand48_mult[1] * (unsigned long)xseed[0];
+    temp[1] = (unsigned short)accu; /* middle 16 bits */
+    accu >>= sizeof(unsigned short) * 8;
+    accu += __rand48_mult[0] * xseed[2] + __rand48_mult[1] * xseed[1] +
+            __rand48_mult[2] * xseed[0];
+    xseed[0] = temp[0];
+    xseed[1] = temp[1];
+    xseed[2] = (unsigned short)accu;
 }

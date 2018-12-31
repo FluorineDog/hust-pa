@@ -41,19 +41,16 @@ DESCRIPTION
         large file support.
 */
 
-int
-_open64_r (ptr, file, flags, mode)
-     struct _reent *ptr;
-     const char *file;
-     int flags;
-     int mode;
+int _open64_r(ptr, file, flags, mode) struct _reent *ptr;
+const char *file;
+int flags;
+int mode;
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _open64 (file, flags, mode)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _open64(file, flags, mode)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

@@ -20,47 +20,25 @@
 //
 
 #ifndef _SCENE_H
-#define	_SCENE_H
+#define _SCENE_H
 
-#ifdef	__cplusplus
-extern "C"
-{
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-VOID
-PAL_ApplyWave(
-   SDL_Surface    *lpSurface
-);
+VOID PAL_ApplyWave(SDL_Surface *lpSurface);
 
-VOID
-PAL_MakeScene(
-   VOID
-);
+VOID PAL_MakeScene(VOID);
 
-BOOL
-PAL_CheckObstacle(
-   PAL_POS         pos,
-   BOOL            fCheckEventObjects,
-   WORD            wSelfObject
-);
+BOOL PAL_CheckObstacle(PAL_POS pos, BOOL fCheckEventObjects, WORD wSelfObject);
 
-VOID
-PAL_UpdatePartyGestures(
-   BOOL             fWalking
-);
+VOID PAL_UpdatePartyGestures(BOOL fWalking);
 
-VOID
-PAL_UpdateParty(
-   VOID
-);
+VOID PAL_UpdateParty(VOID);
 
-VOID
-PAL_NPCWalkOneStep(
-   WORD          wEventObjectID,
-   INT           iSpeed
-);
+VOID PAL_NPCWalkOneStep(WORD wEventObjectID, INT iSpeed);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 

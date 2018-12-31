@@ -47,13 +47,11 @@ ANSI C requires <<asctime>>.
 
 #ifndef _REENT_ONLY
 
-char *
-asctime (const struct tm *tim_p)
-{
-  struct _reent *reent = _REENT;
+char *asctime(const struct tm *tim_p) {
+    struct _reent *reent = _REENT;
 
-  _REENT_CHECK_ASCTIME_BUF(reent);
-  return asctime_r (tim_p, _REENT_ASCTIME_BUF(reent));
+    _REENT_CHECK_ASCTIME_BUF(reent);
+    return asctime_r(tim_p, _REENT_ASCTIME_BUF(reent));
 }
 
 #endif

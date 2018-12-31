@@ -36,10 +36,8 @@ ANSI C requires <<ctime>>.
 
 #ifndef _REENT_ONLY
 
-char *
-ctime (const time_t * tim_p)
-{
-  return asctime (localtime (tim_p));
+char* ctime(const time_t* tim_p) {
+    return asctime(localtime(tim_p));
 }
 
 #endif

@@ -8,7 +8,8 @@
 
 #include <klib.h>
 
-typedef struct FILE {} FILE;
+typedef struct FILE {
+} FILE;
 
 void* kalloc(size_t);
 void kfree(void*);
@@ -61,4 +62,3 @@ namespace ImGui
     void    Value(const char* prefix, const MyMatrix44& v, const char* float_format = NULL);
 }
 */
-

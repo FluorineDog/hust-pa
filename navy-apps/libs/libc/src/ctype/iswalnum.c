@@ -36,8 +36,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswalnum (wint_t c)
-{
-  return iswalnum_l (c, 0);
+int iswalnum(wint_t c) {
+    return iswalnum_l(c, 0);
 }

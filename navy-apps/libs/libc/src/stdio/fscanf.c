@@ -23,40 +23,33 @@
 
 #ifndef _REENT_ONLY
 
-int
-fscanf(FILE *__restrict fp, const char *__restrict fmt, ...)
-{
-  int ret;
-  va_list ap;
+int fscanf(FILE *__restrict fp, const char *__restrict fmt, ...) {
+    int ret;
+    va_list ap;
 
-  va_start (ap, fmt);
-  ret = _vfscanf_r (_REENT, fp, fmt, ap);
-  va_end (ap);
-  return ret;
+    va_start(ap, fmt);
+    ret = _vfscanf_r(_REENT, fp, fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-fiscanf (FILE *, const char *, ...)
-       _ATTRIBUTE ((__alias__("fscanf")));
+int fiscanf(FILE *, const char *, ...) _ATTRIBUTE((__alias__("fscanf")));
 #endif
 
 #endif /* !_REENT_ONLY */
 
-int
-_fscanf_r(struct _reent *ptr, FILE *__restrict fp, const char *__restrict fmt, ...)
-{
-  int ret;
-  va_list ap;
+int _fscanf_r(struct _reent *ptr, FILE *__restrict fp, const char *__restrict fmt, ...) {
+    int ret;
+    va_list ap;
 
-  va_start (ap, fmt);
-  ret = _vfscanf_r (ptr, fp, fmt, ap);
-  va_end (ap);
-  return (ret);
+    va_start(ap, fmt);
+    ret = _vfscanf_r(ptr, fp, fmt, ap);
+    va_end(ap);
+    return (ret);
 }
 
 #ifdef _NANO_FORMATTED_IO
-int
-_fiscanf_r (struct _reent *, FILE *, const char *, ...)
-       _ATTRIBUTE ((__alias__("_fscanf_r")));
+int _fiscanf_r(struct _reent *, FILE *, const char *, ...)
+    _ATTRIBUTE((__alias__("_fscanf_r")));
 #endif

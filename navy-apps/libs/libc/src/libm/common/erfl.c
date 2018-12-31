@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-erfl (long double x)
-{
-  return erf(x);
+long double erfl(long double x) {
+    return erf(x);
 }
 #endif
-

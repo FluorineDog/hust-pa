@@ -10,17 +10,19 @@
    set then do nothing as lock is not initialised. */
 #if !defined(_flockfile)
 #ifndef __SINGLE_THREAD__
-#  define _flockfile(fp) (((fp)->_flags & __SSTR) ? 0 : __lock_acquire_recursive((fp)->_lock))
+#define _flockfile(fp) \
+    (((fp)->_flags & __SSTR) ? 0 : __lock_acquire_recursive((fp)->_lock))
 #else
-#  define _flockfile(fp)	((void) 0)
+#define _flockfile(fp) ((void)0)
 #endif
 #endif
 
 #if !defined(_funlockfile)
 #ifndef __SINGLE_THREAD__
-#  define _funlockfile(fp) (((fp)->_flags & __SSTR) ? 0 : __lock_release_recursive((fp)->_lock))
+#define _funlockfile(fp) \
+    (((fp)->_flags & __SSTR) ? 0 : __lock_release_recursive((fp)->_lock))
 #else
-#  define _funlockfile(fp)	((void) 0)
+#define _funlockfile(fp) ((void)0)
 #endif
 #endif
 

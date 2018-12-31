@@ -65,8 +65,6 @@ No supporting OS subroutines are required.
 #include <_ansi.h>
 #include <wctype.h>
 
-int
-iswprint (wint_t c)
-{
-  return iswprint_l (c, 0);
+int iswprint(wint_t c) {
+    return iswprint_l(c, 0);
 }

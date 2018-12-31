@@ -68,7 +68,7 @@ QUICKREF
 */
 
 /* undef STRICT_ANSI so that strtok_r prototype will be defined */
-#undef  __STRICT_ANSI__
+#undef __STRICT_ANSI__
 #include <string.h>
 #include <stdlib.h>
 #include <_ansi.h>
@@ -76,15 +76,12 @@ QUICKREF
 
 #ifndef _REENT_ONLY
 
-extern char *__strtok_r (char *, const char *, char **, int);
+extern char *__strtok_r(char *, const char *, char **, int);
 
-char *
-strtok (register char *__restrict s,
-	register const char *__restrict delim)
-{
-	struct _reent *reent = _REENT;
+char *strtok(register char *__restrict s, register const char *__restrict delim) {
+    struct _reent *reent = _REENT;
 
-	_REENT_CHECK_MISC(reent);
-	return __strtok_r (s, delim, &(_REENT_STRTOK_LAST(reent)), 1);
+    _REENT_CHECK_MISC(reent);
+    return __strtok_r(s, delim, &(_REENT_STRTOK_LAST(reent)), 1);
 }
 #endif

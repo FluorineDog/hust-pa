@@ -17,28 +17,20 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float
-atanf (float x)
-{
-  switch (numtestf (x))
-    {
-      case NAN:
-        errno = EDOM;
-        return (x);
-      case INF:
-        /* this should check to see if neg NaN or pos NaN... */
-        return (__PI_OVER_TWO);
-      case 0:
-        return (0.0);
-      default:
-        return (atangentf (x, 0, 0, 0));
+float atanf(float x) {
+    switch(numtestf(x)) {
+        case NAN: errno = EDOM; return (x);
+        case INF:
+            /* this should check to see if neg NaN or pos NaN... */
+            return (__PI_OVER_TWO);
+        case 0: return (0.0);
+        default: return (atangentf(x, 0, 0, 0));
     }
 }
 
 #ifdef _DOUBLE_IS_32BITS
-double atan (double x)
-{
-  return (double) atangentf ((float) x, 0, 0, 0);
+double atan(double x) {
+    return (double)atangentf((float)x, 0, 0, 0);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

@@ -23,55 +23,34 @@
 #define RES_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-typedef enum tagLOADRESFLAG
-{
-   kLoadScene          = (1 << 0),    // load a scene
-   kLoadPlayerSprite   = (1 << 1),    // load player sprites
-} LOADRESFLAG, *LPLOADRESFLAG;
+typedef enum tagLOADRESFLAG {
+    kLoadScene = (1 << 0),           // load a scene
+    kLoadPlayerSprite = (1 << 1),    // load player sprites
+} LOADRESFLAG,
+    *LPLOADRESFLAG;
 
-VOID
-PAL_InitResources(
-   VOID
-);
+VOID PAL_InitResources(VOID);
 
-VOID
-PAL_FreeResources(
-   VOID
-);
+VOID PAL_FreeResources(VOID);
 
-VOID
-PAL_SetLoadFlags(
-   BYTE       bFlags
-);
+VOID PAL_SetLoadFlags(BYTE bFlags);
 
-VOID
-PAL_LoadResources(
-   VOID
-);
+VOID PAL_LoadResources(VOID);
 
 LPPALMAP
-PAL_GetCurrentMap(
-   VOID
-);
+PAL_GetCurrentMap(VOID);
 
 LPSPRITE
-PAL_GetPlayerSprite(
-   BYTE      bPlayerIndex
-);
+PAL_GetPlayerSprite(BYTE bPlayerIndex);
 
 LPSPRITE
-PAL_GetBattleSprite(
-   BYTE      bPlayerIndex
-);
+PAL_GetBattleSprite(BYTE bPlayerIndex);
 
 LPSPRITE
-PAL_GetEventObjectSprite(
-   WORD      wEventObjectID
-);
+PAL_GetEventObjectSprite(WORD wEventObjectID);
 
 #ifdef __cplusplus
 }

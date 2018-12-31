@@ -13,7 +13,7 @@
 #endif
 #endif
 
-#if defined (REENTRANT_SYSCALLS_PROVIDED)
+#if defined(REENTRANT_SYSCALLS_PROVIDED)
 
 int _dummy_sbrk_syscalls = 1;
 
@@ -40,17 +40,13 @@ DESCRIPTION
 	<<errno>>.
 */
 
-void *
-_sbrk_r (struct _reent *ptr,
-     ptrdiff_t incr)
-{
-  char *ret;
-  void *_sbrk(ptrdiff_t);
+void *_sbrk_r(struct _reent *ptr, ptrdiff_t incr) {
+    char *ret;
+    void *_sbrk(ptrdiff_t);
 
-  errno = 0;
-  if ((ret = (char *)(_sbrk (incr))) == (void *) -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = (char *)(_sbrk(incr))) == (void *)-1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

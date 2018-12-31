@@ -28,13 +28,10 @@ QUICKREF
 #include <string.h>
 #include <ctype.h>
 
-char *
-strupr (char *s)
-{
-  unsigned char *ucs = (unsigned char *) s;
-  for ( ; *ucs != '\0'; ucs++)
-    {
-      *ucs = toupper(*ucs);
+char *strupr(char *s) {
+    unsigned char *ucs = (unsigned char *)s;
+    for(; *ucs != '\0'; ucs++) {
+        *ucs = toupper(*ucs);
     }
-  return s;
+    return s;
 }

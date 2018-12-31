@@ -3,8 +3,6 @@
 #include <reent.h>
 #include <unistd.h>
 
-int
-close (int fd)
-{
-  return _close_r (_REENT, fd);
+int close(int fd) {
+    return _close_r(_REENT, fd);
 }

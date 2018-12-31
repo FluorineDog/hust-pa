@@ -64,13 +64,11 @@ No supporting OS subroutines are required.
 
 #undef feof
 
-int 
-feof (FILE * fp)
-{
-  int result;
-  CHECK_INIT(_REENT, fp);
-  _newlib_flockfile_start (fp);
-  result = __sfeof (fp);
-  _newlib_flockfile_end (fp);
-  return result;
+int feof(FILE* fp) {
+    int result;
+    CHECK_INIT(_REENT, fp);
+    _newlib_flockfile_start(fp);
+    result = __sfeof(fp);
+    _newlib_flockfile_end(fp);
+    return result;
 }

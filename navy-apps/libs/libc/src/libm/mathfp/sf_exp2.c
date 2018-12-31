@@ -6,17 +6,14 @@
 
 #include "fdlibm.h"
 
-float
-exp2f (float x)
-{
-  return powf(2.0, x);
+float exp2f(float x) {
+    return powf(2.0, x);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-double exp2 (double x)
-{
-  return (double) exp2f ((float) x);
+double exp2(double x) {
+    return (double)exp2f((float)x);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

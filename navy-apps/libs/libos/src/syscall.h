@@ -2,29 +2,29 @@
 #define __SYSCALL_H__
 
 enum {
-  SYS_exit,
-  SYS_yield,
-  SYS_open, // 2
-  SYS_read,
-  SYS_write, 
+    SYS_exit,
+    SYS_yield,
+    SYS_open,    // 2
+    SYS_read,
+    SYS_write,
 
-  SYS_kill, //5
-  SYS_getpid,
+    SYS_kill,    //5
+    SYS_getpid,
 
-  SYS_close,
-  SYS_lseek,
-  SYS_brk,
+    SYS_close,
+    SYS_lseek,
+    SYS_brk,
 
-  SYS_fstat, //10
-  SYS_time,
-  SYS_signal,
-  SYS_execve,
-  SYS_fork,
-  SYS_link,
-  SYS_unlink,
-  SYS_wait,
-  SYS_times,
-  SYS_gettimeofday
+    SYS_fstat,    //10
+    SYS_time,
+    SYS_signal,
+    SYS_execve,
+    SYS_fork,
+    SYS_link,
+    SYS_unlink,
+    SYS_wait,
+    SYS_times,
+    SYS_gettimeofday
 };
 
 #endif

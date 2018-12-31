@@ -48,33 +48,26 @@ Supporting OS subroutines required: <<sbrk>>, <<write>>.
 #include <unistd.h>
 #include <stdarg.h>
 
-int
-_diprintf_r (struct _reent *ptr,
-       int fd,
-       const char *format, ...)
-{
-  va_list ap;
-  int n;
+int _diprintf_r(struct _reent *ptr, int fd, const char *format, ...) {
+    va_list ap;
+    int n;
 
-  va_start (ap, format);
-  n = _vdiprintf_r (ptr, fd, format, ap);
-  va_end (ap);
-  return n;
+    va_start(ap, format);
+    n = _vdiprintf_r(ptr, fd, format, ap);
+    va_end(ap);
+    return n;
 }
 
 #ifndef _REENT_ONLY
 
-int
-diprintf (int fd,
-       const char *format, ...)
-{
-  va_list ap;
-  int n;
+int diprintf(int fd, const char *format, ...) {
+    va_list ap;
+    int n;
 
-  va_start (ap, format);
-  n = _vdiprintf_r (_REENT, fd, format, ap);
-  va_end (ap);
-  return n;
+    va_start(ap, format);
+    n = _vdiprintf_r(_REENT, fd, format, ap);
+    va_end(ap);
+    return n;
 }
 
 #endif /* ! _REENT_ONLY */

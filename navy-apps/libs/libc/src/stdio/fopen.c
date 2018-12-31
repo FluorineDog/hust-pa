@@ -112,60 +112,49 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 #endif
 #include "local.h"
 
-FILE *
-_fopen_r (struct _reent *ptr,
-       const char *__restrict file,
-       const char *__restrict mode)
-{
-  register FILE *fp;
-  register int f;
-  int flags, oflags;
+FILE *_fopen_r(struct _reent *ptr, const char *__restrict file,
+               const char *__restrict mode) {
+    register FILE *fp;
+    register int f;
+    int flags, oflags;
 
-  if ((flags = __sflags (ptr, mode, &oflags)) == 0)
-    return NULL;
-  if ((fp = __sfp (ptr)) == NULL)
-    return NULL;
+    if((flags = __sflags(ptr, mode, &oflags)) == 0) return NULL;
+    if((fp = __sfp(ptr)) == NULL) return NULL;
 
-  if ((f = _open_r (ptr, file, oflags, 0666)) < 0)
-    {
-      _newlib_sfp_lock_start (); 
-      fp->_flags = 0;		/* release */
+    if((f = _open_r(ptr, file, oflags, 0666)) < 0) {
+        _newlib_sfp_lock_start();
+        fp->_flags = 0; /* release */
 #ifndef __SINGLE_THREAD__
-      __lock_close_recursive (fp->_lock);
+        __lock_close_recursive(fp->_lock);
 #endif
-      _newlib_sfp_lock_end (); 
-      return NULL;
+        _newlib_sfp_lock_end();
+        return NULL;
     }
 
-  _newlib_flockfile_start (fp);
+    _newlib_flockfile_start(fp);
 
-  fp->_file = f;
-  fp->_flags = flags;
-  fp->_cookie = (void *) fp;
-  fp->_read = __sread;
-  fp->_write = __swrite;
-  fp->_seek = __sseek;
-  fp->_close = __sclose;
+    fp->_file = f;
+    fp->_flags = flags;
+    fp->_cookie = (void *)fp;
+    fp->_read = __sread;
+    fp->_write = __swrite;
+    fp->_seek = __sseek;
+    fp->_close = __sclose;
 
-  if (fp->_flags & __SAPP)
-    _fseek_r (ptr, fp, 0, SEEK_END);
+    if(fp->_flags & __SAPP) _fseek_r(ptr, fp, 0, SEEK_END);
 
 #ifdef __SCLE
-  if (__stextmode (fp->_file))
-    fp->_flags |= __SCLE;
+    if(__stextmode(fp->_file)) fp->_flags |= __SCLE;
 #endif
 
-  _newlib_flockfile_end (fp);
-  return fp;
+    _newlib_flockfile_end(fp);
+    return fp;
 }
 
 #ifndef _REENT_ONLY
 
-FILE *
-fopen (const char *file,
-       const char *mode)
-{
-  return _fopen_r (_REENT, file, mode);
+FILE *fopen(const char *file, const char *mode) {
+    return _fopen_r(_REENT, file, mode);
 }
 
 #endif

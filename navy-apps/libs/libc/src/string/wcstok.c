@@ -89,86 +89,81 @@ QUICKREF
 
 #include <wchar.h>
 
-wchar_t *
-wcstok (register wchar_t *__restrict s,
-	register const wchar_t *__restrict delim,
-	wchar_t **__restrict lasts)
-{
-	register const wchar_t *spanp;
-	register int c, sc;
-	wchar_t *tok;
+wchar_t *wcstok(register wchar_t *__restrict s, register const wchar_t *__restrict delim,
+                wchar_t **__restrict lasts) {
+    register const wchar_t *spanp;
+    register int c, sc;
+    wchar_t *tok;
 
+    if(s == NULL && (s = *lasts) == NULL) return (NULL);
 
-	if (s == NULL && (s = *lasts) == NULL)
-		return (NULL);
-
-	/*
+    /*
 	 * Skip (span) leading delimiters (s += wcsspn(s, delim), sort of).
 	 */
 cont:
-	c = *s++;
-	for (spanp = delim; (sc = *spanp++) != L'\0';) {
-		if (c == sc)  goto cont;
-	}
+    c = *s++;
+    for(spanp = delim; (sc = *spanp++) != L'\0';) {
+        if(c == sc) goto cont;
+    }
 
-	if (c == L'\0') {		/* no non-delimiter characters */
-		*lasts = NULL;
-		return (NULL);
-	}
-	tok = s - 1;
+    if(c == L'\0') { /* no non-delimiter characters */
+        *lasts = NULL;
+        return (NULL);
+    }
+    tok = s - 1;
 
-	/*
+    /*
 	 * Scan token (scan for delimiters: s += wcscspn(s, delim), sort of).
 	 * Note that delim must have one NUL; we stop if we see that, too.
 	 */
-	for (;;) {
-		c = *s++;
-		spanp = delim;
-		do {
-			if ((sc = *spanp++) == c) {
-				if (c == L'\0')
-					s = NULL;
-				else
-					s[-1] = L'\0';
-				*lasts = s;
-				return (tok);
-			}
-		} while (sc != L'\0');
-	}
-	/* NOTREACHED */
+    for(;;) {
+        c = *s++;
+        spanp = delim;
+        do {
+            if((sc = *spanp++) == c) {
+                if(c == L'\0')
+                    s = NULL;
+                else
+                    s[-1] = L'\0';
+                *lasts = s;
+                return (tok);
+            }
+        } while(sc != L'\0');
+    }
+    /* NOTREACHED */
 }
- 
+
 /* The remainder of this file can serve as a regression test.  Compile
  *  with -D_REGRESSION_TEST.  */
-#if defined(_REGRESSION_TEST)	/* [Test code:  example from C99 standard */
+#if defined(_REGRESSION_TEST) /* [Test code:  example from C99 standard */
 #include <stdio.h>
 #include <wchar.h>
- 
+
 /* example from C99 standard with minor additions to be a test */
-int
-main(void)
-{
-int  errs=0;
-static wchar_t str1[] = L"?a???b,,,#c";
-static wchar_t str2[] = L"\t \t";
-wchar_t *t, *ptr1, *ptr2;
- 
-t = wcstok(str1, L"?", &ptr1); // t points to the token L"a"
-if(wcscmp(t,L"a")) errs++;
-t = wcstok(NULL, L",", &ptr1); // t points to the token L"??b"
-if(wcscmp(t,L"??b")) errs++;
-t = wcstok(str2, L" \t", &ptr2); // t is a null pointer
-if(t != NULL) errs++;
-t = wcstok(NULL, L"#,", &ptr1); // t points to the token L"c"
-if(wcscmp(t,L"c")) errs++;
-t = wcstok(NULL, L"?", &ptr1); // t is a null pointer
-if(t != NULL) errs++;
- 
-printf("wcstok() test ");
-if(errs)  printf("FAILED %d test cases", errs);
-  else    printf("passed");
-printf(".\n");
- 
-return(errs);
+int main(void) {
+    int errs = 0;
+    static wchar_t str1[] = L"?a???b,,,#c";
+    static wchar_t str2[] = L"\t \t";
+    wchar_t *t, *ptr1, *ptr2;
+
+    t = wcstok(str1, L"?", &ptr1);    // t points to the token L"a"
+    if(wcscmp(t, L"a")) errs++;
+    t = wcstok(NULL, L",", &ptr1);    // t points to the token L"??b"
+    if(wcscmp(t, L"??b")) errs++;
+    t = wcstok(str2, L" \t", &ptr2);    // t is a null pointer
+    if(t != NULL) errs++;
+    t = wcstok(NULL, L"#,", &ptr1);    // t points to the token L"c"
+    if(wcscmp(t, L"c")) errs++;
+    t = wcstok(NULL, L"?", &ptr1);    // t is a null pointer
+    if(t != NULL) errs++;
+
+    printf("wcstok() test ");
+    if(errs)
+        printf("FAILED %d test cases", errs);
+    else
+        printf("passed");
+    printf(".\n");
+
+    return (errs);
 }
 #endif /* defined(_REGRESSION_TEST) ] */

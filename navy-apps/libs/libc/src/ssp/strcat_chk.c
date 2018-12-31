@@ -36,27 +36,22 @@ __RCSID("$NetBSD: strcat_chk.c,v 1.5 2014/09/17 00:39:28 joerg Exp $");
 #include <ssp/ssp.h>
 #include <string.h>
 
-char *__strcat_chk(char * __restrict, const char * __restrict, size_t);
+char *__strcat_chk(char *__restrict, const char *__restrict, size_t);
 
-char *
-__strcat_chk(char * __restrict dst, const char * __restrict src, size_t slen)
-{
-	char *d;
+char *__strcat_chk(char *__restrict dst, const char *__restrict src, size_t slen) {
+    char *d;
 
-	for (d = dst; *d; d++) {
-		if (slen-- == 0)
-			__chk_fail();
-	}
+    for(d = dst; *d; d++) {
+        if(slen-- == 0) __chk_fail();
+    }
 
-	while (*src) {
-		if (slen-- == 0)
-			__chk_fail();
-		*d++ = *src++;
-	}
+    while(*src) {
+        if(slen-- == 0) __chk_fail();
+        *d++ = *src++;
+    }
 
-	if (slen-- == 0)
-		__chk_fail();
+    if(slen-- == 0) __chk_fail();
 
-	*d = '\0';
-	return dst;
+    *d = '\0';
+    return dst;
 }

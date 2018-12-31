@@ -49,26 +49,15 @@ Supporting OS subroutines required (only if enabled): <<close>>, <<fstat>>,
 
 #ifndef HAVE_ASSERT_FUNC
 /* func can be NULL, in which case no function information is given.  */
-void
-__assert_func (const char *file,
-	int line,
-	const char *func,
-	const char *failedexpr)
-{
-  fiprintf(stderr,
-	   "assertion \"%s\" failed: file \"%s\", line %d%s%s\n",
-	   failedexpr, file, line,
-	   func ? ", function: " : "", func ? func : "");
-  abort();
-  /* NOTREACHED */
+void __assert_func(const char *file, int line, const char *func, const char *failedexpr) {
+    fiprintf(stderr, "assertion \"%s\" failed: file \"%s\", line %d%s%s\n", failedexpr,
+             file, line, func ? ", function: " : "", func ? func : "");
+    abort();
+    /* NOTREACHED */
 }
 #endif /* HAVE_ASSERT_FUNC */
 
-void
-__assert (const char *file,
-	int line,
-	const char *failedexpr)
-{
-   __assert_func (file, line, NULL, failedexpr);
-  /* NOTREACHED */
+void __assert(const char *file, int line, const char *failedexpr) {
+    __assert_func(file, line, NULL, failedexpr);
+    /* NOTREACHED */
 }

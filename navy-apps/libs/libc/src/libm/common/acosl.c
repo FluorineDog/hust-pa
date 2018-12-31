@@ -33,10 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* On platforms where long double is as wide as double.  */
 #ifdef _LDBL_EQ_DBL
-long double
-acosl (long double x)
-{
-  return acos(x);
+long double acosl(long double x) {
+    return acos(x);
 }
 #endif
-

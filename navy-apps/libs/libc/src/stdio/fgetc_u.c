@@ -28,26 +28,21 @@
 #include <stdio.h>
 #include "local.h"
 
-int
-_fgetc_unlocked_r (struct _reent * ptr,
-       FILE * fp)
-{
-  CHECK_INIT(ptr, fp);
-  return __sgetc_r (ptr, fp);
+int _fgetc_unlocked_r(struct _reent *ptr, FILE *fp) {
+    CHECK_INIT(ptr, fp);
+    return __sgetc_r(ptr, fp);
 }
 
 #ifndef _REENT_ONLY
 
-int
-fgetc_unlocked (FILE * fp)
-{
+int fgetc_unlocked(FILE *fp) {
 #if !defined(PREFER_SIZE_OVER_SPEED) && !defined(__OPTIMIZE_SIZE__)
-  struct _reent *reent = _REENT;
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT(reent, fp);
-  return __sgetc_r (reent, fp);
+    CHECK_INIT(reent, fp);
+    return __sgetc_r(reent, fp);
 #else
-  return _fgetc_unlocked_r (_REENT, fp);
+    return _fgetc_unlocked_r(_REENT, fp);
 #endif
 }
 

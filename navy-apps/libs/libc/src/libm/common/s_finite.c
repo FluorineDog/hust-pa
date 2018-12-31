@@ -21,15 +21,14 @@
 #ifndef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	int finite(double x)
+int finite(double x)
 #else
-	int finite(x)
-	double x;
+int finite(x) double x;
 #endif
 {
-	__int32_t hx;
-	GET_HIGH_WORD(hx,x);
-	return  (int)((__uint32_t)((hx&0x7fffffff)-0x7ff00000)>>31);
+    __int32_t hx;
+    GET_HIGH_WORD(hx, x);
+    return (int)((__uint32_t)((hx & 0x7fffffff) - 0x7ff00000) >> 31);
 }
 
 #endif /* _DOUBLE_IS_32BITS */

@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern int _unsetenv_r (struct _reent *, const char *);
+extern int _unsetenv_r(struct _reent *, const char *);
 
 /*
  * setenv --
@@ -31,22 +31,16 @@ extern int _unsetenv_r (struct _reent *, const char *);
  *	"value".  If rewrite is set, replace any current value.
  */
 
-int
-setenv (const char *name,
-	const char *value,
-	int rewrite)
-{
-  return _setenv_r (_REENT, name, value, rewrite);
+int setenv(const char *name, const char *value, int rewrite) {
+    return _setenv_r(_REENT, name, value, rewrite);
 }
 
 /*
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv (const char *name)
-{
-  return _unsetenv_r (_REENT, name);
+int unsetenv(const char *name) {
+    return _unsetenv_r(_REENT, name);
 }
 
 #endif /* !_REENT_ONLY */

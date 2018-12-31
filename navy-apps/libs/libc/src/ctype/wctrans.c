@@ -74,25 +74,19 @@ No supporting OS subroutines are required.
 #include <errno.h>
 #include "local.h"
 
-wctrans_t
-_wctrans_r (struct _reent *r,
-	const char *c)
-{
-  if (!strcmp (c, "tolower"))
-    return WCT_TOLOWER;
-  else if (!strcmp (c, "toupper"))
-    return WCT_TOUPPER;
-  else
-    {
-      r->_errno = EINVAL;
-      return 0;
+wctrans_t _wctrans_r(struct _reent *r, const char *c) {
+    if(!strcmp(c, "tolower"))
+        return WCT_TOLOWER;
+    else if(!strcmp(c, "toupper"))
+        return WCT_TOUPPER;
+    else {
+        r->_errno = EINVAL;
+        return 0;
     }
 }
 
 #ifndef _REENT_ONLY
-wctrans_t
-wctrans (const char *c)
-{
-  return _wctrans_r (_REENT, c);
+wctrans_t wctrans(const char *c) {
+    return _wctrans_r(_REENT, c);
 }
 #endif /* !_REENT_ONLY */

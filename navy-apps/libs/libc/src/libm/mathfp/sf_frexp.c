@@ -19,41 +19,35 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-float frexpf (float d, int *exp)
-{
-  float f;
-  __int32_t wf, wd;
+float frexpf(float d, int *exp) {
+    float f;
+    __int32_t wf, wd;
 
-  /* Check for special values. */
-  switch (numtestf (d))
-    {
-      case NAN:
-      case INF:
-        errno = EDOM;
-      case 0:
-        *exp = 0;
-        return (d);
+    /* Check for special values. */
+    switch(numtestf(d)) {
+        case NAN:
+        case INF: errno = EDOM;
+        case 0: *exp = 0; return (d);
     }
 
-  GET_FLOAT_WORD (wd, d);
+    GET_FLOAT_WORD(wd, d);
 
-  /* Get the exponent. */
-  *exp = ((wd & 0x7f800000) >> 23) - 126;
+    /* Get the exponent. */
+    *exp = ((wd & 0x7f800000) >> 23) - 126;
 
-  /* Get the mantissa. */ 
-  wf = wd & 0x7fffff;  
-  wf |= 0x3f000000;
+    /* Get the mantissa. */
+    wf = wd & 0x7fffff;
+    wf |= 0x3f000000;
 
-  SET_FLOAT_WORD (f, wf);
+    SET_FLOAT_WORD(f, wf);
 
-  return (f);
+    return (f);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-double frexp (double x, int *exp)
-{
-  return (double) frexpf ((float) x, exp);
+double frexp(double x, int *exp) {
+    return (double)frexpf((float)x, exp);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

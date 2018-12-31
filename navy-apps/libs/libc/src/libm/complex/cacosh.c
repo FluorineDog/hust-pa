@@ -76,18 +76,15 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 
-double complex
-cacosh(double complex z)
-{
-	double complex w;
+double complex cacosh(double complex z) {
+    double complex w;
 
 #if 0 /* does not give the principal value */
 	w = I * cacos(z);
 #else
-	w = clog(z + csqrt(z + 1) * csqrt(z - 1));
+    w = clog(z + csqrt(z + 1) * csqrt(z - 1));
 #endif
-	return w;
+    return w;
 }

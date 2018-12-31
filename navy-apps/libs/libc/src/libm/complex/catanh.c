@@ -77,14 +77,11 @@ QUICKREF
 
 */
 
-
 #include <complex.h>
 
-double complex
-catanh(double complex z)
-{
-	double complex w;
+double complex catanh(double complex z) {
+    double complex w;
 
-	w = -1.0 * I * catan(z * I);
-	return w;
+    w = -1.0 * I * catan(z * I);
+    return w;
 }

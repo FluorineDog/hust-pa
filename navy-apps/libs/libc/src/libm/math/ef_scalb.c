@@ -18,36 +18,37 @@
 
 #ifdef _SCALB_INT
 #ifdef __STDC__
-	float __ieee754_scalbf(float x, int fn)
+float __ieee754_scalbf(float x, int fn)
 #else
-	float __ieee754_scalbf(x,fn)
-	float x; int fn;
+float __ieee754_scalbf(x, fn) float x;
+int fn;
 #endif
 #else
 #ifdef __STDC__
-	float __ieee754_scalbf(float x, float fn)
+float __ieee754_scalbf(float x, float fn)
 #else
-	float __ieee754_scalbf(x,fn)
-	float x, fn;
+float __ieee754_scalbf(x, fn) float x, fn;
 #endif
 #endif
 {
 #ifdef _SCALB_INT
-	return scalbnf(x,fn);
+    return scalbnf(x, fn);
 #else
-	if (isnan(x)||isnan(fn)) return x*fn;
-	if (!finitef(fn)) {
-	    if(fn>(float)0.0) return x*fn;
-	    else       return x/(-fn);
-	}
-	if (rintf(fn)!=fn) return (fn-fn)/(fn-fn);
+    if(isnan(x) || isnan(fn)) return x * fn;
+    if(!finitef(fn)) {
+        if(fn > (float)0.0)
+            return x * fn;
+        else
+            return x / (-fn);
+    }
+    if(rintf(fn) != fn) return (fn - fn) / (fn - fn);
 #if INT_MAX > 65000
-	if ( fn > (float)65000.0) return scalbnf(x, 65000);
-	if (-fn > (float)65000.0) return scalbnf(x,-65000);
+    if(fn > (float)65000.0) return scalbnf(x, 65000);
+    if(-fn > (float)65000.0) return scalbnf(x, -65000);
 #else
-	if ( fn > (float)32000.0) return scalbnf(x, 32000);
-	if (-fn > (float)32000.0) return scalbnf(x,-32000);
+    if(fn > (float)32000.0) return scalbnf(x, 32000);
+    if(-fn > (float)32000.0) return scalbnf(x, -32000);
 #endif
-	return scalbnf(x,(int)fn);
+    return scalbnf(x, (int)fn);
 #endif
 }

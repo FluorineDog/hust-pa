@@ -41,7 +41,7 @@ Supporting OS subroutines required: <<_exit>>.
 */
 
 #include <stdlib.h>
-#include <unistd.h>	/* for _exit() declaration */
+#include <unistd.h> /* for _exit() declaration */
 #include <reent.h>
 #include "atexit.h"
 
@@ -49,17 +49,14 @@ Supporting OS subroutines required: <<_exit>>.
  * Exit, flushing stdio buffers if necessary.
  */
 
-void
-exit (int code)
-{
+void exit(int code) {
 #ifdef _LITE_EXIT
-  /* Refer to comments in __atexit.c for more details of lite exit.  */
-  void __call_exitprocs (int, void *) __attribute__((weak));
-  if (__call_exitprocs)
+    /* Refer to comments in __atexit.c for more details of lite exit.  */
+    void __call_exitprocs(int, void *) __attribute__((weak));
+    if(__call_exitprocs)
 #endif
-    __call_exitprocs (code, NULL);
+        __call_exitprocs(code, NULL);
 
-  if (_GLOBAL_REENT->__cleanup)
-    (*_GLOBAL_REENT->__cleanup) (_GLOBAL_REENT);
-  _exit (code);
+    if(_GLOBAL_REENT->__cleanup) (*_GLOBAL_REENT->__cleanup)(_GLOBAL_REENT);
+    _exit(code);
 }

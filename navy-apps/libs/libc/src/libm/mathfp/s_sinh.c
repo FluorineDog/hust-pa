@@ -19,10 +19,8 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-double
-sinh (double x)
-{
-  return (sineh (x, 0));
+double sinh(double x) {
+    return (sineh(x, 0));
 }
 
 #endif /* _DOUBLE_IS_32BITS */

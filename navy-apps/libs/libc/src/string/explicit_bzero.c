@@ -9,8 +9,6 @@
 /*
  * explicit_bzero - don't let the compiler optimize away bzero
  */
-void
-explicit_bzero(void *p, size_t n)
-{
-	bzero(p, n);
+void explicit_bzero(void *p, size_t n) {
+    bzero(p, n);
 }

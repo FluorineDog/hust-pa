@@ -6,13 +6,11 @@
 
 #include "fdlibm.h"
 
-long double
-__ieee754_hypotl (long double x, long double y)
-{
+long double __ieee754_hypotl(long double x, long double y) {
 #ifdef _LDBL_EQ_DBL
-  return __ieee754_hypot (x, y);
+    return __ieee754_hypot(x, y);
 #else
-  /* Keep it simple for now...  */
-  return sqrtl ((x * x) + (y * y));
+    /* Keep it simple for now...  */
+    return sqrtl((x * x) + (y * y));
 #endif
 }

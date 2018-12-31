@@ -40,14 +40,14 @@ static char ttyname_buf[TTYNAME_BUFSIZE] = _PATH_DEV;
 /*
  *  ttyname() - POSIX 1003.1b 4.7.2 - Determine Terminal Device Name
  */
-char *
- ttyname (int fd)
-{
-  register int  fail;
-  register char *ret=NULL;
-  fail = ttyname_r( fd, ttyname_buf, sizeof(ttyname_buf) );
-  if ( fail )  errno = fail;
-   else  ret = ttyname_buf;
-  return ret;
+char *ttyname(int fd) {
+    register int fail;
+    register char *ret = NULL;
+    fail = ttyname_r(fd, ttyname_buf, sizeof(ttyname_buf));
+    if(fail)
+        errno = fail;
+    else
+        ret = ttyname_buf;
+    return ret;
 }
 #endif /* !_NO_TTYNAME  */

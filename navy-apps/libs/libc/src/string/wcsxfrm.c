@@ -35,11 +35,8 @@ PORTABILITY
 #include <_ansi.h>
 #include <wchar.h>
 
-size_t
-wcsxfrm (wchar_t *__restrict a,
-	const wchar_t *__restrict b,
-	size_t n)
+size_t wcsxfrm(wchar_t *__restrict a, const wchar_t *__restrict b, size_t n)
 
 {
-  return wcslcpy (a, b, n);
+    return wcslcpy(a, b, n);
 }

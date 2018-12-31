@@ -75,27 +75,19 @@ No supporting OS subroutines are required.
 //#include <errno.h>
 #include "local.h"
 
-wint_t
-_towctrans_r (struct _reent *r,
-	wint_t c,
-	wctrans_t w)
-{
-  if (w == WCT_TOLOWER || w == WCT_TOUPPER)
-    return towctrans_l (c, w, 0);
-  else
-    {
-      // skipping this because it was causing trouble (cygwin crash)
-      // and there is no errno specified for towctrans
-      //r->_errno = EINVAL;
-      return c;
+wint_t _towctrans_r(struct _reent *r, wint_t c, wctrans_t w) {
+    if(w == WCT_TOLOWER || w == WCT_TOUPPER)
+        return towctrans_l(c, w, 0);
+    else {
+        // skipping this because it was causing trouble (cygwin crash)
+        // and there is no errno specified for towctrans
+        //r->_errno = EINVAL;
+        return c;
     }
 }
 
 #ifndef _REENT_ONLY
-wint_t
-towctrans (wint_t c,
-	wctrans_t w)
-{
-  return _towctrans_r (_REENT, c, w);
+wint_t towctrans(wint_t c, wctrans_t w) {
+    return _towctrans_r(_REENT, c, w);
 }
 #endif /* !_REENT_ONLY */

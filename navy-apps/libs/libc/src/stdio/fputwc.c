@@ -127,60 +127,44 @@ PORTABILITY
 #include <wchar.h>
 #include "local.h"
 
-wint_t
-__fputwc (struct _reent *ptr,
-	wchar_t wc,
-	FILE *fp)
-{
-  char buf[MB_LEN_MAX];
-  size_t i, len;
+wint_t __fputwc(struct _reent *ptr, wchar_t wc, FILE *fp) {
+    char buf[MB_LEN_MAX];
+    size_t i, len;
 
-  if (MB_CUR_MAX == 1 && wc > 0 && wc <= UCHAR_MAX)
-    {
-      /*
+    if(MB_CUR_MAX == 1 && wc > 0 && wc <= UCHAR_MAX) {
+        /*
        * Assume single-byte locale with no special encoding.
        * A more careful test would be to check
        * _CurrentRuneLocale->encoding.
        */
-      *buf = (unsigned char)wc;
-      len = 1;
-    }
-  else
-    {
-      if ((len = _wcrtomb_r (ptr, buf, wc, &fp->_mbstate)) == (size_t) -1)
-	{
-	  fp->_flags |= __SERR;
-	  return WEOF;
-	}
+        *buf = (unsigned char)wc;
+        len = 1;
+    } else {
+        if((len = _wcrtomb_r(ptr, buf, wc, &fp->_mbstate)) == (size_t)-1) {
+            fp->_flags |= __SERR;
+            return WEOF;
+        }
     }
 
-  for (i = 0; i < len; i++)
-    if (__sputc_r (ptr, (unsigned char) buf[i], fp) == EOF)
-      return WEOF;
+    for(i = 0; i < len; i++)
+        if(__sputc_r(ptr, (unsigned char)buf[i], fp) == EOF) return WEOF;
 
-  return (wint_t) wc;
+    return (wint_t)wc;
 }
 
-wint_t
-_fputwc_r (struct _reent *ptr,
-	wchar_t wc,
-	FILE *fp)
-{
-  wint_t r;
+wint_t _fputwc_r(struct _reent *ptr, wchar_t wc, FILE *fp) {
+    wint_t r;
 
-  _newlib_flockfile_start (fp);
-  ORIENT(fp, 1);
-  r = __fputwc(ptr, wc, fp);
-  _newlib_flockfile_end (fp);
-  return r;
+    _newlib_flockfile_start(fp);
+    ORIENT(fp, 1);
+    r = __fputwc(ptr, wc, fp);
+    _newlib_flockfile_end(fp);
+    return r;
 }
 
-wint_t
-fputwc (wchar_t wc,
-	FILE *fp)
-{
-  struct _reent *reent = _REENT;
+wint_t fputwc(wchar_t wc, FILE *fp) {
+    struct _reent *reent = _REENT;
 
-  CHECK_INIT(reent, fp);
-  return _fputwc_r (reent, wc, fp);
+    CHECK_INIT(reent, fp);
+    return _fputwc_r(reent, wc, fp);
 }

@@ -39,16 +39,12 @@ QUICKREF
 #include <wchar.h>
 #include <wctype.h>
 
-int
-wcscasecmp_l (const wchar_t *s1, const wchar_t *s2, struct __locale_t *locale)
-{
-  int d = 0;
-  for ( ; ; )
-    {
-      const int c1 = towlower_l (*s1++, locale);
-      const int c2 = towlower_l (*s2++, locale);
-      if (((d = c1 - c2) != 0) || (c2 == '\0'))
-        break;
+int wcscasecmp_l(const wchar_t *s1, const wchar_t *s2, struct __locale_t *locale) {
+    int d = 0;
+    for(;;) {
+        const int c1 = towlower_l(*s1++, locale);
+        const int c2 = towlower_l(*s2++, locale);
+        if(((d = c1 - c2) != 0) || (c2 == '\0')) break;
     }
-  return d;
+    return d;
 }

@@ -73,12 +73,10 @@ No supporting OS subroutines are required.
 #include <wctype.h>
 #include "local.h"
 
-wint_t
-towupper (wint_t c)
-{
+wint_t towupper(wint_t c) {
 #ifdef _MB_CAPABLE
-  return towctrans (c, WCT_TOUPPER);
+    return towctrans(c, WCT_TOUPPER);
 #else
-  return c < 0x00ff ? (wint_t)(toupper ((int)c)) : c;
+    return c < 0x00ff ? (wint_t)(toupper((int)c)) : c;
 #endif /* _MB_CAPABLE */
 }

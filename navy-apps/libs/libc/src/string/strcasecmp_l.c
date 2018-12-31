@@ -39,16 +39,12 @@ QUICKREF
 #include <strings.h>
 #include <ctype.h>
 
-int
-strcasecmp_l (const char *s1, const char *s2, struct __locale_t *locale)
-{
-  int d = 0;
-  for ( ; ; )
-    {
-      const int c1 = tolower_l (*s1++, locale);
-      const int c2 = tolower_l (*s2++, locale);
-      if (((d = c1 - c2) != 0) || (c2 == '\0'))
-        break;
+int strcasecmp_l(const char *s1, const char *s2, struct __locale_t *locale) {
+    int d = 0;
+    for(;;) {
+        const int c1 = tolower_l(*s1++, locale);
+        const int c2 = tolower_l(*s2++, locale);
+        if(((d = c1 - c2) != 0) || (c2 == '\0')) break;
     }
-  return d;
+    return d;
 }

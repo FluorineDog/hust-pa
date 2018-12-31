@@ -39,53 +39,47 @@ static char sccsid[] = "@(#)readdir.c	5.7 (Berkeley) 6/1/90";
 
 #include <dirent.h>
 
-extern int getdents (int fd, void *dp, int count);
+extern int getdents(int fd, void *dp, int count);
 
 /*
  * get next entry in a directory.
  */
-struct dirent *
-readdir (register DIR *dirp)
-{
-  register struct dirent *dp;
- 
+struct dirent *readdir(register DIR *dirp) {
+    register struct dirent *dp;
+
 #ifdef HAVE_DD_LOCK
-  __lock_acquire_recursive(dirp->dd_lock);
+    __lock_acquire_recursive(dirp->dd_lock);
 #endif
- 
-  for (;;) {
-    if (dirp->dd_loc == 0) {
-      dirp->dd_size = getdents (dirp->dd_fd,
-				dirp->dd_buf,
-				dirp->dd_len);
-      
-      if (dirp->dd_size <= 0) {
+
+    for(;;) {
+        if(dirp->dd_loc == 0) {
+            dirp->dd_size = getdents(dirp->dd_fd, dirp->dd_buf, dirp->dd_len);
+
+            if(dirp->dd_size <= 0) {
+#ifdef HAVE_DD_LOCK
+                __lock_release_recursive(dirp->dd_lock);
+#endif
+                return NULL;
+            }
+        }
+        if(dirp->dd_loc >= dirp->dd_size) {
+            dirp->dd_loc = 0;
+            continue;
+        }
+        dp = (struct dirent *)(dirp->dd_buf + dirp->dd_loc);
+        if(dp->d_reclen <= 0 || dp->d_reclen > dirp->dd_len + 1 - dirp->dd_loc) {
+#ifdef HAVE_DD_LOCK
+            __lock_release_recursive(dirp->dd_lock);
+#endif
+            return NULL;
+        }
+        dirp->dd_loc += dp->d_reclen;
+        if(dp->d_ino == 0) continue;
 #ifdef HAVE_DD_LOCK
         __lock_release_recursive(dirp->dd_lock);
 #endif
-	return NULL;
-      }
+        return (dp);
     }
-    if (dirp->dd_loc >= dirp->dd_size) {
-      dirp->dd_loc = 0;
-      continue;
-    }
-    dp = (struct dirent *)(dirp->dd_buf + dirp->dd_loc);
-    if (dp->d_reclen <= 0 ||
-	dp->d_reclen > dirp->dd_len + 1 - dirp->dd_loc) {
-#ifdef HAVE_DD_LOCK
-      __lock_release_recursive(dirp->dd_lock);
-#endif
-      return NULL;
-    }
-    dirp->dd_loc += dp->d_reclen;
-    if (dp->d_ino == 0)
-      continue;
-#ifdef HAVE_DD_LOCK
-    __lock_release_recursive(dirp->dd_lock);
-#endif
-    return (dp);
-  }
 }
 
 #endif /* ! HAVE_OPENDIR */

@@ -33,29 +33,23 @@
 #define GETOPT_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-#define opterr     PAL_opterr
-#define optind     PAL_optind
-#define optopt     PAL_optopt
-#define optreset   PAL_optreset
-#define optarg     PAL_optarg
-#define getopt     PAL_getopt
+#define opterr PAL_opterr
+#define optind PAL_optind
+#define optopt PAL_optopt
+#define optreset PAL_optreset
+#define optarg PAL_optarg
+#define getopt PAL_getopt
 
-extern int     opterr;
-extern int     optind;
-extern int     optopt;
-extern int     optreset;
-extern char   *optarg;
+extern int opterr;
+extern int optind;
+extern int optopt;
+extern int optreset;
+extern char *optarg;
 
-int
-getopt(
-   int             nargc,
-   char * const   *nargv,
-   const char     *ostr
-);
+int getopt(int nargc, char *const *nargv, const char *ostr);
 
 #ifdef __cplusplus
 }

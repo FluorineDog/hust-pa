@@ -34,74 +34,73 @@
  */
 
 /* first part of list definition */
-#define LINKLIST_DEF(NAME) \
-struct NAME##_t {
-
+#define LINKLIST_DEF(NAME) struct NAME##_t {
 /* second part of list definition */
-#define LINKLIST_DEF_FI(NAME) \
-	struct NAME##_t *_prev, *_next; \
-}; \
-typedef struct NAME##_t *NAME##_t; \
-NAME##_t NAME##_prev(NAME##_t node); \
-NAME##_t NAME##_next(NAME##_t node); \
-void NAME##_remove(NAME##_t node); \
-void NAME##_insert(NAME##_t prev, NAME##_t next, NAME##_t obj); \
-NAME##_t NAME##_new(); \
-void NAME##_free(NAME##_t node); 
+#define LINKLIST_DEF_FI(NAME)                                       \
+    struct NAME##_t *_prev, *_next;                                 \
+    }                                                               \
+    ;                                                               \
+    typedef struct NAME##_t *NAME##_t;                              \
+    NAME##_t NAME##_prev(NAME##_t node);                            \
+    NAME##_t NAME##_next(NAME##_t node);                            \
+    void NAME##_remove(NAME##_t node);                              \
+    void NAME##_insert(NAME##_t prev, NAME##_t next, NAME##_t obj); \
+    NAME##_t NAME##_new();                                          \
+    void NAME##_free(NAME##_t node);
 
 /* list implementation */
-#define LINKLIST_IMPL(NAME, SIZE) \
-static struct NAME##_t NAME##_pool[(SIZE) + 1]; \
-static NAME##_t NAME##_free_head = NULL; \
-NAME##_t NAME##_new() { \
-	NAME##_t ret, free_head = NAME##_free_head; \
-	struct NAME##_t *pool = NAME##_pool; \
-	if (free_head == NULL) { \
-		int i; \
-		for (i = 1; i <= SIZE; i ++) { \
-			pool[i - 1]._next = pool + i; \
-		} \
-		free_head = pool; \
-	} \
-	ret = free_head; \
-	NAME##_free_head = free_head->_next; \
-	ret->_prev = ret->_next = NULL; \
-	return ret; \
-} \
-NAME##_t NAME##_prev(NAME##_t node) { \
-	return node->_prev; \
-} \
-NAME##_t NAME##_next(NAME##_t node) { \
-	return node->_next; \
-} \
-void NAME##_insert(NAME##_t prev, NAME##_t next, NAME##_t obj) { \
-	obj->_prev = prev; \
-	obj->_next = next; \
-	if (prev != NULL) prev->_next = obj; \
-	if (next != NULL) next->_prev = obj; \
-} \
-void NAME##_remove(NAME##_t node) { \
-	NAME##_t prev = node->_prev, next = node->_next; \
-	if (prev != NULL) prev->_next = next; \
-	if (next != NULL) next->_prev = prev; \
-} \
-void NAME##_free(NAME##_t node) { \
-	node->_next = NAME##_free_head; \
-	NAME##_free_head = node; \
-}
+#define LINKLIST_IMPL(NAME, SIZE)                                    \
+    static struct NAME##_t NAME##_pool[(SIZE) + 1];                  \
+    static NAME##_t NAME##_free_head = NULL;                         \
+    NAME##_t NAME##_new() {                                          \
+        NAME##_t ret, free_head = NAME##_free_head;                  \
+        struct NAME##_t *pool = NAME##_pool;                         \
+        if(free_head == NULL) {                                      \
+            int i;                                                   \
+            for(i = 1; i <= SIZE; i++) {                             \
+                pool[i - 1]._next = pool + i;                        \
+            }                                                        \
+            free_head = pool;                                        \
+        }                                                            \
+        ret = free_head;                                             \
+        NAME##_free_head = free_head->_next;                         \
+        ret->_prev = ret->_next = NULL;                              \
+        return ret;                                                  \
+    }                                                                \
+    NAME##_t NAME##_prev(NAME##_t node) {                            \
+        return node->_prev;                                          \
+    }                                                                \
+    NAME##_t NAME##_next(NAME##_t node) {                            \
+        return node->_next;                                          \
+    }                                                                \
+    void NAME##_insert(NAME##_t prev, NAME##_t next, NAME##_t obj) { \
+        obj->_prev = prev;                                           \
+        obj->_next = next;                                           \
+        if(prev != NULL) prev->_next = obj;                          \
+        if(next != NULL) next->_prev = obj;                          \
+    }                                                                \
+    void NAME##_remove(NAME##_t node) {                              \
+        NAME##_t prev = node->_prev, next = node->_next;             \
+        if(prev != NULL) prev->_next = next;                         \
+        if(next != NULL) next->_prev = prev;                         \
+    }                                                                \
+    void NAME##_free(NAME##_t node) {                                \
+        node->_next = NAME##_free_head;                              \
+        NAME##_free_head = node;                                     \
+    }
 
 /* 定义fly_t链表 */
 LINKLIST_DEF(fly)
-	int x;
-	int y;
-	int text;
-	int v;
+int x;
+int y;
+int text;
+int v;
 LINKLIST_DEF_FI(fly)
 
 typedef char bool;
 
-#define true         1
-#define false        0
+#define true 1
+#define false 0
 
 /* 按键相关 */
 void press_key(int scan_code);

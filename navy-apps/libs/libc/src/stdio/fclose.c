@@ -55,74 +55,61 @@ Required OS subroutines: <<close>>, <<fstat>>, <<isatty>>, <<lseek>>,
 #include <sys/lock.h>
 #include "local.h"
 
-int
-_fclose_r (struct _reent *rptr,
-      register FILE * fp)
-{
-  int r;
+int _fclose_r(struct _reent *rptr, register FILE *fp) {
+    int r;
 
-  if (fp == NULL)
-    return (0);			/* on NULL */
+    if(fp == NULL) return (0); /* on NULL */
 
-  CHECK_INIT (rptr, fp);
+    CHECK_INIT(rptr, fp);
 
-  /* We can't use the _newlib_flockfile_XXX macros here due to the
+    /* We can't use the _newlib_flockfile_XXX macros here due to the
      interlocked locking with the sfp_lock. */
 #ifdef _STDIO_WITH_THREAD_CANCELLATION_SUPPORT
-  int __oldcancel;
-  pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &__oldcancel);
+    int __oldcancel;
+    pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &__oldcancel);
 #endif
-  if (!(fp->_flags2 & __SNLK))
-    _flockfile (fp);
+    if(!(fp->_flags2 & __SNLK)) _flockfile(fp);
 
-  if (fp->_flags == 0)		/* not open! */
+    if(fp->_flags == 0) /* not open! */
     {
-      if (!(fp->_flags2 & __SNLK))
-	_funlockfile (fp);
+        if(!(fp->_flags2 & __SNLK)) _funlockfile(fp);
 #ifdef _STDIO_WITH_THREAD_CANCELLATION_SUPPORT
-      pthread_setcancelstate (__oldcancel, &__oldcancel);
+        pthread_setcancelstate(__oldcancel, &__oldcancel);
 #endif
-      return (0);
+        return (0);
     }
 #ifdef _STDIO_BSD_SEMANTICS
-  /* BSD and Glibc systems only flush streams which have been written to. */
-  r = (fp->_flags & __SWR) ? __sflush_r (rptr, fp) : 0;
+    /* BSD and Glibc systems only flush streams which have been written to. */
+    r = (fp->_flags & __SWR) ? __sflush_r(rptr, fp) : 0;
 #else
-  /* Follow POSIX semantics exactly.  Unconditionally flush to allow
+    /* Follow POSIX semantics exactly.  Unconditionally flush to allow
      special handling for seekable read files to reposition file to last
      byte processed as opposed to last byte read ahead into the buffer. */
-  r = __sflush_r (rptr, fp);
+    r = __sflush_r(rptr, fp);
 #endif
-  if (fp->_close != NULL && fp->_close (rptr, fp->_cookie) < 0)
-    r = EOF;
-  if (fp->_flags & __SMBF)
-    _free_r (rptr, (char *) fp->_bf._base);
-  if (HASUB (fp))
-    FREEUB (rptr, fp);
-  if (HASLB (fp))
-    FREELB (rptr, fp);
-  __sfp_lock_acquire ();
-  fp->_flags = 0;		/* release this FILE for reuse */
-  if (!(fp->_flags2 & __SNLK))
-    _funlockfile (fp);
+    if(fp->_close != NULL && fp->_close(rptr, fp->_cookie) < 0) r = EOF;
+    if(fp->_flags & __SMBF) _free_r(rptr, (char *)fp->_bf._base);
+    if(HASUB(fp)) FREEUB(rptr, fp);
+    if(HASLB(fp)) FREELB(rptr, fp);
+    __sfp_lock_acquire();
+    fp->_flags = 0; /* release this FILE for reuse */
+    if(!(fp->_flags2 & __SNLK)) _funlockfile(fp);
 #ifndef __SINGLE_THREAD__
-  __lock_close_recursive (fp->_lock);
+    __lock_close_recursive(fp->_lock);
 #endif
 
-  __sfp_lock_release ();
+    __sfp_lock_release();
 #ifdef _STDIO_WITH_THREAD_CANCELLATION_SUPPORT
-  pthread_setcancelstate (__oldcancel, &__oldcancel);
+    pthread_setcancelstate(__oldcancel, &__oldcancel);
 #endif
 
-  return (r);
+    return (r);
 }
 
 #ifndef _REENT_ONLY
 
-int
-fclose (register FILE * fp)
-{
-  return _fclose_r(_REENT, fp);
+int fclose(register FILE *fp) {
+    return _fclose_r(_REENT, fp);
 }
 
 #endif

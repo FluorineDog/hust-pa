@@ -15,7 +15,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 /* Doc in swscanf.c */
- 
+
 #include <_ansi.h>
 #include <reent.h>
 #include <stdio.h>
@@ -25,29 +25,24 @@
 
 #ifndef _REENT_ONLY
 
-int
-fwscanf (FILE *__restrict fp, const wchar_t *__restrict fmt, ...)
-{
-  int ret;
-  va_list ap;
+int fwscanf(FILE *__restrict fp, const wchar_t *__restrict fmt, ...) {
+    int ret;
+    va_list ap;
 
-  va_start (ap, fmt);
-  ret = _vfwscanf_r (_REENT, fp, fmt, ap);
-  va_end (ap);
-  return ret;
+    va_start(ap, fmt);
+    ret = _vfwscanf_r(_REENT, fp, fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
 #endif /* !_REENT_ONLY */
 
-int
-_fwscanf_r (struct _reent *ptr, FILE *fp, const wchar_t *fmt, ...)
-{
-  int ret;
-  va_list ap;
+int _fwscanf_r(struct _reent *ptr, FILE *fp, const wchar_t *fmt, ...) {
+    int ret;
+    va_list ap;
 
-  va_start (ap, fmt);
-  ret = _vfwscanf_r (ptr, fp, fmt, ap);
-  va_end (ap);
-  return (ret);
+    va_start(ap, fmt);
+    ret = _vfwscanf_r(ptr, fp, fmt, ap);
+    va_end(ap);
+    return (ret);
 }
-

@@ -33,34 +33,28 @@ PORTABILITY
 #include <wchar.h>
 #include "local.h"
 
-int
-wcswidth (const wchar_t *pwcs,
-	size_t n)
+int wcswidth(const wchar_t *pwcs, size_t n)
 
 {
-  int w, len = 0;
-  if (!pwcs || n == 0)
-    return 0;
-  do {
-    wint_t wi = *pwcs;
+    int w, len = 0;
+    if(!pwcs || n == 0) return 0;
+    do {
+        wint_t wi = *pwcs;
 
 #ifdef _MB_CAPABLE
-  wi = _jp2uc (wi);
-  /* First half of a surrogate pair? */
-  if (sizeof (wchar_t) == 2 && wi >= 0xd800 && wi <= 0xdbff)
-    {
-      wint_t wi2;
+        wi = _jp2uc(wi);
+        /* First half of a surrogate pair? */
+        if(sizeof(wchar_t) == 2 && wi >= 0xd800 && wi <= 0xdbff) {
+            wint_t wi2;
 
-      /* Extract second half and check for validity. */
-      if (--n == 0 || (wi2 = _jp2uc (*++pwcs)) < 0xdc00 || wi2 > 0xdfff)
-	return -1;
-      /* Compute actual unicode value to use in call to __wcwidth. */
-      wi = (((wi & 0x3ff) << 10) | (wi2 & 0x3ff)) + 0x10000;
-    }
+            /* Extract second half and check for validity. */
+            if(--n == 0 || (wi2 = _jp2uc(*++pwcs)) < 0xdc00 || wi2 > 0xdfff) return -1;
+            /* Compute actual unicode value to use in call to __wcwidth. */
+            wi = (((wi & 0x3ff) << 10) | (wi2 & 0x3ff)) + 0x10000;
+        }
 #endif /* _MB_CAPABLE */
-    if ((w = __wcwidth (wi)) < 0)
-      return -1;
-    len += w;
-  } while (*pwcs++ && --n > 0);
-  return len;
+        if((w = __wcwidth(wi)) < 0) return -1;
+        len += w;
+    } while(*pwcs++ && --n > 0);
+    return len;
 }

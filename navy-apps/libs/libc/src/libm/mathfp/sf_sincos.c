@@ -17,22 +17,16 @@
 #include "fdlibm.h"
 #include "zmath.h"
 
-void
-sincosf (float x,
-        float *sinx,
-        float *cosx)
-{
-  *sinx = sin (x);
-  *cosx = cos (x);
+void sincosf(float x, float *sinx, float *cosx) {
+    *sinx = sin(x);
+    *cosx = cos(x);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
-void
-sincos (double x, double *sinx, double *cosx)
-{
-  *sinx = (double) sinf ((float) x);
-  *cosx = (double) cosf ((float) x);
+void sincos(double x, double *sinx, double *cosx) {
+    *sinx = (double)sinf((float)x);
+    *cosx = (double)cosf((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

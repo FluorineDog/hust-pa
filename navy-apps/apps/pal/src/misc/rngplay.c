@@ -24,14 +24,8 @@
 
 #include "main.h"
 
-static INT
-PAL_RNGReadFrame(
-   LPBYTE          lpBuffer,
-   UINT            uiBufferSize,
-   UINT            uiRngNum,
-   UINT            uiFrameNum,
-   FILE           *fpRngMKF
-)
+static INT PAL_RNGReadFrame(LPBYTE lpBuffer, UINT uiBufferSize, UINT uiRngNum,
+                            UINT uiFrameNum, FILE *fpRngMKF)
 /*++
   Purpose:
 
@@ -57,96 +51,81 @@ PAL_RNGReadFrame(
 
 --*/
 {
-   UINT         uiOffset       = 0;
-   UINT         uiSubOffset    = 0;
-   UINT         uiNextOffset   = 0;
-   UINT         uiChunkCount   = 0;
-   INT          iChunkLen      = 0;
+    UINT uiOffset = 0;
+    UINT uiSubOffset = 0;
+    UINT uiNextOffset = 0;
+    UINT uiChunkCount = 0;
+    INT iChunkLen = 0;
 
-   if (lpBuffer == NULL || fpRngMKF == NULL || uiBufferSize == 0)
-   {
-      return -1;
-   }
+    if(lpBuffer == NULL || fpRngMKF == NULL || uiBufferSize == 0) {
+        return -1;
+    }
 
-   //
-   // Get the total number of chunks.
-   //
-   uiChunkCount = PAL_MKFGetChunkCount(fpRngMKF);
-   if (uiRngNum >= uiChunkCount)
-   {
-      return -1;
-   }
+    //
+    // Get the total number of chunks.
+    //
+    uiChunkCount = PAL_MKFGetChunkCount(fpRngMKF);
+    if(uiRngNum >= uiChunkCount) {
+        return -1;
+    }
 
-   //
-   // Get the offset of the chunk.
-   //
-   fseek(fpRngMKF, 4 * uiRngNum, SEEK_SET);
-   fread(&uiOffset, sizeof(UINT), 1, fpRngMKF);
-   fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
-   uiOffset = SWAP32(uiOffset);
-   uiNextOffset = SWAP32(uiNextOffset);
+    //
+    // Get the offset of the chunk.
+    //
+    fseek(fpRngMKF, 4 * uiRngNum, SEEK_SET);
+    fread(&uiOffset, sizeof(UINT), 1, fpRngMKF);
+    fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
+    uiOffset = SWAP32(uiOffset);
+    uiNextOffset = SWAP32(uiNextOffset);
 
-   //
-   // Get the length of the chunk.
-   //
-   iChunkLen = uiNextOffset - uiOffset;
-   if (iChunkLen != 0)
-   {
-      fseek(fpRngMKF, uiOffset, SEEK_SET);
-   }
-   else
-   {
-      return -1;
-   }
+    //
+    // Get the length of the chunk.
+    //
+    iChunkLen = uiNextOffset - uiOffset;
+    if(iChunkLen != 0) {
+        fseek(fpRngMKF, uiOffset, SEEK_SET);
+    } else {
+        return -1;
+    }
 
-   //
-   // Get the number of sub chunks.
-   //
-   fread(&uiChunkCount, sizeof(UINT), 1, fpRngMKF);
-   uiChunkCount = (SWAP32(uiChunkCount) - 4) / 4;
-   if (uiFrameNum >= uiChunkCount)
-   {
-      return -1;
-   }
+    //
+    // Get the number of sub chunks.
+    //
+    fread(&uiChunkCount, sizeof(UINT), 1, fpRngMKF);
+    uiChunkCount = (SWAP32(uiChunkCount) - 4) / 4;
+    if(uiFrameNum >= uiChunkCount) {
+        return -1;
+    }
 
-   //
-   // Get the offset of the sub chunk.
-   //
-   fseek(fpRngMKF, uiOffset + 4 * uiFrameNum, SEEK_SET);
-   fread(&uiSubOffset, sizeof(UINT), 1, fpRngMKF);
-   fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
-   uiSubOffset = SWAP32(uiSubOffset);
-   uiNextOffset = SWAP32(uiNextOffset);
+    //
+    // Get the offset of the sub chunk.
+    //
+    fseek(fpRngMKF, uiOffset + 4 * uiFrameNum, SEEK_SET);
+    fread(&uiSubOffset, sizeof(UINT), 1, fpRngMKF);
+    fread(&uiNextOffset, sizeof(UINT), 1, fpRngMKF);
+    uiSubOffset = SWAP32(uiSubOffset);
+    uiNextOffset = SWAP32(uiNextOffset);
 
-   //
-   // Get the length of the sub chunk.
-   //
-   iChunkLen = uiNextOffset - uiSubOffset;
-   if ((UINT)iChunkLen > uiBufferSize)
-   {
-      return -2;
-   }
+    //
+    // Get the length of the sub chunk.
+    //
+    iChunkLen = uiNextOffset - uiSubOffset;
+    if((UINT)iChunkLen > uiBufferSize) {
+        return -2;
+    }
 
-   if (iChunkLen != 0)
-   {
-      fseek(fpRngMKF, uiOffset + uiSubOffset, SEEK_SET);
-      fread(lpBuffer, iChunkLen, 1, fpRngMKF);
-   }
-   else
-   {
-      return -1;
-   }
+    if(iChunkLen != 0) {
+        fseek(fpRngMKF, uiOffset + uiSubOffset, SEEK_SET);
+        fread(lpBuffer, iChunkLen, 1, fpRngMKF);
+    } else {
+        return -1;
+    }
 
-   return iChunkLen;
+    return iChunkLen;
 }
 
-static INT
-PAL_RNGBlitToSurface(
-   INT                      iNumRNG,
-   INT                      iNumFrame,
-   SDL_Surface             *lpDstSurface,
-   FILE                    *fpRngMKF
-)
+static INT PAL_RNGBlitToSurface(INT iNumRNG, INT iNumFrame, SDL_Surface *lpDstSurface,
+                                FILE *fpRngMKF)
 /*++
   Purpose:
 
@@ -172,247 +151,238 @@ PAL_RNGBlitToSurface(
 
 --*/
 {
-   INT                   ptr         = 0;
-   INT                   dst_ptr     = 0;
-   BYTE                  data        = 0;
-   WORD                  wdata       = 0;
-   INT                   x, y, i, n;
-   LPBYTE                rng         = NULL;
-   LPBYTE                buf         = NULL;
+    INT ptr = 0;
+    INT dst_ptr = 0;
+    BYTE data = 0;
+    WORD wdata = 0;
+    INT x, y, i, n;
+    LPBYTE rng = NULL;
+    LPBYTE buf = NULL;
 
-   //
-   // Check for invalid parameters.
-   //
-   if (lpDstSurface == NULL || iNumRNG < 0 || iNumFrame < 0)
-   {
-      return -1;
-   }
+    //
+    // Check for invalid parameters.
+    //
+    if(lpDstSurface == NULL || iNumRNG < 0 || iNumFrame < 0) {
+        return -1;
+    }
 
-   buf = (LPBYTE)calloc(1, 65000);
-   if (buf == NULL)
-   {
-      return -1;
-   }
+    buf = (LPBYTE)calloc(1, 65000);
+    if(buf == NULL) {
+        return -1;
+    }
 
-   //
-   // Read the frame.
-   //
-   if (PAL_RNGReadFrame(buf, 65000, iNumRNG, iNumFrame, fpRngMKF) < 0)
-   {
-      free(buf);
-      return -1;
-   }
+    //
+    // Read the frame.
+    //
+    if(PAL_RNGReadFrame(buf, 65000, iNumRNG, iNumFrame, fpRngMKF) < 0) {
+        free(buf);
+        return -1;
+    }
 
-   //
-   // Decompress the frame.
-   //
-   rng = (LPBYTE)calloc(1, 65000);
-   if (rng == NULL)
-   {
-      free(buf);
-      return -1;
-   }
-   Decompress(buf, rng, 65000);
-   free(buf);
+    //
+    // Decompress the frame.
+    //
+    rng = (LPBYTE)calloc(1, 65000);
+    if(rng == NULL) {
+        free(buf);
+        return -1;
+    }
+    Decompress(buf, rng, 65000);
+    free(buf);
 
-   //
-   // Draw the frame to the surface.
-   // FIXME: Dirty and ineffective code, needs to be cleaned up
-   //
-   while (TRUE)
-   {
-      data = rng[ptr++];
-      switch (data)
-      {
-      case 0x00:
-      case 0x13:
-         //
-         // End
-         //
-         goto end;
+    //
+    // Draw the frame to the surface.
+    // FIXME: Dirty and ineffective code, needs to be cleaned up
+    //
+    while(TRUE) {
+        data = rng[ptr++];
+        switch(data) {
+            case 0x00:
+            case 0x13:
+                //
+                // End
+                //
+                goto end;
 
-      case 0x02:
-         dst_ptr += 2;
-         break;
+            case 0x02: dst_ptr += 2; break;
 
-      case 0x03:
-         data = rng[ptr++];
-         dst_ptr += (data + 1) * 2;
-         break;
+            case 0x03:
+                data = rng[ptr++];
+                dst_ptr += (data + 1) * 2;
+                break;
 
-      case 0x04:
-         wdata = rng[ptr] | (rng[ptr + 1] << 8);
-         ptr += 2;
-         dst_ptr += ((unsigned int)wdata + 1) * 2;
-         break;
+            case 0x04:
+                wdata = rng[ptr] | (rng[ptr + 1] << 8);
+                ptr += 2;
+                dst_ptr += ((unsigned int)wdata + 1) * 2;
+                break;
 
-      case 0x0a:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
+            case 0x0a:
+                x = dst_ptr % 320;
+                y = dst_ptr / 320;
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                if(++x >= 320) {
+                    x = 0;
+                    ++y;
+                }
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                dst_ptr += 2;
 
-      case 0x09:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
+            case 0x09:
+                x = dst_ptr % 320;
+                y = dst_ptr / 320;
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                if(++x >= 320) {
+                    x = 0;
+                    ++y;
+                }
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                dst_ptr += 2;
 
-      case 0x08:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
+            case 0x08:
+                x = dst_ptr % 320;
+                y = dst_ptr / 320;
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                if(++x >= 320) {
+                    x = 0;
+                    ++y;
+                }
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                dst_ptr += 2;
 
-      case 0x07:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
+            case 0x07:
+                x = dst_ptr % 320;
+                y = dst_ptr / 320;
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                if(++x >= 320) {
+                    x = 0;
+                    ++y;
+                }
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                dst_ptr += 2;
 
-      case 0x06:
-         x = dst_ptr % 320;
-         y = dst_ptr / 320;
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         if (++x >= 320)
-         {
-            x = 0;
-            ++y;
-         }
-         ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-         dst_ptr += 2;
-         break;
+            case 0x06:
+                x = dst_ptr % 320;
+                y = dst_ptr / 320;
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                if(++x >= 320) {
+                    x = 0;
+                    ++y;
+                }
+                ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                    rng[ptr++];
+                dst_ptr += 2;
+                break;
 
-      case 0x0b:
-         data = *(rng + ptr++);
-         for (i = 0; i <= data; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            dst_ptr += 2;
-         }
-         break;
+            case 0x0b:
+                data = *(rng + ptr++);
+                for(i = 0; i <= data; i++) {
+                    x = dst_ptr % 320;
+                    y = dst_ptr / 320;
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr++];
+                    if(++x >= 320) {
+                        x = 0;
+                        ++y;
+                    }
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr++];
+                    dst_ptr += 2;
+                }
+                break;
 
-      case 0x0c:
-         wdata = rng[ptr] | (rng[ptr + 1] << 8);
-         ptr += 2;
-         for (i = 0; i <= wdata; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr++];
-            dst_ptr += 2;
-         }
-         break;
+            case 0x0c:
+                wdata = rng[ptr] | (rng[ptr + 1] << 8);
+                ptr += 2;
+                for(i = 0; i <= wdata; i++) {
+                    x = dst_ptr % 320;
+                    y = dst_ptr / 320;
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr++];
+                    if(++x >= 320) {
+                        x = 0;
+                        ++y;
+                    }
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr++];
+                    dst_ptr += 2;
+                }
+                break;
 
-      case 0x0d:
-      case 0x0e:
-      case 0x0f:
-      case 0x10:
-         for (i = 0; i < data - (0x0d - 2); i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr + 1];
-            dst_ptr += 2;
-         }
-         ptr += 2;
-         break;
+            case 0x0d:
+            case 0x0e:
+            case 0x0f:
+            case 0x10:
+                for(i = 0; i < data - (0x0d - 2); i++) {
+                    x = dst_ptr % 320;
+                    y = dst_ptr / 320;
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr];
+                    if(++x >= 320) {
+                        x = 0;
+                        ++y;
+                    }
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr + 1];
+                    dst_ptr += 2;
+                }
+                ptr += 2;
+                break;
 
-      case 0x11:
-    	 data = *(rng + ptr++);
-         for (i = 0; i <= data; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr + 1];
-            dst_ptr += 2;
-         }
-         ptr += 2;
-         break;
+            case 0x11:
+                data = *(rng + ptr++);
+                for(i = 0; i <= data; i++) {
+                    x = dst_ptr % 320;
+                    y = dst_ptr / 320;
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr];
+                    if(++x >= 320) {
+                        x = 0;
+                        ++y;
+                    }
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr + 1];
+                    dst_ptr += 2;
+                }
+                ptr += 2;
+                break;
 
-      case 0x12:
-         n = (rng[ptr] | (rng[ptr + 1] << 8)) + 1;
-         ptr += 2;
-         for (i = 0; i < n; i++)
-         {
-            x = dst_ptr % 320;
-            y = dst_ptr / 320;
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr];
-            if (++x >= 320)
-            {
-               x = 0;
-               ++y;
-            }
-            ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] = rng[ptr + 1];
-            dst_ptr += 2;
-         }
-         ptr += 2;
-         break;
-      }
-   }
+            case 0x12:
+                n = (rng[ptr] | (rng[ptr + 1] << 8)) + 1;
+                ptr += 2;
+                for(i = 0; i < n; i++) {
+                    x = dst_ptr % 320;
+                    y = dst_ptr / 320;
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr];
+                    if(++x >= 320) {
+                        x = 0;
+                        ++y;
+                    }
+                    ((LPBYTE)(lpDstSurface->pixels))[y * lpDstSurface->pitch + x] =
+                        rng[ptr + 1];
+                    dst_ptr += 2;
+                }
+                ptr += 2;
+                break;
+        }
+    }
 
 end:
-   free(rng);
-   return 0;
+    free(rng);
+    return 0;
 }
 
-VOID
-PAL_RNGPlay(
-   INT           iNumRNG,
-   INT           iStartFrame,
-   INT           iEndFrame,
-   INT           iSpeed
-)
+VOID PAL_RNGPlay(INT iNumRNG, INT iStartFrame, INT iEndFrame, INT iSpeed)
 /*++
   Purpose:
 
@@ -434,49 +404,45 @@ PAL_RNGPlay(
 
 --*/
 {
-   UINT            iTime;
-   int             iDelay = 800 / (iSpeed == 0 ? 16 : iSpeed);
-   FILE           *fp;
+    UINT iTime;
+    int iDelay = 800 / (iSpeed == 0 ? 16 : iSpeed);
+    FILE *fp;
 
-   fp = UTIL_OpenRequiredFile("rng.mkf");
+    fp = UTIL_OpenRequiredFile("rng.mkf");
 
-   for (; iStartFrame <= iEndFrame; iStartFrame++)
-   {
-      iTime = SDL_GetTicks() + iDelay;
+    for(; iStartFrame <= iEndFrame; iStartFrame++) {
+        iTime = SDL_GetTicks() + iDelay;
 
-      if (PAL_RNGBlitToSurface(iNumRNG, iStartFrame, gpScreen, fp) == -1)
-      {
-         //
-         // Failed to get the frame, don't go further
-         //
-         fclose(fp);
-         return;
-      }
+        if(PAL_RNGBlitToSurface(iNumRNG, iStartFrame, gpScreen, fp) == -1) {
+            //
+            // Failed to get the frame, don't go further
+            //
+            fclose(fp);
+            return;
+        }
 
-      //
-      // Update the screen
-      //
-      VIDEO_UpdateScreen(NULL);
+        //
+        // Update the screen
+        //
+        VIDEO_UpdateScreen(NULL);
 
-      //
-      // Fade in the screen if needed
-      //
-      if (gpGlobals->fNeedToFadeIn)
-      {
-         PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
-         gpGlobals->fNeedToFadeIn = FALSE;
-      }
+        //
+        // Fade in the screen if needed
+        //
+        if(gpGlobals->fNeedToFadeIn) {
+            PAL_FadeIn(gpGlobals->wNumPalette, gpGlobals->fNightPalette, 1);
+            gpGlobals->fNeedToFadeIn = FALSE;
+        }
 
-      //
-      // Delay for a while
-      //
-      PAL_ProcessEvent();
-      while (SDL_GetTicks() <= iTime)
-      {
-         PAL_ProcessEvent();
-         SDL_Delay(1);
-      }
-   }
+        //
+        // Delay for a while
+        //
+        PAL_ProcessEvent();
+        while(SDL_GetTicks() <= iTime) {
+            PAL_ProcessEvent();
+            SDL_Delay(1);
+        }
+    }
 
-   fclose(fp);
+    fclose(fp);
 }

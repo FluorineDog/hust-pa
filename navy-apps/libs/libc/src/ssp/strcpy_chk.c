@@ -38,18 +38,14 @@ __RCSID("$NetBSD: strcpy_chk.c,v 1.8 2015/05/09 15:42:21 christos Exp $");
 
 #undef memcpy
 
-char *__strcpy_chk(char * __restrict, const char * __restrict, size_t);
+char *__strcpy_chk(char *__restrict, const char *__restrict, size_t);
 
-char *
-__strcpy_chk(char * __restrict dst, const char * __restrict src, size_t slen)
-{
-	size_t len = strlen(src) + 1;
+char *__strcpy_chk(char *__restrict dst, const char *__restrict src, size_t slen) {
+    size_t len = strlen(src) + 1;
 
-	if (len > slen)
-		__chk_fail();
+    if(len > slen) __chk_fail();
 
-	if (__ssp_overlap(src, dst, len))
-		__chk_fail();
+    if(__ssp_overlap(src, dst, len)) __chk_fail();
 
-	return memcpy(dst, src, len);
+    return memcpy(dst, src, len);
 }

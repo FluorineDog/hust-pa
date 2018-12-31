@@ -23,25 +23,24 @@
 #include <math.h>
 
 #ifdef __STDC__
-	float pow10f(float x)		/* wrapper pow10f */
+float pow10f(float x) /* wrapper pow10f */
 #else
-	float pow10f(x)			/* wrapper pow10f */
-	float x;
+float pow10f(x) /* wrapper pow10f */
+    float x;
 #endif
 {
-  return powf(10.0, x);
+    return powf(10.0, x);
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double pow10(double x)
+double pow10(double x)
 #else
-	double pow10(x)
-	double x;
+double pow10(x) double x;
 #endif
 {
-	return (double) pow10f((float) x);
+    return (double)pow10f((float)x);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

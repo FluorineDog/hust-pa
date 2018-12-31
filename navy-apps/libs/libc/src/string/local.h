@@ -2,7 +2,7 @@
 #include "../ctype/local.h"
 
 /* internal function to compute width of wide char. */
-int __wcwidth (wint_t);
+int __wcwidth(wint_t);
 
 /*
    Taken from glibc:
@@ -11,10 +11,8 @@ int __wcwidth (wint_t);
    default implementations.
 */
 #ifdef _HAVE_CC_INHIBIT_LOOP_TO_LIBCALL
-# define __inhibit_loop_to_libcall \
-  __attribute__ ((__optimize__ ("-fno-tree-loop-distribute-patterns")))
+#define __inhibit_loop_to_libcall \
+    __attribute__((__optimize__("-fno-tree-loop-distribute-patterns")))
 #else
-# define __inhibit_loop_to_libcall
+#define __inhibit_loop_to_libcall
 #endif
-
-

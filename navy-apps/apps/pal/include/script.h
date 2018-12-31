@@ -23,23 +23,14 @@
 #define SCRIPT_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-WORD
-PAL_RunTriggerScript(
-   WORD           wScriptEntry,
-   WORD           wEventObjectID
-);
+WORD PAL_RunTriggerScript(WORD wScriptEntry, WORD wEventObjectID);
 
-WORD
-PAL_RunAutoScript(
-   WORD           wScriptEntry,
-   WORD           wEventObjectID
-);
+WORD PAL_RunAutoScript(WORD wScriptEntry, WORD wEventObjectID);
 
-extern BOOL       g_fScriptSuccess;
+extern BOOL g_fScriptSuccess;
 
 #ifdef __cplusplus
 }

@@ -7,33 +7,30 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	float fdimf(float x, float y)
+float fdimf(float x, float y)
 #else
-	float fdimf(x,y)
-	float x;
-	float y;
+float fdimf(x, y) float x;
+float y;
 #endif
 {
-  int c = __fpclassifyf(x);
-  if (c == FP_NAN)  return(x);
-  if (__fpclassifyf(y) == FP_NAN)  return(y);
-  if (c == FP_INFINITE)
-    return HUGE_VALF;
+    int c = __fpclassifyf(x);
+    if(c == FP_NAN) return (x);
+    if(__fpclassifyf(y) == FP_NAN) return (y);
+    if(c == FP_INFINITE) return HUGE_VALF;
 
-  return x > y ? x - y : 0.0;
+    return x > y ? x - y : 0.0;
 }
 
 #ifdef _DOUBLE_IS_32BITS
 
 #ifdef __STDC__
-	double fdim(double x, double y)
+double fdim(double x, double y)
 #else
-	double fdim(x,y)
-	double x;
-	double y;
+double fdim(x, y) double x;
+double y;
 #endif
 {
-  return (double) fdimf((float) x, (float) y);
+    return (double)fdimf((float)x, (float)y);
 }
 
 #endif /* defined(_DOUBLE_IS_32BITS) */

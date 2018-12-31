@@ -38,19 +38,12 @@ DESCRIPTION
 	<<errno>>.
 */
 
-int
-_open_r (struct _reent *ptr,
-     const char *file,
-     int flags,
-     int mode)
-{
-  int ret;
+int _open_r(struct _reent *ptr, const char *file, int flags, int mode) {
+    int ret;
 
-  errno = 0;
-  if ((ret = _open (file, flags, mode)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if((ret = _open(file, flags, mode)) == -1 && errno != 0) ptr->_errno = errno;
+    return ret;
 }
-
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

@@ -11,10 +11,8 @@
 #include <complex.h>
 #include "fdlibm.h"
 
-float
-crealf(float complex z)
-{
-	float_complex w = { .z = z };
+float crealf(float complex z) {
+    float_complex w = {.z = z};
 
-	return (REAL_PART(w));
+    return (REAL_PART(w));
 }

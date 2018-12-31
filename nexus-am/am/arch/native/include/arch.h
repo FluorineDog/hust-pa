@@ -8,21 +8,21 @@
 #define true 1
 
 #ifndef __USE_GNU
-# define __USE_GNU
+#define __USE_GNU
 #endif
 
 #include <ucontext.h>
 
 struct _Context {
-  union {
-    uint8_t pad[1024];
-    struct {
-      ucontext_t uc;
-      void *prot;
+    union {
+        uint8_t pad[1024];
+        struct {
+            ucontext_t uc;
+            void *prot;
+        };
     };
-  };
-  uintptr_t rax;
-  uintptr_t rip;
+    uintptr_t rax;
+    uintptr_t rip;
 };
 
 #define GPR1 rax
