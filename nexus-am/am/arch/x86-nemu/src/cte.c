@@ -32,9 +32,9 @@ _Context *irq_handle(_Context *tf) {
             }
             default: ev.event = _EVENT_ERROR; break;
         }
-        printf("[irq before %p]", tf);
+        // printf("[irq before %p]", tf);
         next = user_handler(ev, tf);
-        printf("[irq after %p]", next);
+        // printf("[irq after %p]", next);
         if(next == NULL) {
             next = tf;
         }
