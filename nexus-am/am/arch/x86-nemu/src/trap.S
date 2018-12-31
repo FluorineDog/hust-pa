@@ -5,15 +5,15 @@
 .globl vecnull;  vecnull:  pushl $0;  pushl   $-1; jmp asm_trap
 
 asm_trap:
+  # recover stack pointer
   pushal
 
   pushl $0       # for prot
 
   pushl %esp
   call irq_handle
-
-  addl $4, %esp
-
+  # eax stores esp 
+  movl %eax, %esp
   addl $4, %esp
   popal
   addl $8, %esp

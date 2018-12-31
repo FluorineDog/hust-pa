@@ -32,8 +32,9 @@ _Context *irq_handle(_Context *tf) {
             }
             default: ev.event = _EVENT_ERROR; break;
         }
-
+        printf("[irq before %p]", tf);
         next = user_handler(ev, tf);
+        printf("[irq after %p]", next);
         if(next == NULL) {
             next = tf;
         }
@@ -62,7 +63,14 @@ int _cte_init(_Context *(*handler)(_Event, _Context *)) {
 }
 
 _Context *_kcontext(_Area stack, void (*entry)(void *), void *arg) {
-    return NULL;
+    _Context* ctx = (_Context*)((char*)stack.end - sizeof(_Context));
+    memset(ctx, sizeof(_Context), 0);
+    ctx->eip = (uint32_t)entry;
+    ctx->cs = 0x8;
+    // TODO WITH ARG
+    uintptr_t* tf = (uintptr_t*)stack.start;
+    *tf = (uintptr_t)ctx;
+    return ctx;
 }
 
 void _yield() {
