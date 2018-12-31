@@ -1,6 +1,7 @@
 #include "device.h"
 #include "fs.h"
 size_t serial_write(const void *buf, size_t offset, size_t len) {
+    _yield();
     for(int i = 0; i < len; ++i) {
         _putc(((char *)buf)[i]);
     }
@@ -53,6 +54,7 @@ void init_device() {
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
+    _yield();
     // Log("buf=%p, off=%d, len=%d", buf, offset, len);
     int keycode = read_key();
     const char *status = "ku";
