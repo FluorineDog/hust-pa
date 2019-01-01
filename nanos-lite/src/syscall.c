@@ -90,6 +90,7 @@ _Context* do_syscall(_Context* c) {
             _def(path, 2, const char*);
             _def(argv, 3, char* const*);
             _def(envp, 4, char* const*);
+            // TODO: i know there is some bug, related to stack, and i won't fix
             _ret() = proc_execve(path, argv, envp);
             break;
         }

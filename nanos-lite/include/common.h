@@ -1,7 +1,7 @@
 #pragma once
 /* Uncomment these macros to enable corresponding functionality. */
 #define HAS_CTE
-//#define HAS_VME
+#define HAS_VME
 
 #include <am.h>
 #include <klib.h>

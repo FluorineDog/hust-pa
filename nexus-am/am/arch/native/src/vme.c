@@ -17,6 +17,7 @@ void shm_munmap(void *va);
 int _vme_init(void *(*pgalloc_f)(size_t), void (*pgfree_f)(void *)) {
     // we do not need to ask MM to get a page from OS,
     // since we can call malloc() in native
+    // YOU SON OF THE BITCH
     return 0;
 }
 

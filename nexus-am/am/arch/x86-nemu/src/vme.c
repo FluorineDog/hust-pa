@@ -17,15 +17,13 @@ int _vme_init(void *(*pgalloc_f)(size_t), void (*pgfree_f)(void *)) {
     pgalloc_usr = pgalloc_f;
     pgfree_usr = pgfree_f;
 
-    int i;
-
     // make all PDEs invalid
-    for(i = 0; i < NR_PDE; i++) {
+    for(int i = 0; i < NR_PDE; i++) {
         kpdirs[i] = 0;
     }
 
     PTE *ptab = kptabs;
-    for(i = 0; i < NR_KSEG_MAP; i++) {
+    for(int i = 0; i < NR_KSEG_MAP; i++) {
         uint32_t pdir_idx = (uintptr_t)segments[i].start / (PGSIZE * NR_PTE);
         uint32_t pdir_idx_end = (uintptr_t)segments[i].end / (PGSIZE * NR_PTE);
         for(; pdir_idx < pdir_idx_end; pdir_idx++) {
@@ -79,6 +77,7 @@ int _map(_Protect *p, void *va, void *pa, int mode) {
 }
 
 _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *args) {
+    
     uint32_t* stack_args = (uint32_t*)ustack.end - 3;
     _Context *ctx = (_Context *)stack_args - 1;
     stack_args[0] = 0;
