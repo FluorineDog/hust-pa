@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "memory/mmu.h"
 
 enum { R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI };
 enum { R_AX, R_CX, R_DX, R_BX, R_SP, R_BP, R_SI, R_DI };
@@ -33,7 +34,15 @@ typedef union {
             rtlreg_t limit;
             rtlreg_t base;
         } idtr;
-        rtlreg_t ctlreg[8];
+        union {
+            rtlreg_t ctlreg[8];
+            struct {
+                CR0 cr0;
+                rtlreg_t _reserved_1_2[2];
+                CR3 cr3;
+                rtlreg_t _reserved_4_7[4];
+            };
+        };
     };
 } CPU_state;
 

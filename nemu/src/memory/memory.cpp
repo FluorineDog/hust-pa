@@ -30,6 +30,10 @@ void paddr_write(paddr_t addr, uint32_t data, int len) {
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
+	if(!cpu.cr0.paging){
+		// no paging
+		return paddr_read(addr, len);
+	}
 	return paddr_read(addr, len);
 }
 

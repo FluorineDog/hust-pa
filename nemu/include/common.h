@@ -33,6 +33,10 @@ inline void BITCAST(To& dst, const void* src) {
     dst = (To)src;
 }
 
+inline constexpr uint32_t maskify(int bit) {
+    return (1Ul << bit) - 1;
+}
+
 #include "debug.h"
 #include "macro.h"
 #include <optional>
