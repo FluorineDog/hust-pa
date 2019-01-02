@@ -52,6 +52,10 @@ static int cmd_scan_memory(char *args);
 
 static int cmd_scan_memory_n(char *args);
 
+static int cmd_scan_physical_memory(char *args);
+
+static int cmd_scan_physical_memory_n(char *args);
+
 static int cmd_add_watch(char *args);
 
 static int cmd_delete_watch(char *args);
@@ -77,8 +81,10 @@ static struct {
 		{"si",     "Step [N] instruction(s)",                           cmd_step_into},
 		{"info",   "Provide information of (r)egister/(w)atchpoint",    cmd_info},
 		{"p",      "Eval expression",                                   cmd_eval},
-		{"xx",     "Scan memory",                                       cmd_scan_memory},
-		{"x",      "Scan multiple memory",                              cmd_scan_memory_n},
+		{"x",      "Scan memory",                                       cmd_scan_memory},
+		{"xx",     "Scan multiple memory",                              cmd_scan_memory_n},
+		{"xp",     "Scan physical memory",                              cmd_scan_physical_memory},
+		{"xxp",    "Scan multiple physical memory",                     cmd_scan_physical_memory_n},
 		{"w",      "add_watchpoint",                                    cmd_add_watch},
 		{"d",      "delete_watchpoint",                                 cmd_delete_watch},
 		{"attach", "attach difftest",                                   cmd_attach_difftest},
@@ -172,7 +178,7 @@ static int cmd_eval(char *args) {
 
 constexpr int NR_CMD = (sizeof(cmd_table) / sizeof(cmd_table[0]));
 
-static void scan_memory_kernel(char *args, int n) {
+static void scan_memory_kernel(char *args, int n, bool physical) {
 	auto expr = compile_expr(args);
 	int addr_v = expr->eval();
 	uint32_t addr_base [[maybe_unused]] = addr_v;
@@ -181,15 +187,14 @@ static void scan_memory_kernel(char *args, int n) {
 		if (i % 4 == 0) {
 			printf("0x%08x: ", addr);
 		}
-		printf("0x%08x    ", vaddr_read(addr, 4));
+		printf("0x%08x    ", physical ? paddr_read(addr, 4) : vaddr_read(addr, 4));
 		if (i % 4 == 3) {
 			printf("\n");
 		}
 	}
 }
-
 static int cmd_scan_memory(char *args) {
-	scan_memory_kernel(args, 1);
+	scan_memory_kernel(args, 1, false);
 	return 0;
 }
 
@@ -197,7 +202,20 @@ static int cmd_scan_memory_n(char *args) {
 	char *arg = strtok(nullptr, " ");
 	int N = atoi(arg);
 	args = arg + strlen(arg) + 1;
-	scan_memory_kernel(args, N);
+	scan_memory_kernel(args, N, false);
+	return 0;
+}
+
+static int cmd_scan_physical_memory(char *args) {
+	scan_memory_kernel(args, 1, true);
+	return 0;
+}
+
+static int cmd_scan_physical_memory_n(char *args) {
+	char *arg = strtok(nullptr, " ");
+	int N = atoi(arg);
+	args = arg + strlen(arg) + 1;
+	scan_memory_kernel(args, N, true);
 	return 0;
 }
 

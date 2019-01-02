@@ -78,27 +78,50 @@ typedef union GateDescriptor {
 	uint32_t val;
 } GateDesc;
 
-union PAddr{
-	PAddr(uint32_t val): val(val)
+namespace MMU {
+union VAddr{
+	VAddr(uint32_t val): val(val) {}
 	struct {
-		uint32_t offset : 12;
+		uint32_t page_offset : 12;
 		uint32_t table_index : 10;
 		uint32_t dir_index : 10;
 	};
 	uint32_t val;
 };
 
-inline paddr_t get_paddr(uint32_t entry_val, uint32_t offset){
-	return (entry_val & ~maskify(12)) + offset;
+inline paddr_t blend_paddr(uint32_t base_addr, int offset){
+	return (base_addr & ~maskify(12)) + offset;
 }
 
-inline PDE get_pde(CR3 cr3, int index) {
-	paddr_t paddr = get_paddr(cr3.val, index * sizeof(PDE));
-	return (PDE) paddr_read(paddr, 4);
+template<typename Type>
+inline Type& fetch_pmem(uint32_t base_addr, int index){
+	auto paddr = blend_paddr(base_addr, index * sizeof(Type));
+	return (Type&)pmem[paddr];
 }
 
-inline PTE get_pte(PDE pde, int index) {
-	paddr_t paddr = get_paddr(pde.val, index * sizeof(PTE));
-	return (PTE) paddr_read(paddr, 4);
+//inline PDE get_pde(CR3 cr3, int index) {
+//	paddr_t pde_paddr = blend_paddr(cr3.val, index * sizeof(PDE));
+//	return (PDE) paddr_read(pde_paddr, 4);
+//}
+//
+//inline PTE get_pte(PDE pde, int index) {
+//	paddr_t pte_paddr = blend_paddr(pde.val, index * sizeof(PTE));
+//	return (PTE) paddr_read(pte_paddr, 4);
+//}
+
+inline paddr_t extract_paddr(CR3 cr3, vaddr_t addr_raw, bool is_write){
+	VAddr vaddr(addr_raw);
+	printflog("accessing %08x", addr_raw);
+	auto & pde = fetch_pmem<PDE>(cr3.val, vaddr.dir_index);
+	assert(pde.present == 1);
+	pde.accessed = 1;
+	auto & pte = fetch_pmem<PTE>(pde.val, vaddr.dir_index);
+	assert(pte.present == 1);
+	pte.accessed = 1;
+	pte.dirty |= is_write;
+	return blend_paddr(pte.val, vaddr.page_offset);
 }
 
+}
+
+using MMU::extract_paddr;

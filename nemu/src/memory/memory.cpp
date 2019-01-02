@@ -1,5 +1,6 @@
 #include "nemu.h"
 #include "device/mmio.h"
+#include "memory/mmu.h"
 
 
 #define pmem_rw(addr, type) *(type *)({\
@@ -29,19 +30,19 @@ void paddr_write(paddr_t addr, uint32_t data, int len) {
 	}
 }
 
-uint32_t vaddr_read(vaddr_t addr, int len) {
+uint32_t vaddr_read(vaddr_t vaddr, int len) {
 	if(!cpu.cr0.paging){
 		// no paging
-		return paddr_read(addr, len);
+		return paddr_read(vaddr, len);
 	}
-	return paddr_read(addr, len);
+	auto paddr = extract_paddr(cpu.cr3, vaddr, false);
+	return paddr_read(paddr, len);
 }
 
-void vaddr_write(vaddr_t addr, uint32_t data, int len) {
+void vaddr_write(vaddr_t vaddr, uint32_t data, int len) {
 	if(!cpu.cr0.paging){
-		paddr_write(addr, data, len);
+		return paddr_write(vaddr, data, len);
 	}
-	
-	paddr_t pde = get_pde(cpu.cr3, )
-	return paddr_write(addr, len);
+	auto paddr = extract_paddr(cpu.cr3, vaddr, true);
+	return paddr_write(paddr, data, len);
 }
