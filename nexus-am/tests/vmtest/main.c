@@ -6,7 +6,7 @@
 _Context *uctx;
 int ntraps = 0;
 
-_Context *handler(_Event ev, _Context *ctx) {
+static _Context *handler(_Event ev, _Context *ctx) {
     switch(ev.event) {
         case _EVENT_YIELD: break;
         case _EVENT_IRQ_TIMER:
@@ -45,7 +45,6 @@ uint8_t code[] = {
     0x31, 0xc0,                            // xor %eax, %eax
     0x8d, 0xb6, 0x00, 0x00, 0x00, 0x00,    // lea 0(%esi), %esi
     0x83, 0xc0, 0x01,                      // add $1, %eax
-                                           //  0x90, 0x90, // nop, nop
     0xcd, 0x80,                            // int $0x80
     0xeb, 0xf9,                            // jmp 8
 };
@@ -69,13 +68,13 @@ int main() {
     _map(&prot, ptr, up1, _PROT_WRITE);
 
     memcpy(up1, code, sizeof(code));
-    printf("Code copied to %x execute\n", ptr);
+    printf("Code copied to 0x%08x execute\n", ptr);
 
     _Area k = {.start = kstk, .end = kstk + 4096};
     _Area u = {.start = ptr + pgsz, .end = ptr + pgsz};
 
     uctx = _ucontext(&prot, u, k, ptr, 0);
-
+    return -1;
     _intr_write(1);
     while(1) {
         _yield();

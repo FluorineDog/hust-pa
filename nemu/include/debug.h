@@ -1,10 +1,13 @@
 #pragma once
+
 #include "common.h"
 #include <stdio.h>
 #include <assert.h>
 
+extern uint64_t g_nr_guest_instr;
+
 #ifdef DEBUG
-extern FILE* log_fp;
+extern FILE *log_fp;
 #define Log_write(format, ...)                      \
     do {                                            \
         if(log_fp != NULL) {                        \
@@ -34,6 +37,7 @@ extern FILE* log_fp;
             fprintf(stderr, "\33[1;31m"); \
             fprintf(stderr, __VA_ARGS__); \
             fprintf(stderr, "\33[0m\n");  \
+            fprintf(stderr, "{{nr=%ld}}", g_nr_guest_instr); \
             assert(cond);                 \
         }                                 \
     } while(0)

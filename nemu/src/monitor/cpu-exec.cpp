@@ -9,13 +9,13 @@
  * This is useful when you use the `si' command.
  * You can modify this value as you want.
  */
-#define MAX_INSTR_TO_PRINT 10
+#define MAX_INSTR_TO_PRINT 20
 
 int nemu_state = NEMU_STOP;
 
 void exec_wrapper(bool);
 
-static uint64_t g_nr_guest_instr = 0;
+uint64_t g_nr_guest_instr = 0;
 
 void nr_guest_instr_add(uint32_t n) {
     g_nr_guest_instr += n;
@@ -33,7 +33,7 @@ void cpu_exec(uint64_t n) {
     }
     nemu_state = NEMU_RUNNING;
 
-    bool print_flag = n < MAX_INSTR_TO_PRINT;
+    bool print_flag = n <= MAX_INSTR_TO_PRINT;
 
     for (; n > 0; n--) {
         /* Execute one instruction, including instruction fetch,

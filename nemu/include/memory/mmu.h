@@ -113,10 +113,10 @@ inline paddr_t extract_paddr(CR3 cr3, vaddr_t addr_raw, bool is_write){
 	VAddr vaddr(addr_raw);
 //	printflog("accessing %08x", addr_raw);
 	auto & pde = fetch_pmem<PDE>(cr3.val, vaddr.dir_index);
-	assert(pde.present == 1);
+	Assert(pde.present == 1, "ck");
 	pde.accessed = 1;
 	auto & pte = fetch_pmem<PTE>(pde.val, vaddr.table_index);
-	assert(pte.present == 1);
+	Assert(pte.present == 1, "kc");
 	pte.accessed = 1;
 	pte.dirty |= is_write;
 	return blend_paddr(pte.val, vaddr.page_offset);

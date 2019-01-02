@@ -56,7 +56,7 @@ int _protect(_Protect *p) {
         updir[i] = kpdirs[i];
     }
     p->area.start = (void *)0x8000000;
-    p->area.end = (void *)0xc0000000;
+    p->area.end =  (void *)0xc0000000;
     return 0;
 }
 
@@ -103,21 +103,22 @@ int _map(_Protect *p, void *va, void *pa, int mode) {
     return 0;
 }
 
+// construct a valid "context"/ trapframe on ustack from given parameters
 _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *args_raw) {
     // TODO
     uint32_t* stack_args = (uint32_t*)ustack.end - 3;
-    _Context *ctx = (_Context *)stack_args - 1;
     stack_args[0] = 0;
     stack_args[1] = 0;
     stack_args[2] = 0;
 
+    _Context *ctx = (_Context *)stack_args - 1;
     memset(ctx, sizeof(_Context), 0);
-    ctx->Prot = p;
+    ctx->prot = p;
     ctx->eip = (uint32_t)entry;
     ctx->cs = 0x8;
 
-    // TODO WITH ARG
-    uintptr_t *tf = (uintptr_t *)ustack.start;
-    *tf = (uintptr_t)ctx;
+    // set stacktop with tf
+    *(uintptr_t *)ustack.start = (uintptr_t)ctx;
+
     return ctx;
 }

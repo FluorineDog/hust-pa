@@ -1,13 +1,22 @@
 #include "loader.h"
+#include <am.h>
 #include <klib.h>
 #include "fs.h"
 static uintptr_t loader(PCB *pcb, const char *filename) {
-    // fuck the filenames
-    // ramdisk_read((void *)DEFAULT_ENTRY, 0, RAMDISK_SIZE);
     assert(filename != NULL);
+    // alloc enough page for pcb
     int fd = vfs_open(filename, 0, 0);
     int size = vfs_filesz(fd);
     Log("load program %s {fd=%d} with size=%d", filename, fd, size);
+    Log("allocing pages", filename, fd, size);
+
+    // alloc pages for 
+    for(vaddr_t va = DEFAULT_ENTRY; va < DEFAULT_ENTRY + PGROUNDUP(size); va += PGSIZE) {
+        _map(&pcb->as, va, new_page(1), 0);
+    }
+
+    pcb->max_brk = DEFAULT_ENTRY + PGROUNDUP(size);
+    pcb->cur_brk = DEFAULT_ENTRY + size;
     vfs_read(fd, (void *)DEFAULT_ENTRY, size);
     vfs_close(fd);
     return DEFAULT_ENTRY;
@@ -40,19 +49,12 @@ void context_kload(PCB *pcb, void *entry) {
     pcb->tf = _kcontext(stack, entry, NULL);
 }
 
-void extend_page_until(PCB* pcb, int size){
-     
-}
-
 void context_uload(PCB *pcb, const char *filename) {
-    size_t size = vfs_filesz(filename);
-    // alloc enough page for pcb
-
-    uintptr_t entry = loader(pcb, filename);
 
     _Area stack;
     stack.start = pcb->stack;
     stack.end = stack.start + sizeof(pcb->stack);
-    
+
+    uintptr_t entry = loader(pcb, filename);
     pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
 }

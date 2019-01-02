@@ -1,10 +1,11 @@
 #include "proc.h"
 #include "loader.h"
 
-#define MAX_NR_PROC 4
+#define MAX_NR_PROC 6
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used));
 static PCB pcb_boot;
+static int pcb_iter = 2;
 PCB *current;
 
 void switch_boot_pcb() {
@@ -34,15 +35,14 @@ _Context *schedule(_Context *prev) {
     // switch to pcb[0]
     static uint32_t n = 0;
     n = (n + 1) & 0xF;
-    // Log("schedule %d", n);
     current = (n == 0) ? &pcb[0] : &pcb[1];
-    // return tf
+    _switch(current->tf);
     return current->tf;
 }
 
 int proc_execve(const char *path, char *const argv[], char *const envp[]) {
     // TODO
-    program_naive_uload(NULL, path, argv);
+    context_uload(&pcb[pcb_iter++], path, argv);
     panic("wtf");
     return -1;
 }
