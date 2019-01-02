@@ -25,7 +25,6 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-    // TODO();
     // size_t width = screen_width();
     // offset /= sizeof(int);
     // len /= sizeof(int);
@@ -45,8 +44,6 @@ void init_device() {
     Log("Initializing devices...");
     _ioe_init();
 
-    // TODO: print the string to array `dispinfo` with the format
-    // described in the Navy-apps convention
     int width = screen_width();
     int height = screen_height();
     int size = sprintf(dispinfo, "WIDTH:%d\nHEIGHT:%d\n", width, height);

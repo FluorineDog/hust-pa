@@ -66,7 +66,6 @@ _Context* do_syscall(_Context* c) {
             _ret() = vfs_write(fd, buf, size);
             break;
         }
-        // TODO
         case SYS_close: {
             // TODO();
             _def(fd, 2, int);

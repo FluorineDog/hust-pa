@@ -14,5 +14,3 @@ typedef char bool;
 #ifndef __unused
 #define __unused __attribute__((unused))
 #endif    // __unused
-
-// #define TODO() panic("TODO");

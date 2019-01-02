@@ -52,16 +52,17 @@ int _protect(_Protect *p) {
     p->ptr = updir;
     // map kernel space
     for(int i = 0; i < NR_PDE; i++) {
+        // low level page: use kernel
         updir[i] = kpdirs[i];
     }
-
     p->area.start = (void *)0x8000000;
     p->area.end = (void *)0xc0000000;
     return 0;
 }
 
 void _unprotect(_Protect *p) {
-    // TODO
+    // p->
+    // DO NOTHING?
 }
 
 static _Protect *cur_as = NULL;
@@ -78,17 +79,20 @@ int _map(_Protect *p, void *va, void *pa, int mode) {
     return 0;
 }
 
-_Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *args) {
-    
+_Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *args_raw) {
+    // TODO
     uint32_t* stack_args = (uint32_t*)ustack.end - 3;
     _Context *ctx = (_Context *)stack_args - 1;
     stack_args[0] = 0;
     stack_args[1] = 0;
     stack_args[2] = 0;
-    
+
+    // _protect(p); 
     memset(ctx, sizeof(_Context), 0);
+    ctx->Prot = p;
     ctx->eip = (uint32_t)entry;
     ctx->cs = 0x8;
+
     // TODO WITH ARG
     uintptr_t *tf = (uintptr_t *)ustack.start;
     *tf = (uintptr_t)ctx;

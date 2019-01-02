@@ -40,7 +40,6 @@ static Finfo file_table[] __attribute__((used)) = {
 #define NR_FILES (sizeof(file_table) / sizeof(file_table[0]))
 
 void init_fs() {
-    // TODO: initialize the size of /dev/fb
     for(int i = FD_FILES_BEGIN; i < NR_FILES; ++i) {
         file_table[i].read = ramdisk_read;
         file_table[i].write = ramdisk_write;
