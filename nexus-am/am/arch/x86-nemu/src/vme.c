@@ -60,7 +60,9 @@ int _protect(_Protect *p) {
     return 0;
 }
 
-void _unprotect(_Protect *p) {}
+void _unprotect(_Protect *p) {
+    // TODO
+}
 
 static _Protect *cur_as = NULL;
 void get_cur_as(_Context *c) {

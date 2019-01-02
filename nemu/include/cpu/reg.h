@@ -33,6 +33,7 @@ typedef union {
             rtlreg_t limit;
             rtlreg_t base;
         } idtr;
+        rtlreg_t ctlreg[8];
     };
 } CPU_state;
 
