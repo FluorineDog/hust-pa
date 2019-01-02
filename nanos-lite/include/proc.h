@@ -21,4 +21,10 @@ extern PCB *current;
 int proc_execve(const char *path, char *const argv[], char *const envp[]);
 _Context *schedule(_Context *prev);
 
+// typedef struct _Protect {
+//     size_t pgsize;
+//     _Area area;
+//     void *ptr;
+// } _Protect;
+
 #endif

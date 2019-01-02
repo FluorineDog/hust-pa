@@ -23,7 +23,7 @@ uint32_t paddr_read(paddr_t addr, int len) {
 
 void paddr_write(paddr_t addr, uint32_t data, int len) {
 	int no = is_mmio(addr);
-	if(no == -1){
+	if (no == -1) {
 		memcpy(guest_to_host(addr), &data, len);
 	} else {
 		mmio_write(addr, len, data, no);
@@ -31,7 +31,7 @@ void paddr_write(paddr_t addr, uint32_t data, int len) {
 }
 
 uint32_t vaddr_read(vaddr_t vaddr, int len) {
-	if(!cpu.cr0.paging){
+	if (!cpu.cr0.paging) {
 		// no paging
 		return paddr_read(vaddr, len);
 	}
@@ -40,8 +40,11 @@ uint32_t vaddr_read(vaddr_t vaddr, int len) {
 }
 
 void vaddr_write(vaddr_t vaddr, uint32_t data, int len) {
-	if(!cpu.cr0.paging){
+	if (!cpu.cr0.paging) {
 		return paddr_write(vaddr, data, len);
+	}
+	if (((vaddr + len - 1) ^ vaddr) >= PAGE_SIZE){
+		panic("[cross boundary %08x]", vaddr);
 	}
 	auto paddr = extract_paddr(cpu.cr3, vaddr, true);
 	return paddr_write(paddr, data, len);

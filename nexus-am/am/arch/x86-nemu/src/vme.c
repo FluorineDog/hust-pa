@@ -61,12 +61,12 @@ int _protect(_Protect *p) {
 }
 
 void _unprotect(_Protect *p) {
-    // p->
     // DO NOTHING?
+    // TODO
 }
 
 static _Protect *cur_as = NULL;
-void get_cur_as(_Context *c) {
+void set_to_cur_as(_Context *c) {
     c->prot = cur_as;
 }
 
@@ -76,6 +76,30 @@ void _switch(_Context *c) {
 }
 
 int _map(_Protect *p, void *va, void *pa, int mode) {
+    // TODO
+    assert((uint32_t)va < 0x80000000);
+    uint32_t pdx = PDX(va);
+    
+    PDE* page_dir = (PDE*)p->ptr;
+    
+    if((page_dir[pdx] & PTE_P) == 0){
+        assert(page_dir[pdx] == 0);
+        // page table is missing
+        // create new page
+        PTE* pt = (PTE*)pgalloc_usr(1);
+        assert(((uint32_t)pt & 0x3ff) == 0);
+        PDE new_pde = PTE_P | (uint32_t)pt;
+        page_dir[pdx] = new_pde;
+    }
+    PDE pde = page_dir[pdx];
+    PTE* page_table = (PTE*)PDE_ADDR(pde);
+
+    uint32_t ptx = PTX(va);
+    if((page_table[ptx] & PTE_P) == 0){
+        assert(page_table[ptx] == 0);
+        page_table[ptx] = PTE_P | (uint32_t)pa;
+    }
+
     return 0;
 }
 
@@ -87,7 +111,6 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *
     stack_args[1] = 0;
     stack_args[2] = 0;
 
-    // _protect(p); 
     memset(ctx, sizeof(_Context), 0);
     ctx->Prot = p;
     ctx->eip = (uint32_t)entry;

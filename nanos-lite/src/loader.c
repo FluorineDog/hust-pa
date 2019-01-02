@@ -40,12 +40,19 @@ void context_kload(PCB *pcb, void *entry) {
     pcb->tf = _kcontext(stack, entry, NULL);
 }
 
+void extend_page_until(PCB* pcb, int size){
+     
+}
+
 void context_uload(PCB *pcb, const char *filename) {
+    size_t size = vfs_filesz(filename);
+    // alloc enough page for pcb
+
     uintptr_t entry = loader(pcb, filename);
 
     _Area stack;
     stack.start = pcb->stack;
     stack.end = stack.start + sizeof(pcb->stack);
-
+    
     pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
 }

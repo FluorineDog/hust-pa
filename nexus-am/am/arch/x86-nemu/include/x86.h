@@ -68,6 +68,7 @@ typedef uint32_t PDE;
 #define PGADDR(pd, pt, off) ((uint32_t)((pd) << PDXSHFT | (pt) << PTXSHFT | (off)))
 
 // Address in page table or page directory entry
+#define PDE_ADDR(pde) ((uint32_t)(pde) & ~0xfff)
 #define PTE_ADDR(pte) ((uint32_t)(pte) & ~0xfff)
 
 // Gate descriptors for interrupts and traps
