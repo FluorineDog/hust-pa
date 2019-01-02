@@ -78,17 +78,27 @@ typedef union GateDescriptor {
 	uint32_t val;
 } GateDesc;
 
+union PAddr{
+	PAddr(uint32_t val): val(val)
+	struct {
+		uint32_t offset : 12;
+		uint32_t table_index : 10;
+		uint32_t dir_index : 10;
+	};
+	uint32_t val;
+};
+
 inline paddr_t get_paddr(uint32_t entry_val, uint32_t offset){
 	return (entry_val & ~maskify(12)) + offset;
 }
 
-inline PDE get_pde(CR3 cr3, int id) {
-	paddr_t paddr = get_paddr(cr3.val, id * sizeof(PDE));
+inline PDE get_pde(CR3 cr3, int index) {
+	paddr_t paddr = get_paddr(cr3.val, index * sizeof(PDE));
 	return (PDE) paddr_read(paddr, 4);
 }
 
-inline PTE get_pte(PDE pde, int id) {
-	paddr_t paddr = get_paddr(pde.val, id * sizeof(PTE));
+inline PTE get_pte(PDE pde, int index) {
+	paddr_t paddr = get_paddr(pde.val, index * sizeof(PTE));
 	return (PTE) paddr_read(paddr, 4);
 }
 

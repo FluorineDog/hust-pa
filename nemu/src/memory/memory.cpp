@@ -38,5 +38,10 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 }
 
 void vaddr_write(vaddr_t addr, uint32_t data, int len) {
-	paddr_write(addr, data, len);
+	if(!cpu.cr0.paging){
+		paddr_write(addr, data, len);
+	}
+	
+	paddr_t pde = get_pde(cpu.cr3, )
+	return paddr_write(addr, len);
 }
