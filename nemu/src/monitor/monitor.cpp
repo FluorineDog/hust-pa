@@ -90,6 +90,7 @@ static inline void restart() {
   cpu.eip = ENTRY_START;
   cpu.cs = 8;
   cpu.eflags = EFLAGS::MASK_IF;
+  cpu.ctlreg[0] = 0x6000'0011;
 }
 
 static inline void parse_args(int argc, char *argv[]) {

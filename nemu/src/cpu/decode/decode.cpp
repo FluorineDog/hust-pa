@@ -126,6 +126,10 @@ make_DHelper(mov_R2E) {
   decode_op_rm(eip, id_dest, false, id_src, true);
 }
 
+make_DHelper(lea_R2M) {
+  decode_op_rm(eip, id_dest, false, id_src, false);
+}
+
 /* Gb <- Eb
  * Gv <- Ev
  */

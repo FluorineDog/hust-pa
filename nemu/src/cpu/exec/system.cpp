@@ -15,17 +15,21 @@ make_EHelper(lidt) {
 	print_asm_template1(lidt);
 }
 
-// use R2M
+// use mov_E2r
 make_EHelper(mov_r2cr) {
 	// TODO();
+	assert(id_src->type == OP_TYPE_REG);
+	assert(id_dest->type == OP_TYPE_REG);
 	rtl_mv(&cpu.ctlreg[id_dest->reg], &id_src->val);
 	print_asm("movl %%%s,%%cr%d", reg_name(id_src->reg, 4), id_dest->reg);
 	// TODO: diff-test
 }
 
-// use lea_M2R
+// use lea_r2m
 make_EHelper(mov_cr2r) {
 	// TODO;
+	assert(id_src->type == OP_TYPE_REG);
+	assert(id_dest->type == OP_TYPE_REG);
 	operand_write(id_dest, &cpu.ctlreg[id_src->reg]);
 	print_asm("movl %%cr%d,%%%s", id_src->reg, reg_name(id_dest->reg, 4));
 	// TODO: diff-test

@@ -94,6 +94,7 @@ make_DHelper(mov_I2E);
 make_DHelper(mov_R2E);
 make_DHelper(mov_E2R);
 make_DHelper(lea_M2R);
+make_DHelper(lea_R2M);
 
 make_DHelper(gp2_1_E);
 make_DHelper(gp2_cl2E);

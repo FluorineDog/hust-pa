@@ -177,15 +177,17 @@ opcode_entry opcode_table[512] = {
 		/* 0x04 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x08 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x0c */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0x10 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x14 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x18 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x1c */    EMPTY, EMPTY, EMPTY, EMPTY,
 		
-		/* 0x20 */    EMPTY, IDEX(mov_R2E, mov_r2cr), EMPTY, IDEX(lea_M2R, mov_cr2r),
+		/* 0x20 */    IDEX(lea_R2M, mov_cr2r), EMPTY, IDEX(mov_E2R, mov_r2cr), EMPTY,
 		/* 0x24 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x28 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x2c */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0x30 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x34 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x38 */    EMPTY, EMPTY, EMPTY, EMPTY,
@@ -195,6 +197,7 @@ opcode_entry opcode_table[512] = {
 		/* 0x44 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x48 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x4c */    EMPTY, EMPTY, EMPTY, EMPTY,
+		
 		/* 0x50 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x54 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0x58 */    EMPTY, EMPTY, EMPTY, EMPTY,
