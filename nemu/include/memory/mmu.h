@@ -111,11 +111,11 @@ inline Type& fetch_pmem(uint32_t base_addr, int index){
 
 inline paddr_t extract_paddr(CR3 cr3, vaddr_t addr_raw, bool is_write){
 	VAddr vaddr(addr_raw);
-	printflog("accessing %08x", addr_raw);
+//	printflog("accessing %08x", addr_raw);
 	auto & pde = fetch_pmem<PDE>(cr3.val, vaddr.dir_index);
 	assert(pde.present == 1);
 	pde.accessed = 1;
-	auto & pte = fetch_pmem<PTE>(pde.val, vaddr.dir_index);
+	auto & pte = fetch_pmem<PTE>(pde.val, vaddr.table_index);
 	assert(pte.present == 1);
 	pte.accessed = 1;
 	pte.dirty |= is_write;

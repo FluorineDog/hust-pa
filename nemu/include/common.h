@@ -4,7 +4,7 @@
 #define DEBUG
 
 #ifdef DEBUG
-#define DIFF_TEST
+//#define DIFF_TEST
 #endif
 
 #if _SHARE
@@ -34,7 +34,7 @@ inline void BITCAST(To& dst, const void* src) {
 }
 
 inline constexpr uint32_t maskify(int bit) {
-    return (1Ul << bit) - 1;
+    return (1U << bit) - 1;
 }
 
 #include "debug.h"
