@@ -7,7 +7,6 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 	/* TODO: Trigger an interrupt/exception with ``NO''.
 	 * That is, use ``NO'' to index the IDT.
 	 */
-	fprintf(stderr, "<<<%08x-%08x|", ret_addr, cpu.esp);
 	assert(0 <= NO);
 	assert(NO * 8U + 7U < cpu.idtr.limit);
 	rtl_push(&cpu.eflags);
@@ -46,7 +45,6 @@ void return_from_intr(){
 	rtl_pop(&tempEFLAGS);
 	rtl_mv(&cpu.eflags, &tempEFLAGS);
 //	fprintf(stderr, "%08x", tempCS);
-	fprintf(stderr, "|%08x-%08x>>>", tempEIP, cpu.esp);
 	assert(tempCS == 8);
 	rtl_jr(&tempEIP);
 }
@@ -68,7 +66,7 @@ bool dev_raise_intr() {
 	uint32_t new_time = g_nr_guest_instr;
 	if(last_time < new_time){
 		cpu.irq_time = 1;
-		last_time = new_time + 10;
+		last_time = new_time + 1;
 //		extern void info_register();
 //		info_register();
 	}

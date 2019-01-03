@@ -18,6 +18,9 @@ uint32_t get_time_in_ms() {
 	gettimeofday(&now, NULL);
 	uint32_t seconds = now.tv_sec;
 	uint32_t useconds = now.tv_usec;
+	if((int)g_nr_guest_instr > -1){
+		return g_nr_guest_instr;
+	}
 	return seconds * 1000 + (useconds + 500) / 1000;
 }
 

@@ -50,6 +50,7 @@ _Context *irq_handle(_Context *tf) {
         // printf("[irq before %p]", tf);
         next = user_handler(ev, tf);
         // printf("[irq after %p]", next);
+        
         if(next == NULL) {
             next = tf;
         }
@@ -83,7 +84,7 @@ _Context *_kcontext(_Area stack, void (*entry)(void *), void *arg) {
     void **args = (void **)stack.end;
     args[0] = arg;
     _Context *ctx = (_Context *)args - 1;
-    memset(ctx, sizeof(_Context), 0);
+    memset(ctx, 0, sizeof(_Context));
     ctx->eip = (size_t)entry;
     ctx->eflags = MASK_IF;
     ctx->cs = 0x8;
