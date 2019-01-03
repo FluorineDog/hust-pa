@@ -1,7 +1,7 @@
 #include "proc.h"
 #include "loader.h"
 
-#define MAX_NR_PROC 6
+#define MAX_NR_PROC 4
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used));
 static PCB pcb_boot;
@@ -42,13 +42,24 @@ _Context *schedule(_Context *prev) {
     return current->tf;
 }
 
+static PCB* get_pcb_from_context(_Context* ctx){
+    for(int i = 0; i < MAX_NR_PROC; ++i){
+        if(pcb[i].tf == ctx){
+            return pcb + i;
+        }
+    }
+    panic("wtf: no pcb");
+}
+
 int proc_execve(_Context *ctx, const char *path, char *const argv[], char *const envp[]) {
     // TODO
     // context_uload(&pcb[pcb_iter++], path);
-    panic("wtf");
+    // panic("wtf");
+    TODO();
     return -1;
 }
 
 int proc_brk(_Context *ctx, size_t new_program_break) {
+    
     return -1;
 }
