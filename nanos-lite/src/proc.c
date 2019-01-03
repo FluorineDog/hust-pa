@@ -23,9 +23,9 @@ void hello_fun(void *arg) {
 
 void init_proc() {
     // naive_uload(NULL, "/bin/init");
-    // context_kload(&all_pcbs[0], (void *)hello_fun);
+    context_kload(&all_pcbs[0], (void *)hello_fun);
     // context_kload(&all_pcbs[1], (void *)hello_fun);
-    context_uload(&all_pcbs[0], "/bin/hello");
+    // context_uload(&all_pcbs[0], "/bin/hello");
     context_uload(&all_pcbs[1], "/bin/hello");
     // Log("all_pcbs content: %p", all_pcbs[1].tf->prot->ptr);
     switch_boot_pcb();
