@@ -82,7 +82,7 @@ _Context* do_syscall(_Context* c) {
         case SYS_brk: {
             // TODO
             _def(new_prg_brk, 2, size_t);
-            _ret() = proc_brk(c, new_prg_brk);
+            _ret() = proc_brk(new_prg_brk);
             break;
         }
 
@@ -91,7 +91,7 @@ _Context* do_syscall(_Context* c) {
             _def(argv, 3, char* const*);
             _def(envp, 4, char* const*);
             // TODO: i know there is some bug, related to stack, and i won't fix
-            _ret() = proc_execve(c, path, argv, envp);
+            _ret() = proc_execve(path, argv, envp);
             break;
         }
         default: panic("Unhandled syscall ID = %d", syscall_type);
