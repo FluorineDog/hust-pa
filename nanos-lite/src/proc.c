@@ -24,10 +24,12 @@ void hello_fun(void *arg) {
 void init_proc() {
     // naive_uload(NULL, "/bin/init");
     const char* args[] = {"/bin/litenes", "/share/games/nes/mario.nes", NULL};
+    const char* args2[] = {"/bin/litenes", "/share/games/nes/kungfu.nes", NULL};
     context_kload(&all_pcbs[0], (void *)hello_fun);
     // context_kload(&all_pcbs[1], (void *)hello_fun);
     // context_uload(&all_pcbs[0], "/bin/hello");
     context_uload(&all_pcbs[1], "/bin/litenes", args);
+    context_uload(&all_pcbs[2], "/bin/litenes", args2);
     // Log("all_pcbs content: %p", all_pcbs[1].tf->prot->ptr);
     switch_boot_pcb();
 }
@@ -37,9 +39,9 @@ _Context *schedule(_Context *prev) {
     current->tf = prev;
     // switch to all_pcbs[0]
     static uint32_t n = 0;
-    n = (n + 1) & 0xF;
+    n = (n + 1) & 0xFF;
     // Log("Scheduling to %d", n);
-    current = (n == 0) ? &all_pcbs[0] : &all_pcbs[1];
+    current = (n == 0) ? &all_pcbs[0] : &all_pcbs[1 + n / 0x80];
     _switch(current->tf);
     return current->tf;
 }
