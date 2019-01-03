@@ -78,7 +78,6 @@ void _switch(_Context *c) {
 
 int _map(_Protect *p, void *va, void *pa, int mode) {
     // TODO
-    assert((uint32_t)va < 0x80000000);
     uint32_t pdx = PDX(va);
     
     PDE* page_dir = (PDE*)p->ptr;

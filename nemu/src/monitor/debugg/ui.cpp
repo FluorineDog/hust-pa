@@ -221,14 +221,21 @@ static int cmd_scan_physical_memory_n(char *args) {
 
 
 static void info_register() {
+	auto show = [](const char* name, rtlreg_t value){
+		printf("%-8s0x%08x%16d\n", name, value, value);
+	};
 	for (int i = 0; i < 8; ++i) {
 		auto value = cpu.gpr[i]._32;
-		printf("%-8s0x%08x%16d\n", regsl[i], value, value);
+//		printf("%-8s0x%08x%16d\n", regsl[i], value, value);
+		show(regsl[i], value);
 	}
-	printf("%-8s0x%08x%16d\n", "eip", cpu.eip, cpu.eip);
+	show("eip", cpu.eip);
+	show("CR0", cpu.cr0.val);
+	show("CR3", cpu.cr3.val);
 	using namespace EFLAGS;
 	printf("ZF=%d, SF=%d, CF=%d, OF=%d\n", get_ZF(cpu.eflags), get_SF(cpu.eflags), get_CF(cpu.eflags),
 			get_OF(cpu.eflags));
+	
 }
 
 static int cmd_info(char *args) {

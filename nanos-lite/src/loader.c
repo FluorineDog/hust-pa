@@ -2,6 +2,10 @@
 #include <am.h>
 #include <klib.h>
 #include "fs.h"
+static inline size_t min(size_t a, size_t b) {
+    return a < b ? a : b;
+
+}
 static uintptr_t loader(PCB *pcb, const char *filename) {
     assert(filename != NULL);
     // alloc enough page for pcb
@@ -10,14 +14,16 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     Log("load program %s {fd=%d} with size=%d", filename, fd, size);
     Log("allocing pages", filename, fd, size);
 
-    // alloc pages for 
-    for(void* va = (void*) DEFAULT_ENTRY; va < (void*)DEFAULT_ENTRY + PGROUNDUP(size); va += PGSIZE) {
-        _map(&pcb->as, (void*)va, new_page(1), _PROT_WRITE);
+    // alloc pages for
+    for(int iter = 0; iter < PGROUNDUP(size); iter += PGSIZE) {
+        void *va = (void *)DEFAULT_ENTRY + iter;
+        void *pa = new_page(1);
+        _map(&pcb->as, va, pa, _PROT_WRITE);
+        vfs_read(fd, pa, min(PGSIZE, size - iter));
     }
     pcb->max_brk = DEFAULT_ENTRY + PGROUNDUP(size);
     pcb->cur_brk = DEFAULT_ENTRY + size;
 
-    vfs_read(fd, (void *)DEFAULT_ENTRY, size);
     vfs_close(fd);
     return DEFAULT_ENTRY;
 }
@@ -50,13 +56,13 @@ void context_kload(PCB *pcb, void *entry) {
 }
 
 void context_uload(PCB *pcb, const char *filename) {
-
     _Area stack;
     stack.start = pcb->stack;
     stack.end = stack.start + sizeof(pcb->stack);
 
     uintptr_t entry = loader(pcb, filename);
     pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
+    assert(pcb->tf->prot == &pcb->as);
     assert(pcb->tf->prot);
-    assert(pcb->tf->prot->ptr);
+    // assert(pcb->tf->prot->ptr);
 }
