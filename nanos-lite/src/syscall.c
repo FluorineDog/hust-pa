@@ -31,8 +31,8 @@ _Context* do_syscall(_Context* c) {
                 _halt(status);
                 panic("wtf");
             }
-            TODO();
-            naive_uload(NULL, "/bin/init");
+            c = proc_execve("/bin/init", NULL, NULL);
+            _switch(c);
             break;
         }
         case SYS_yield: {
