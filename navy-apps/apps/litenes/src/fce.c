@@ -176,6 +176,7 @@ int main(int argc, char *argv[]) {
         fname = "/share/games/nes/kungfu.nes";
         fprintf(stderr, "No ROM specified. Deafult to %s\n", fname);
     } else {
+        fprintf(stderr, "%d, %p->%s", argc, argv, argv[1]);
         fname = argv[1];
     }
 

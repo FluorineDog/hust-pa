@@ -23,10 +23,11 @@ void hello_fun(void *arg) {
 
 void init_proc() {
     // naive_uload(NULL, "/bin/init");
+    const char* args[] = {"/bin/litenes", "/share/games/nes/mario.nes", NULL};
     context_kload(&all_pcbs[0], (void *)hello_fun);
     // context_kload(&all_pcbs[1], (void *)hello_fun);
     // context_uload(&all_pcbs[0], "/bin/hello");
-    context_uload(&all_pcbs[1], "/bin/hello");
+    context_uload(&all_pcbs[1], "/bin/litenes", args);
     // Log("all_pcbs content: %p", all_pcbs[1].tf->prot->ptr);
     switch_boot_pcb();
 }
@@ -48,8 +49,12 @@ int proc_execve(const char *path, char *const argv[], char *const envp[]) {
     // TODO
     // context_uload(&all_pcbs[pcb_iter++], path);
     // panic("wtf");
-    TODO();
-    return -1;
+    // TODO();
+    PCB* pcb = current;
+    _unprotect(&pcb->as);
+    
+
+    return 0;
 }
 
 int proc_brk(size_t new_program_break) {

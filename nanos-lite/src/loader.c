@@ -57,13 +57,13 @@ void context_kload(PCB *pcb, void *entry) {
     assert(pcb->tf->prot == &pcb->as);
 }
 
-void context_uload(PCB *pcb, const char *filename) {
+void context_uload(PCB *pcb, const char *filename, void* args) {
     _Area stack;
     stack.start = pcb->stack;
     stack.end = stack.start + sizeof(pcb->stack);
     _protect(&pcb->as);
     uintptr_t entry = loader(pcb, filename);
-    pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
+    pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, args);
     assert(pcb->tf->prot == &pcb->as);
     assert(pcb->tf->prot);
     // assert(pcb->tf->prot->ptr);

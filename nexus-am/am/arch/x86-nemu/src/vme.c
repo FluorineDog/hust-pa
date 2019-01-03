@@ -56,7 +56,7 @@ int _protect(_Protect *p) {
         updir[i] = kpdirs[i];
     }
     p->area.start = (void *)0x8000000;
-    p->area.end =  (void *)0xc0000000;
+    p->area.end = (void *)0xc0000000;
     return 0;
 }
 
@@ -79,46 +79,76 @@ void _switch(_Context *c) {
 int _map(_Protect *p, void *va, void *pa, int mode) {
     // TODO
     uint32_t pdx = PDX(va);
-    
-    PDE* page_dir = (PDE*)p->ptr;
-    assert(page_dir); 
-    if((page_dir[pdx] & PTE_P) == 0){
+
+    PDE *page_dir = (PDE *)p->ptr;
+    assert(page_dir);
+    if((page_dir[pdx] & PTE_P) == 0) {
         assert(page_dir[pdx] == 0);
         // page table is missing
         // create new page
-        PTE* pt = (PTE*)pgalloc_usr(1);
+        PTE *pt = (PTE *)pgalloc_usr(1);
         assert(((uint32_t)pt & 0x3ff) == 0);
         PDE new_pde = PTE_P | (uint32_t)pt;
         page_dir[pdx] = new_pde;
     }
     PDE pde = page_dir[pdx];
-    PTE* page_table = (PTE*)PDE_ADDR(pde);
+    PTE *page_table = (PTE *)PDE_ADDR(pde);
 
     uint32_t ptx = PTX(va);
-    if((page_table[ptx] & PTE_P) == 0){
+    if((page_table[ptx] & PTE_P) == 0) {
         assert(page_table[ptx] == 0);
         page_table[ptx] = PTE_P | (uint32_t)pa;
     }
-
     return 0;
 }
 
 // construct a valid "context"/ trapframe on ustack from given parameters
-_Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *args_raw) {
+_Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
+                    void *args_raw_void) {
     // TODO
-    uint32_t* stack_args = (uint32_t*)ustack.end - 3;
-    stack_args[0] = 0;
-    stack_args[1] = 0;
-    stack_args[2] = 0;
+    int argc = 0;
+    char **stack_argv = (char **)ustack.end;
+    const char* const* args_raw = (const char* const*)args_raw_void;
+    if(args_raw) {
+        while(args_raw[argc]) {
+            argc++;
+            stack_argv--;
+        }
+        ustack.end = stack_argv;
+    }
 
-    _Context *ctx = (_Context *)stack_args - 1;
-    memset(ctx, sizeof(_Context), 0);
-    ctx->prot = p;
-    ctx->eip = (uint32_t)entry;
-    ctx->cs = 0x8;
+    if(args_raw){
+        char *stack_strs = (char *)ustack.end;
+        for(int i = 0; i < argc; ++i) {
+            int len = strlen(args_raw[i]) + 1;
+            stack_strs -= len;
+            strcpy(stack_strs, args_raw[i]);
+            stack_argv[i] = stack_strs;
+        }
+        ustack.end = stack_strs;
+    }
 
-    // set stacktop with tf
-    *(uintptr_t *)ustack.start = (uintptr_t)ctx;
+    {
+        uint32_t *stack_args = (uint32_t *)ustack.end - 3;
+        stack_args[0] = argc;
+        stack_args[1] = (uint32_t)stack_argv;
+        stack_args[2] = 0;
+        ustack.end = stack_args;
+        printf("[%p fuck %s]", stack_argv,  stack_argv[1]);
+    }
 
+    _Context *ctx = (_Context *)ustack.end - 1;
+    {
+        memset(ctx, sizeof(_Context), 0);
+        ctx->prot = p;
+        ctx->eip = (uint32_t)entry;
+        ctx->cs = 0x8;
+        ustack.end = ctx;
+    }
+
+    {
+        // set stacktop with tf
+        *(uintptr_t *)ustack.start = (uintptr_t)ustack.end;
+    }
     return ctx;
 }
