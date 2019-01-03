@@ -13,7 +13,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     int size = vfs_filesz(fd);
     Log("load program %s {fd=%d} with size=%d", filename, fd, size);
     Log("allocing pages", filename, fd, size);
-
+    
     // alloc pages for
     for(int iter = 0; iter < PGROUNDUP(size); iter += PGSIZE) {
         void *va = (void *)DEFAULT_ENTRY + iter;
@@ -59,7 +59,7 @@ void context_uload(PCB *pcb, const char *filename) {
     _Area stack;
     stack.start = pcb->stack;
     stack.end = stack.start + sizeof(pcb->stack);
-
+    _protect(&pcb->as);
     uintptr_t entry = loader(pcb, filename);
     pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
     assert(pcb->tf->prot == &pcb->as);

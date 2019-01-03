@@ -25,7 +25,9 @@ void init_proc() {
     // naive_uload(NULL, "/bin/init");
     // context_kload(&pcb[0], (void *)hello_fun);
     // context_kload(&pcb[1], (void *)hello_fun);
-    context_uload(&pcb[1], "/bin/dummy");
+    context_uload(&pcb[0], "/bin/hello");
+    context_uload(&pcb[1], "/bin/hello");
+    Log("pcb content: %p", pcb[1].tf->prot->ptr);
     switch_boot_pcb();
 }
 
@@ -35,6 +37,7 @@ _Context *schedule(_Context *prev) {
     // switch to pcb[0]
     static uint32_t n = 0;
     n = (n + 1) & 0xF;
+    Log("Scheduling to %d", n);
     current = (n == 0) ? &pcb[0] : &pcb[1];
     _switch(current->tf);
     return current->tf;

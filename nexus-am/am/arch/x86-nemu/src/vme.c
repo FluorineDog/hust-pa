@@ -81,7 +81,7 @@ int _map(_Protect *p, void *va, void *pa, int mode) {
     uint32_t pdx = PDX(va);
     
     PDE* page_dir = (PDE*)p->ptr;
-    
+    assert(page_dir); 
     if((page_dir[pdx] & PTE_P) == 0){
         assert(page_dir[pdx] == 0);
         // page table is missing

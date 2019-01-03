@@ -81,7 +81,7 @@ _Context* do_syscall(_Context* c) {
         }
         case SYS_brk: {
             // TODO
-            _set_ret(0);
+            _set_ret(-1);
             break;
         }
 
