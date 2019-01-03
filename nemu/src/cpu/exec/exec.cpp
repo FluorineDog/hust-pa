@@ -1,5 +1,6 @@
 #include "cpu/exec.h"
 #include "all-instr.h"
+#include "cpu/intr.h"
 
 typedef struct {
 	DHelper decode;
@@ -168,7 +169,7 @@ opcode_entry opcode_table[512] = {
 		
 		/* 0xf0 */    EMPTY, EMPTY, EMPTY, EMPTY,
 		/* 0xf4 */    EMPTY, EMPTY, IDEXW(E, gp3, 1), IDEX(E, gp3),
-		/* 0xf8 */    EMPTY, EMPTY, EMPTY, EMPTY,
+		/* 0xf8 */    EMPTY, EMPTY, EX(cli), EX(sti),
 		/* 0xfc */    EMPTY, EMPTY, IDEXW(E, gp4, 1), IDEX(E, gp5),
 		
 		/*2 byte_opcode_table */
@@ -303,9 +304,12 @@ void exec_wrapper(bool print_flag) {
 		puts(g_decoding.asm_buf);
 	}
 #endif
-	
 	update_eip();
-
+	bool is_irq = dev_raise_intr();
+	if(is_irq){
+		update_eip();
+	}
+	
 #if defined(DIFF_TEST)
 	void difftest_step(uint32_t);
 	difftest_step(ori_eip);
