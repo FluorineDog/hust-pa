@@ -4,7 +4,7 @@
 #define DEBUG
 
 #ifdef DEBUG
-#define DIFF_TEST
+//#define DIFF_TEST
 #endif
 
 #if _SHARE

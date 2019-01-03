@@ -57,4 +57,6 @@ void context_uload(PCB *pcb, const char *filename) {
 
     uintptr_t entry = loader(pcb, filename);
     pcb->tf = _ucontext(&pcb->as, stack, stack, (void *)entry, NULL);
+    assert(pcb->tf->prot);
+    assert(pcb->tf->prot->ptr);
 }

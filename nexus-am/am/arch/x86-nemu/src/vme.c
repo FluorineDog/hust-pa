@@ -71,6 +71,7 @@ void get_cur_as(_Context *c) {
 }
 
 void _switch(_Context *c) {
+    assert(c->prot);
     set_cr3(c->prot->ptr);
     cur_as = c->prot;
 }
