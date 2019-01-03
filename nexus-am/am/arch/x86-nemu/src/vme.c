@@ -1,3 +1,4 @@
+#include <eflags.h>
 #include <x86.h>
 #include <klib.h>
 
@@ -139,7 +140,7 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
         stack_args[2] = (uint32_t)stack_argv;
         stack_args[3] = 0;
         ustack.end = stack_args;
-        printf("[%p fuck %s]", stack_argv,  stack_argv[1]);
+        // printf("[%p fuck %s]", stack_argv,  stack_argv[1]);
     }
 
     _Context *ctx = (_Context *)ustack.end - 1;
@@ -148,6 +149,7 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
         ctx->prot = p;
         ctx->eip = (uint32_t)entry;
         ctx->cs = 0x8;
+        ctx->eflags = MASK_IF;
         ustack.end = ctx;
     }
 

@@ -89,8 +89,9 @@ static inline void restart() {
   /* Set the initial instruction pointer. */
   cpu.eip = ENTRY_START;
   cpu.cs = 8;
-  cpu.eflags = EFLAGS::MASK_IF;
+  cpu.eflags = 0;
   cpu.ctlreg[0] = 0x6000'0011;
+  cpu.irq_time = 0;
 }
 
 static inline void parse_args(int argc, char *argv[]) {
