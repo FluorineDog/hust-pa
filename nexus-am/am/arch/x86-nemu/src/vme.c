@@ -129,10 +129,13 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
     }
 
     {
-        uint32_t *stack_args = (uint32_t *)ustack.end - 3;
-        stack_args[0] = argc;
-        stack_args[1] = (uint32_t)stack_argv;
-        stack_args[2] = 0;
+        uint32_t *stack_args = (uint32_t *)ustack.end - 4;
+        // placeholder for return addr of _start
+        stack_args[0] = 0; 
+        // parameters of _start
+        stack_args[1] = argc;
+        stack_args[2] = (uint32_t)stack_argv;
+        stack_args[3] = 0;
         ustack.end = stack_args;
         printf("[%p fuck %s]", stack_argv,  stack_argv[1]);
     }
