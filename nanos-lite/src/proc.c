@@ -23,12 +23,12 @@ void hello_fun(void *arg) {
 
 void init_proc() {
     // naive_uload(NULL, "/bin/init");
-    const char* args[] = {"/bin/litenes", "/share/games/nes/mario.nes", NULL};
+    // const char* args[] = {"/bin/litenes", "/share/games/nes/mario.nes", NULL};
     // const char* args2[] = {"/bin/litenes", "/share/games/nes/kungfu.nes", NULL};
     context_kload(&all_pcbs[0], (void *)hello_fun);
     // context_kload(&all_pcbs[1], (void *)hello_fun);
     // context_uload(&all_pcbs[0], "/bin/hello");
-    context_uload(&all_pcbs[1], "/bin/litenes", args);
+    // context_uload(&all_pcbs[1], "/bin/litenes", args);
     context_uload(&all_pcbs[1], "/bin/init", NULL);
     // Log("all_pcbs content: %p", all_pcbs[1].tf->prot->ptr);
     switch_boot_pcb();

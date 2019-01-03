@@ -36,7 +36,7 @@ endif
 
 ifeq ($(ISA), x86)
   CFLAGS_NEWLIB = -DNO_FLOATING_POINT
-  CFLAGS_COMMON = -m32 -fno-pic -fno-builtin -fno-stack-protector -fno-omit-frame-pointer -march=i386 -mstringop-strategy=unrolled_loop -fno-reorder-functions $(CFLAGS_NEWLIB)
+  CFLAGS_COMMON = -g -m32 -fno-pic -fno-builtin -fno-stack-protector -fno-omit-frame-pointer -march=i386 -mstringop-strategy=unrolled_loop -fno-reorder-functions $(CFLAGS_NEWLIB)
   CFLAGS   += $(CFLAGS_COMMON)
   CXXFLAGS += $(CFLAGS_COMMON) -ffreestanding -fno-rtti -fno-exceptions
   ASFLAGS  += -m32
