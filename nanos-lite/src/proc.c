@@ -5,7 +5,6 @@
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used));
 static PCB pcb_boot;
-static int pcb_iter = 2;
 PCB *current;
 
 void switch_boot_pcb() {
@@ -27,7 +26,7 @@ void init_proc() {
     // context_kload(&pcb[1], (void *)hello_fun);
     context_uload(&pcb[0], "/bin/hello");
     context_uload(&pcb[1], "/bin/hello");
-    Log("pcb content: %p", pcb[1].tf->prot->ptr);
+    // Log("pcb content: %p", pcb[1].tf->prot->ptr);
     switch_boot_pcb();
 }
 
@@ -37,15 +36,19 @@ _Context *schedule(_Context *prev) {
     // switch to pcb[0]
     static uint32_t n = 0;
     n = (n + 1) & 0xF;
-    Log("Scheduling to %d", n);
+    // Log("Scheduling to %d", n);
     current = (n == 0) ? &pcb[0] : &pcb[1];
     _switch(current->tf);
     return current->tf;
 }
 
-int proc_execve(const char *path, char *const argv[], char *const envp[]) {
+int proc_execve(_Context *ctx, const char *path, char *const argv[], char *const envp[]) {
     // TODO
-    context_uload(&pcb[pcb_iter++], path);
+    // context_uload(&pcb[pcb_iter++], path);
     panic("wtf");
+    return -1;
+}
+
+int proc_brk(_Context *ctx, size_t new_program_break) {
     return -1;
 }

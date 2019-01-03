@@ -11,7 +11,6 @@ void vecnull();
 extern void get_cur_as(_Context *c);
 
 _Context *irq_handle(_Context *tf) {
-    printf("Handle %p", tf);
     _Context *next = tf;
     get_cur_as(tf);
     if(user_handler) {
