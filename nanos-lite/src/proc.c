@@ -47,15 +47,16 @@ _Context *schedule(_Context *prev) {
 }
 
 
-int proc_execve(const char *path, char *const argv[], char *const envp[]) {
+_Context* proc_execve(const char *path, char *const argv[], char *const envp[]) {
     // TODO
     // context_uload(&all_pcbs[pcb_iter++], path);
     // panic("wtf");
     // TODO();
     PCB* pcb = current;
+    memset(pcb, sizeof(*pcb), 0);
     _unprotect(&pcb->as);
-    TODO();
-    return 0;
+    context_uload(pcb, path, (void*)argv);
+    return pcb->tf;
 }
 
 int proc_brk(size_t new_program_break) {

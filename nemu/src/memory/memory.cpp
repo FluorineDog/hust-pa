@@ -79,7 +79,7 @@ paddr_t extract_paddr(CR3 cr3, vaddr_t addr_raw, bool is_write){
 	Assert(pde.present == 1, "ck, %08x->%08x", cr3.val, addr_raw);
 	pde.accessed = 1;
 	auto & pte = fetch_pmem<PTE>(pde.val, vaddr.table_index);
-	Assert(pte.present == 1, "kc");
+	Assert(pte.present == 1, "kc, %08x->%08x", cr3.val, addr_raw);
 	pte.accessed = 1;
 	pte.dirty |= is_write;
 	tlb[cache_id] = &pte;

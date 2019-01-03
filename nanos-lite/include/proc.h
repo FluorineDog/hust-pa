@@ -18,7 +18,7 @@ typedef union {
 } PCB;
 
 extern PCB *current;
-int proc_execve(const char *path, char *const argv[], char *const envp[]);
+_Context *proc_execve(const char *path, char *const argv[], char *const envp[]);
 int proc_brk(size_t new_program_break);
 _Context *schedule(_Context *prev);
 

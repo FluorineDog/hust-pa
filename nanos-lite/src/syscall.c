@@ -31,6 +31,7 @@ _Context* do_syscall(_Context* c) {
                 _halt(status);
                 panic("wtf");
             }
+            TODO();
             naive_uload(NULL, "/bin/init");
             break;
         }
@@ -91,7 +92,8 @@ _Context* do_syscall(_Context* c) {
             _def(argv, 3, char* const*);
             _def(envp, 4, char* const*);
             // TODO: i know there is some bug, related to stack, and i won't fix
-            _ret() = proc_execve(path, argv, envp);
+            c = proc_execve(path, argv, envp);
+            _switch(c);
             break;
         }
         default: panic("Unhandled syscall ID = %d", syscall_type);
