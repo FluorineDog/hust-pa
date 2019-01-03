@@ -66,7 +66,7 @@ void _unprotect(_Protect *p) {
 }
 
 static _Protect *cur_as = NULL;
-void set_to_cur_as(_Context *c) {
+void get_cur_as(_Context *c) {
     c->prot = cur_as;
 }
 

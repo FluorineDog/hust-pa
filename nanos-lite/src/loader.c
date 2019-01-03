@@ -11,12 +11,12 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     Log("allocing pages", filename, fd, size);
 
     // alloc pages for 
-    for(vaddr_t va = DEFAULT_ENTRY; va < DEFAULT_ENTRY + PGROUNDUP(size); va += PGSIZE) {
-        _map(&pcb->as, va, new_page(1), 0);
+    for(void* va = (void*) DEFAULT_ENTRY; va < (void*)DEFAULT_ENTRY + PGROUNDUP(size); va += PGSIZE) {
+        _map(&pcb->as, (void*)va, new_page(1), _PROT_WRITE);
     }
-
     pcb->max_brk = DEFAULT_ENTRY + PGROUNDUP(size);
     pcb->cur_brk = DEFAULT_ENTRY + size;
+
     vfs_read(fd, (void *)DEFAULT_ENTRY, size);
     vfs_close(fd);
     return DEFAULT_ENTRY;

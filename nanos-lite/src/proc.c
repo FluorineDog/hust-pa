@@ -42,7 +42,7 @@ _Context *schedule(_Context *prev) {
 
 int proc_execve(const char *path, char *const argv[], char *const envp[]) {
     // TODO
-    context_uload(&pcb[pcb_iter++], path, argv);
+    context_uload(&pcb[pcb_iter++], path);
     panic("wtf");
     return -1;
 }

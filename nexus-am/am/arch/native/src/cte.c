@@ -3,11 +3,6 @@
 
 static _Context *(*user_handler)(_Event, _Context *) = NULL;
 
-extern void asm_trap();
-extern void ret_from_trap();
-
-extern void get_cur_as(_Context *c);
-extern void _switch(_Context *c);
 
 void irq_handle(_Context *c) {
     getcontext(&c->uc);

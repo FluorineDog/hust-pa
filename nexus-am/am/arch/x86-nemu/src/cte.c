@@ -8,8 +8,12 @@ void vectrap();
 void vecsys();
 void vecnull();
 
+extern void get_cur_as(_Context *c);
+
 _Context *irq_handle(_Context *tf) {
+    printf("Handle %p", tf);
     _Context *next = tf;
+    get_cur_as(tf);
     if(user_handler) {
         _Event ev = {0};
         // printf("[fuck with %d]", tf->irq);
@@ -27,7 +31,7 @@ _Context *irq_handle(_Context *tf) {
                 break;
             }
             case -1: {
-                printf("[exit]");
+                printf("[exit whore]");
                 break;
             }
             default: ev.event = _EVENT_ERROR; break;
@@ -39,6 +43,7 @@ _Context *irq_handle(_Context *tf) {
             next = tf;
         }
     }
+    _switch(next);
     return next;
 }
 

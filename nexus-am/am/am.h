@@ -85,6 +85,13 @@ void _unprotect(_Protect *p);
 int _map(_Protect *p, void *va, void *pa, int prot);
 _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry, void *args);
 
+void asm_trap();
+void ret_from_trap();
+
+void get_cur_as(_Context *c);
+void _switch(_Context *c);
+
+
 // ================= Multi-Processor Extension (MPE) =================
 
 int _mpe_init(void (*entry)());
