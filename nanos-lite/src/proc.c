@@ -54,7 +54,7 @@ _Context* proc_execve(const char *path, char *const argv[], char *const envp[]) 
     // panic("wtf");
     // TODO();
     PCB* pcb = current;
-    memset(pcb, 0, sizeof(PCB));
+    // memset(pcb, 0, sizeof(PCB));
     _unprotect(&pcb->as);
     context_uload(pcb, path, (void*)argv);
     return pcb->tf;

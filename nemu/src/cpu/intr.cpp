@@ -51,25 +51,25 @@ void return_from_intr(){
 
 extern uint32_t get_time_in_ms();
 bool dev_raise_intr() {
-	using namespace EFLAGS;
-	static int last_IF = 0;
-	int this_IF = get_IF(cpu.eflags);
-	static uint32_t last_time = 100000;
-	if(last_IF && this_IF && cpu.irq_time == 1){
-		// TODO: JIT
-//		Log("trigger interrupt at %d=> %08x", last_time, cpu.eip);
-		raise_intr(32, cpu.eip);
-		cpu.irq_time = 0;
-		return true;
-	}
-	last_IF = this_IF;
-	uint32_t new_time = g_nr_guest_instr;
-	if(last_time < new_time){
-		cpu.irq_time = 1;
-		last_time = new_time + 1;
-//		extern void info_register();
-//		info_register();
-	}
+//	using namespace EFLAGS;
+//	static int last_IF = 0;
+//	int this_IF = get_IF(cpu.eflags);
+//	static uint32_t last_time = 100000;
+//	if(last_IF && this_IF && cpu.irq_time == 1){
+//		// TODO: JIT
+////		Log("trigger interrupt at %d=> %08x", last_time, cpu.eip);
+//		raise_intr(32, cpu.eip);
+//		cpu.irq_time = 0;
+//		return true;
+//	}
+//	last_IF = this_IF;
+//	uint32_t new_time = g_nr_guest_instr;
+//	if(last_time < new_time){
+//		cpu.irq_time = 1;
+//		last_time = new_time + 1;
+////		extern void info_register();
+////		info_register();
+//	}
 	return false;
 }
 
