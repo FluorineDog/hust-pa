@@ -30,8 +30,14 @@ void init_proc() {
     // context_uload(&all_pcbs[0], "/bin/hello");
     // context_uload(&all_pcbs[1], "/bin/litenes", args);
     context_uload(&all_pcbs[1], "/bin/init", NULL);
+    context_uload(&all_pcbs[2], "/bin/init", NULL);
+    context_uload(&all_pcbs[3], "/bin/init", NULL);
     // Log("all_pcbs content: %p", all_pcbs[1].tf->prot->ptr);
     switch_boot_pcb();
+}
+static int chosen_pcb_id;
+void set_pcb_id(int id){
+    chosen_pcb_id = id;
 }
 
 _Context *schedule(_Context *prev) {
@@ -42,7 +48,7 @@ _Context *schedule(_Context *prev) {
     n = (n + 1) & 0xFF;
     // n = 1;
     // Log("Scheduling to %d", n);
-    current = (n == 0) ? &all_pcbs[0] : &all_pcbs[1];
+    current = (n == 0) ? &all_pcbs[0] : &all_pcbs[chosen_pcb_id];
     _switch(current->tf);
     return current->tf;
 }

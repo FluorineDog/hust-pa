@@ -58,6 +58,10 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     if(keycode & 0x8000) {
         keycode ^= 0x8000;
         status = "kd";
+        if(_KEY_F1 <= keycode <= _KEY_F3) {
+            extern void set_pcb_id(int);
+            set_pcb_id(keycode - _KEY_F1 + 1);
+        }
     }
 
     static int next_time = 0;
