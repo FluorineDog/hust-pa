@@ -67,7 +67,10 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     static int next_time = 0;
     if(keycode != _KEY_NONE) {
         const char *name = keyname[keycode];
+        // while(1);
+        // printf("[%p]", buf);
         int n = snprintf(buf, len + 100, "%s %s\n", status, name);
+        printf("[%s]", buf);
         assert(n < len);
         return n;
     } else {

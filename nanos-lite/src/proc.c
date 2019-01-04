@@ -2,7 +2,6 @@
 #include "loader.h"
 #include "memory.h"
 
-#define MAX_NR_PROC 4
 
 static PCB all_pcbs[MAX_NR_PROC] __attribute__((used));
 static PCB pcb_boot;
@@ -37,8 +36,15 @@ void init_proc() {
 }
 static int chosen_pcb_id = 1;
 void set_pcb_id(int id){
-    Log("switching to %d", id);
+    // Log("switching to %d", id);
+    // delayed
     chosen_pcb_id = id;
+}
+
+int get_pcb_id(){
+    int id = current - all_pcbs;
+    // Log("fuck %d", id);
+    return id;
 }
 
 _Context *schedule(_Context *prev) {

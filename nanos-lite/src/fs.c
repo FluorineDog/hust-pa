@@ -1,6 +1,7 @@
 #include "fs.h"
 #include "device.h"
 #include "ramdisk.h"
+#include "proc.h"
 
 typedef size_t (*ReadFn)(void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn)(const void *buf, size_t offset, size_t len);
@@ -11,8 +12,7 @@ typedef struct {
     size_t disk_offset;
     ReadFn read;
     WriteFn write;
-    ssize_t open_offset;
-    int file_lock;
+    ssize_t open_offset[MAX_NR_PROC];
 } Finfo;
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
@@ -43,7 +43,6 @@ void init_fs() {
     for(int i = FD_FILES_BEGIN; i < NR_FILES; ++i) {
         file_table[i].read = ramdisk_read;
         file_table[i].write = ramdisk_write;
-        file_table[i].open_offset = 0;
     }
     file_table[FD_FB].size = screen_width() * screen_height() * sizeof(int);
 }
@@ -51,8 +50,8 @@ void init_fs() {
 size_t vfs_read(int fd, void *buf, size_t size) {
     assert(0 <= fd && fd < NR_FILES);
     Finfo *h = file_table + fd;
-    int offset = h->open_offset + h->disk_offset;
-    int remaining = h->size - h->open_offset;
+    int offset = h->open_offset[get_pcb_id()] + h->disk_offset;
+    int remaining = h->size - h->open_offset[get_pcb_id()];
     if(size > remaining) {
         size = remaining;
     }
@@ -62,28 +61,28 @@ size_t vfs_read(int fd, void *buf, size_t size) {
         panic("wtf");
         return delta;
     }
-    // Log("read{fd = %d, buf=%p, size=%d} from %d to %d", fd, buf, h->size, h->open_offset,
-    //     h->open_offset + delta);
-    h->open_offset += delta;
+    // Log("read{fd = %d, buf=%p, size=%d} from %d to %d", fd, buf, h->size, h->open_offset[get_pcb_id()],
+    //     h->open_offset[get_pcb_id()] + delta);
+    h->open_offset[get_pcb_id()] += delta;
     return delta;
 }
 
 size_t vfs_write(int fd, const void *buf, size_t size) {
     assert(0 <= fd && fd < NR_FILES);
     Finfo *h = file_table + fd;
-    int offset = h->open_offset + h->disk_offset;
+    int offset = h->open_offset[get_pcb_id()] + h->disk_offset;
     int delta = h->write(buf, offset, size);
     if(delta < 0) {
         panic("wtf");
         return delta;
     }
     if(size != delta) {
-        Log("write %d from %d to %d[%d]", fd, h->open_offset, h->open_offset + delta,
+        Log("write %d from %d to %d[%d]", fd, h->open_offset[get_pcb_id()], h->open_offset[get_pcb_id()] + delta,
             size);
     }
     assert(size == delta);
-    h->open_offset += delta;
-    assert(h->open_offset <= h->size);
+    h->open_offset[get_pcb_id()] += delta;
+    assert(h->open_offset[get_pcb_id()] <= h->size);
     return delta;
 }
 
@@ -97,7 +96,7 @@ int vfs_open(const char *filename, int flags, int mode) {
             // match
             // assert(handle->file_lock == 0);
             // handle->file_lock++;
-            handle->open_offset = 0;
+            handle->open_offset[get_pcb_id()] = 0;
             Log("opened with fd=%d", fd);
             return fd;
         }
@@ -124,17 +123,17 @@ ssize_t vfs_lseek(int fd, ssize_t offset, int whence) {
     ssize_t base;
     switch(whence) {
         case SEEK_SET: base = 0; break;
-        case SEEK_CUR: base = handle->open_offset; break;
+        case SEEK_CUR: base = handle->open_offset[get_pcb_id()]; break;
         case SEEK_END: base = handle->size; break;
         default: panic("wtf");
     }
     ssize_t new = base + offset;
     // Log("lseek %d{size = %d, off=%d} with {offset=%d, whence=%d}, to %d", fd,
-    //     handle->size, handle->open_offset, offset, whence, new);
+    //     handle->size, handle->open_offset[get_pcb_id()], offset, whence, new);
     assert(0 <= new);
     // piss off the fix size
     assert(new <= handle->size);
-    handle->open_offset = new;
+    handle->open_offset[get_pcb_id()] = new;
     return new;
 }
 

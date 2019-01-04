@@ -1,10 +1,12 @@
-#ifndef __PROC_H__
-#define __PROC_H__
+#pragma once 
 
 #include "common.h"
 #include "memory.h"
 
 #define STACK_SIZE (8 * PGSIZE)
+#define MAX_NR_PROC 4
+void set_pcb_id(int id);
+int get_pcb_id();
 
 typedef union {
     uint8_t stack[STACK_SIZE] PG_ALIGN;
@@ -27,5 +29,3 @@ _Context *schedule(_Context *prev);
 //     _Area area;
 //     void *ptr;
 // } _Protect;
-
-#endif
