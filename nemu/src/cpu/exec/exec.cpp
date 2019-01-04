@@ -308,6 +308,10 @@ void exec_wrapper(bool print_flag) {
 	}
 #endif
 	update_eip();
+	if(cpu.irq_time && EFLAGS::get_IF(cpu.eflags)){
+		raise_intr(32, cpu.eip)	;
+		update_eip();
+	}
 	
 #if defined(DIFF_TEST)
 	void difftest_step(uint32_t);
