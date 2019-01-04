@@ -3,7 +3,6 @@
 
 make_EHelper(jmp) {
   // the target address is calculated at the decode stage
-  
   rtl_j(id_dest->val);
   print_asm("jmp %x", id_dest->val);
 }

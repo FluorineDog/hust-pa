@@ -1,3 +1,4 @@
+#include <eflags.h>
 #include <x86.h>
 #include <klib.h>
 
