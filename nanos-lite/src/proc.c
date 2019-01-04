@@ -43,7 +43,10 @@ void set_pcb_id(int id){
 
 int get_pcb_id(){
     int id = current - all_pcbs;
-    // Log("fuck %d", id);
+    if((uint32_t)id > (uint32_t)MAX_NR_PROC){
+        id = 0;
+    }
+    // assert(0<= id && id < MAX_NR_PROC);
     return id;
 }
 

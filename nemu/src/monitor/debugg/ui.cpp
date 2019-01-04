@@ -233,7 +233,7 @@ void info_register() {
 	show("CR0", cpu.cr0.val);
 	show("CR3", cpu.cr3.val);
 	using namespace EFLAGS;
-	printf("ZF=%d, SF=%d, CF=%d, OF=%d\n, IF=%d", get_ZF(cpu.eflags), get_SF(cpu.eflags), get_CF(cpu.eflags),
+	printf("ZF=%d, SF=%d, CF=%d, OF=%d, IF=%d\n", get_ZF(cpu.eflags), get_SF(cpu.eflags), get_CF(cpu.eflags),
 			get_OF(cpu.eflags), get_IF(cpu.eflags));
 	
 }

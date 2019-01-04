@@ -1,4 +1,5 @@
 #include "nemu.h"
+#include "time.h"
 #include "device/device.h"
 #include "monitor/monitor.h"
 #include "monitor/watchpoint.h"
@@ -80,7 +81,13 @@ void cpu_exec(uint64_t n) {
                 return;
             }
         }
+        static time_t last_time = time(NULL);
+        if(time(NULL) > last_time + 30){
+        	last_time = time(NULL);
+            break;
+        }
 #endif
+
     }
 
     if (nemu_state == NEMU_RUNNING) { nemu_state = NEMU_STOP; }

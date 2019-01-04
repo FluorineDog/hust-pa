@@ -51,11 +51,11 @@ void return_from_intr(){
 
 extern uint32_t get_time_in_ms();
 void dev_raise_intr() {
-	static int count = 0;
+	static uint32_t count = 0;
 	if((++count & 0xF) == 0xF){
+		// fprintf(stderr, "[timer int at %08x=>%08x]", cpu.cr3.val, cpu.eip);
 		cpu.irq_time = 1;
 	}
 	
-//	printf("timer int");
 }
 

@@ -281,10 +281,13 @@ make_EHelper(real) {
 static inline void update_eip(void) {
 	if (g_decoding.is_jmp) {
 		g_decoding.is_jmp = 0;
-	}
-	else { cpu.eip = g_decoding.seq_eip; }
+	} else { cpu.eip = g_decoding.seq_eip; }
 	memset(&g_decoding, 0, sizeof(g_decoding));
 }
+
+#include <map>
+
+std::map<uint32_t, int> cr3_bitch;
 
 void exec_wrapper(bool print_flag) {
 	vaddr_t ori_eip = cpu.eip;
@@ -302,18 +305,26 @@ void exec_wrapper(bool print_flag) {
 	sprintf(g_decoding.p, "%*.s", 50 - (12 + 3 * instr_len), "");
 	// TODO: FUCK THE OVERLAP WARNING OFF
 	strcat(g_decoding.asm_buf, g_decoding.assembly);
+	if (ori_eip >= 0x8000000) {
+		int k = cr3_bitch[cpu.cr3.val];
+		if (k == 0) {
+			cr3_bitch[cpu.cr3.val] = cr3_bitch.size();
+		}
+		g_decoding.asm_buf[0] = (k + 'a');
+	}
 	Log_write("%s\n", g_decoding.asm_buf);
 	if (print_flag) {
+		
 		puts(g_decoding.asm_buf);
 	}
 #endif
 	update_eip();
-	if(cpu.irq_time && EFLAGS::get_IF(cpu.eflags)){
-		raise_intr(32, cpu.eip)	;
+	if (cpu.irq_time && EFLAGS::get_IF(cpu.eflags)) {
+		raise_intr(32, cpu.eip);
 		update_eip();
 		cpu.irq_time = 0;
 	}
-	
+
 #if defined(DIFF_TEST)
 	void difftest_step(uint32_t);
 	difftest_step(ori_eip);

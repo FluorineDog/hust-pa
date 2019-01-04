@@ -23,6 +23,7 @@ uint32_t paddr_read(paddr_t addr, int len) {
 
 void paddr_write(paddr_t addr, uint32_t data, int len) {
 	int no = is_mmio(addr);
+//	assert(addr >= 0x101c20 || addr < 0x100000);
 	if (no == -1) {
 		memcpy(guest_to_host(addr), &data, len);
 	} else {

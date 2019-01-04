@@ -1,10 +1,10 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
-//#define DIFF_TEST
+#define DIFF_TEST
 #endif
 
 #if _SHARE
