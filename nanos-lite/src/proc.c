@@ -35,8 +35,9 @@ void init_proc() {
     // Log("all_pcbs content: %p", all_pcbs[1].tf->prot->ptr);
     switch_boot_pcb();
 }
-static int chosen_pcb_id;
+static int chosen_pcb_id = 1;
 void set_pcb_id(int id){
+    Log("switching to %d", id);
     chosen_pcb_id = id;
 }
 
