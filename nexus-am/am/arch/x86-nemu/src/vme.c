@@ -1,3 +1,4 @@
+#include <eflags.h>
 #include <x86.h>
 #include <klib.h>
 
@@ -64,7 +65,7 @@ void _unprotect(_Protect *p) {
     // DO NOTHING?
     // discard the fuck
     // to avoid anything
-    memset(p, sizeof(_Protect), 0);
+    memset(p,  0, sizeof(_Protect));
 }
 
 static _Protect *cur_as = NULL;
@@ -139,15 +140,16 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
         stack_args[2] = (uint32_t)stack_argv;
         stack_args[3] = 0;
         ustack.end = stack_args;
-        printf("[%p fuck %s]", stack_argv,  stack_argv[1]);
+        // printf("[%p fuck %s]", stack_argv,  stack_argv[1]);
     }
 
     _Context *ctx = (_Context *)ustack.end - 1;
     {
-        memset(ctx, sizeof(_Context), 0);
+        memset(ctx, 0, sizeof(_Context));
         ctx->prot = p;
         ctx->eip = (uint32_t)entry;
         ctx->cs = 0x8;
+        ctx->eflags = MASK_IF;
         ustack.end = ctx;
     }
 

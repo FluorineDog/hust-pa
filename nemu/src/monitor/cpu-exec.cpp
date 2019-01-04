@@ -39,6 +39,7 @@ void cpu_exec(uint64_t n) {
         /* Execute one instruction, including instruction fetch,
          * instruction decode, and the actual execution. */
         exec_wrapper(print_flag);
+//        printf("[%08x]", cpu.esp);
         nr_guest_instr_add(1);
 
 

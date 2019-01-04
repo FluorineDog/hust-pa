@@ -34,18 +34,18 @@ void naive_uload(PCB *pcb, const char *filename) {
     panic("wtf");
 }
 
-static char buf[3][128];
-const char *argv[3] = {buf[0], buf[1], buf[2]};
-void program_naive_uload(PCB *pcb, const char *filename, char *const *raw_argv) {
-    int i = 0;
-    while(raw_argv[i] != NULL && i < 3) {
-        strcpy(buf[i], raw_argv[i]);
-        i++;
-    }
-    uintptr_t entry = loader(pcb, filename);
-    ((void (*)(int argc, const char *const *argv))entry)(i, argv);
-    panic("wtf");
-}
+// static char buf[3][128];
+// const char *argv[3] = {buf[0], buf[1], buf[2]};
+// void program_naive_uload(PCB *pcb, const char *filename, char *const *raw_argv) {
+//     int i = 0;
+//     while(raw_argv[i] != NULL && i < 3) {
+//         strcpy(buf[i], raw_argv[i]);
+//         i++;
+//     }
+//     uintptr_t entry = loader(pcb, filename);
+//     ((void (*)(int argc, const char *const *argv))entry)(i, argv);
+//     panic("wtf");
+// }
 
 void context_kload(PCB *pcb, void *entry) {
     _Area stack;

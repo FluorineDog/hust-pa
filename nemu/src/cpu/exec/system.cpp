@@ -15,6 +15,16 @@ make_EHelper(lidt) {
 	print_asm_template1(lidt);
 }
 
+make_EHelper(cli) {
+	rtl_andi(&cpu.eflags, &cpu.eflags, ~EFLAGS::MASK_IF);
+	print_asm_template1(cli);
+}
+
+make_EHelper(sti) {
+	rtl_ori(&cpu.eflags, &cpu.eflags, EFLAGS::MASK_IF);
+	print_asm_template1(sti);
+}
+
 // use mov_E2r
 make_EHelper(mov_r2cr) {
 	// TODO();
