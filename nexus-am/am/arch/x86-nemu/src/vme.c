@@ -65,7 +65,7 @@ void _unprotect(_Protect *p) {
     // DO NOTHING?
     // discard the fuck
     // to avoid anything
-    memset(p,  0, sizeof(_Protect));
+    memset(p, 0, sizeof(_Protect));
 }
 
 static _Protect *cur_as = NULL;

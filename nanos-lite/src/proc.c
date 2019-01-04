@@ -39,8 +39,8 @@ _Context *schedule(_Context *prev) {
     current->tf = prev;
     // switch to all_pcbs[0]
     static uint32_t n = 0;
-    // n = (n + 1) & 0xF;
-    n = 1;
+    n = (n + 1) & 0xFF;
+    // n = 1;
     // Log("Scheduling to %d", n);
     current = (n == 0) ? &all_pcbs[0] : &all_pcbs[1];
     _switch(current->tf);
@@ -54,7 +54,7 @@ _Context* proc_execve(const char *path, char *const argv[], char *const envp[]) 
     // panic("wtf");
     // TODO();
     PCB* pcb = current;
-    memset(pcb, 0, sizeof(PCB));
+    // memset(pcb, 0, sizeof(PCB));
     _unprotect(&pcb->as);
     context_uload(pcb, path, (void*)argv);
     return pcb->tf;
