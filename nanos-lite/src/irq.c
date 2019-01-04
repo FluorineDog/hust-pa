@@ -13,6 +13,12 @@ static _Context* do_event(_Event e, _Context* c) {
         case _EVENT_SYSCALL: {
             // Log("irq=%p, pa1=%p, pa2=%p, pa3=%p", c->GPR1, c->GPR2, c->GPR3, c->GPR4);
             c = do_syscall(c);
+            // Log("do_event %p", c);
+            break;
+        }
+        case _EVENT_IRQ_TIMER: {
+            // printf("irq ");
+            c = schedule(c);
             break;
         }
         default: panic("Unhandled event ID = %d", e.event);
