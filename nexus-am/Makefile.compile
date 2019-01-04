@@ -19,26 +19,26 @@ ISA_DEF = __ISA_$(shell echo $(ISA) | tr a-z A-Z)__
 
 INCLUDES  = $(addprefix -I, $(INC_DIR)) -I$(AM_HOME)/am/
 INCLUDES += -I$(AM_HOME)/am/arch/$(ARCH)/include
-CFLAGS   += -std=gnu11 -O2 -MMD -Wall -Werror -ggdb $(INCLUDES) -D$(ISA_DEF) -fno-builtin
-CXXFLAGS += -std=c++11 -O2 -MMD -Wall -Werror -ggdb $(INCLUDES) -D$(ISA_DEF) -fno-builtin
+CFLAGS   += -std=gnu11 -DNDEBUG -O2 -MMD -Wall -Werror -ggdb $(INCLUDES) -D$(ISA_DEF) -fno-builtin
+CXXFLAGS += -std=c++11 -DNDEBUG -O2 -MMD -Wall -Werror -ggdb $(INCLUDES) -D$(ISA_DEF) -fno-builtin
 ASFLAGS  +=                -MMD                     $(INCLUDES) -D$(ISA_DEF)
 
 ifeq ($(ISA), native)
 CFLAGS_COMMON = -fpie
 CFLAGS   += $(CFLAGS_COMMON)
-CXXFLAGS += $(CFLAGS_COMMON)
+CXXFLAGS += $(CFLAGS_COMMON) 
 ASFLAGS  += -fpie -pie
 endif
 
 ifeq ($(ISA), x86)
-CFLAGS_COMMON = -m32 -fno-pic -fno-builtin -fno-stack-protector -fno-omit-frame-pointer -march=i386 -mstringop-strategy=unrolled_loop
-CFLAGS   += $(CFLAGS_COMMON)
+CFLAGS_COMMON = -DNDEBUG -Ofast -m32 -fno-pic -fno-builtin -fno-stack-protector -fno-omit-frame-pointer -march=i386 -mstringop-strategy=unrolled_loop
+CFLAGS   += $(CFLAGS_COMMON) 
 CXXFLAGS += $(CFLAGS_COMMON) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  += -m32
 endif
 
 ifeq ($(ISA), am_native)
-CFLAGS_COMMON = -fno-builtin -fno-stack-protector -fno-omit-frame-pointer -fno-reorder-functions
+CFLAGS_COMMON = -DNDEBUG -Ofast  -fno-builtin -fno-stack-protector -fno-omit-frame-pointer -fno-reorder-functions
 CFLAGS   += $(CFLAGS_COMMON)
 CXXFLAGS += $(CFLAGS_COMMON) -ffreestanding -fno-rtti -fno-exceptions
 endif

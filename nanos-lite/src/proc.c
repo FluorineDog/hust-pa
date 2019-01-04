@@ -39,11 +39,12 @@ void set_pcb_id(int id){
     // Log("switching to %d", id);
     // delayed
     chosen_pcb_id = id;
+    Log("chosen=%d", id);
 }
 
 int get_pcb_id(){
     int id = current - all_pcbs;
-    if((uint32_t)id > (uint32_t)MAX_NR_PROC){
+    if((uint32_t)id >= (uint32_t)MAX_NR_PROC){
         id = 0;
     }
     // assert(0<= id && id < MAX_NR_PROC);
@@ -59,6 +60,7 @@ _Context *schedule(_Context *prev) {
     // n = 1;
     // Log("Scheduling to %d", n);
     current = (n == 0) ? &all_pcbs[0] : &all_pcbs[chosen_pcb_id];
+    if(chosen_pcb_id ==0 ) chosen_pcb_id = 1;
     _switch(current->tf);
     return current->tf;
 }
