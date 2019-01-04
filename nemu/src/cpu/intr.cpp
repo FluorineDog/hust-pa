@@ -51,6 +51,7 @@ void return_from_intr(){
 
 extern uint32_t get_time_in_ms();
 void dev_raise_intr() {
-	printf("timer int");
+	cpu.irq_time = 1;
+//	printf("timer int");
 }
 

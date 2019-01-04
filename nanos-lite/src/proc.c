@@ -39,8 +39,8 @@ _Context *schedule(_Context *prev) {
     current->tf = prev;
     // switch to all_pcbs[0]
     static uint32_t n = 0;
-    // n = (n + 1) & 0xF;
-    n = 1;
+    n = (n + 1) & 0xFF;
+    // n = 1;
     // Log("Scheduling to %d", n);
     current = (n == 0) ? &all_pcbs[0] : &all_pcbs[1];
     _switch(current->tf);

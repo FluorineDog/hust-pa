@@ -311,6 +311,7 @@ void exec_wrapper(bool print_flag) {
 	if(cpu.irq_time && EFLAGS::get_IF(cpu.eflags)){
 		raise_intr(32, cpu.eip)	;
 		update_eip();
+		cpu.irq_time = 0;
 	}
 	
 #if defined(DIFF_TEST)
