@@ -308,10 +308,6 @@ void exec_wrapper(bool print_flag) {
 	}
 #endif
 	update_eip();
-	bool is_irq = dev_raise_intr();
-	if(is_irq){
-		update_eip();
-	}
 	
 #if defined(DIFF_TEST)
 	void difftest_step(uint32_t);
