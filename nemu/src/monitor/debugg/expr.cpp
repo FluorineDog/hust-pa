@@ -279,7 +279,6 @@ private:
                 return make_unique<Tree>(value, fn);
             }
             case TK_REG: {
-                // TODO
                 ++iter;
                 if (auto t = parse_cpuname(token.second)) {
                     auto[name, value] = t.value();

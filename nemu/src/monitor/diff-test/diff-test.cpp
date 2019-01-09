@@ -131,7 +131,6 @@ void difftest_step(uint32_t eip) {
         nemu_state = NEMU_ABORT;
     }
 
-    //    TODO();
 }
 
 

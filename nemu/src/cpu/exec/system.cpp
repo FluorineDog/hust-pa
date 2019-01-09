@@ -27,7 +27,6 @@ make_EHelper(sti) {
 
 // use mov_E2r
 make_EHelper(mov_r2cr) {
-	// TODO();
 	assert(id_src->type == OP_TYPE_REG);
 	assert(id_dest->type == OP_TYPE_REG);
 	rtl_mv(&cpu.ctlreg[id_dest->reg], &id_src->val);
@@ -37,7 +36,6 @@ make_EHelper(mov_r2cr) {
 
 // use lea_r2m
 make_EHelper(mov_cr2r) {
-	// TODO;
 	assert(id_src->type == OP_TYPE_REG);
 	assert(id_dest->type == OP_TYPE_REG);
 	operand_write(id_dest, &cpu.ctlreg[id_src->reg]);
