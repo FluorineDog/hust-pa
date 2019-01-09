@@ -111,7 +111,7 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
     // TODO
     int argc = 0;
     char **stack_argv = (char **)ustack.end;
-    const char* const* args_raw = (const char* const*)args_raw_void;
+    const char *const *args_raw = (const char *const *)args_raw_void;
     if(args_raw) {
         while(args_raw[argc]) {
             argc++;
@@ -120,7 +120,7 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
         ustack.end = stack_argv;
     }
 
-    if(args_raw){
+    if(args_raw) {
         char *stack_strs = (char *)ustack.end;
         for(int i = 0; i < argc; ++i) {
             int len = strlen(args_raw[i]) + 1;
@@ -134,7 +134,7 @@ _Context *_ucontext(_Protect *p, _Area ustack, _Area kstack, void *entry,
     {
         uint32_t *stack_args = (uint32_t *)ustack.end - 4;
         // placeholder for return addr of _start
-        stack_args[0] = 0; 
+        stack_args[0] = 0;
         // parameters of _start
         stack_args[1] = argc;
         stack_args[2] = (uint32_t)stack_argv;

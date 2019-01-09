@@ -40,7 +40,7 @@ enum { eflags_accept_(XX) };
 #undef XX
 
 #define XX_(name, loc, bit)                                  \
-    inline uint32_t get_##name(uint32_t eflags) {                   \
+    inline uint32_t get_##name(uint32_t eflags) {            \
         return (LOWMASK_##name & (eflags >> OFFSET_##name)); \
     }
 #define XX(name, loc, bit) XX_(name, loc, bit)

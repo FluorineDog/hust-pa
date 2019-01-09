@@ -3,7 +3,6 @@
 
 static _Context *(*user_handler)(_Event, _Context *) = NULL;
 
-
 void irq_handle(_Context *c) {
     getcontext(&c->uc);
     get_cur_as(c);

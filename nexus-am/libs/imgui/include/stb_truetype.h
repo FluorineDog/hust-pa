@@ -753,7 +753,7 @@ STBTT_DEF int stbtt_GetGlyphBox(const stbtt_fontinfo *info, int glyph_index, int
 enum { STBTT_vmove = 1, STBTT_vline, STBTT_vcurve, STBTT_vcubic };
 #endif
 
-#ifndef stbtt_vertex    // you can predefine this to use different values
+#ifndef stbtt_vertex    // you can predefine this to use different values \
                         // (we share this with other code at RAD)
 #define stbtt_vertex_type \
     short    // can't use stbtt_int16 because that's not visible in the header file

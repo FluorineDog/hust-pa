@@ -91,7 +91,6 @@ void ret_from_trap();
 void get_cur_as(_Context *c);
 void _switch(_Context *c);
 
-
 // ================= Multi-Processor Extension (MPE) =================
 
 int _mpe_init(void (*entry)());
