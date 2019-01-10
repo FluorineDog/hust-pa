@@ -14,7 +14,7 @@
 
 int nemu_state = NEMU_STOP;
 
-void exec_wrapper(bool);
+int exec_wrapper(bool);
 
 uint64_t g_nr_guest_instr = 0;
 
@@ -37,11 +37,12 @@ void cpu_exec(uint64_t n) {
     bool print_flag = n <= MAX_INSTR_TO_PRINT;
 
     for (; n > 0; n--) {
+        
         /* Execute one instruction, including instruction fetch,
          * instruction decode, and the actual execution. */
-        exec_wrapper(print_flag);
+        int n_inst = exec_wrapper(print_flag);
 //        printf("[%08x]", cpu.esp);
-        nr_guest_instr_add(1);
+        nr_guest_instr_add(n_inst);
 
 
 #ifdef HAS_IOE

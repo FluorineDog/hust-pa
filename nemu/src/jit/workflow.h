@@ -1,5 +1,4 @@
 #pragma once
-
 #include <optional>
 #include "kjit.h"
 #include <map>
@@ -18,13 +17,8 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Constant.h>
 
-using rtlreg_t = uint32_t;
+#include "cpu/reg.h"
 
-struct CPUState {
-	uint32_t val[20];
-	uint32_t fuck[20];
-};
-extern CPUState cpu;
 
 namespace llvm {
 
@@ -199,7 +193,7 @@ private:
 		uint64_t uid;
 		std::unique_ptr<Module> mod;
 		std::unordered_map<rtlreg_t *, Value *> value_cache;
-		std::array<std::pair<Value *, bool>, sizeof(CPUState) / sizeof(rtlreg_t)> reg_cache;
+		std::array<std::pair<Value *, bool>, sizeof(CPU_state) / sizeof(rtlreg_t)> reg_cache;
 		BasicBlock *bb;
 		Function *func;
 		Value *regfile;

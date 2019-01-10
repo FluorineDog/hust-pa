@@ -289,8 +289,9 @@ static inline void update_eip(void) {
 
 std::map<uint32_t, int> cr3_bitch;
 
-void exec_wrapper(bool print_flag) {
+int exec_wrapper(bool print_flag) {
 	vaddr_t ori_eip = cpu.eip;
+	cpu.eip = 0;
 
 #ifdef DEBUG
 	g_decoding.p = g_decoding.asm_buf;
@@ -329,4 +330,5 @@ void exec_wrapper(bool print_flag) {
 	void difftest_step(uint32_t);
 	difftest_step(ori_eip);
 #endif
+	return 1;
 }
