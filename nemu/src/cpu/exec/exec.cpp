@@ -291,6 +291,7 @@ std::map<uint32_t, int> cr3_bitch;
 
 int exec_wrapper(bool print_flag) {
 	vaddr_t ori_eip = cpu.eip;
+	// served as an anchor
 	cpu.eip = 0;
 
 #ifdef DEBUG
