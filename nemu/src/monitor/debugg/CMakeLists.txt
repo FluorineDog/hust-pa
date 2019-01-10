@@ -1,1 +1,1 @@
-add_library("debugg" OBJECT "expr.cpp" "watchpoint.cpp" "ui.cpp")
+add_library("debugg" OBJECT "expr.cpp" "ui.cpp" "watchpoint.cpp")
