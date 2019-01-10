@@ -1,1 +1,1 @@
-add_library("io" OBJECT "mmio.cpp" "port-io.cpp")
+add_library("io" OBJECT "port-io.cpp" "mmio.cpp")

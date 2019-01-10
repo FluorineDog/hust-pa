@@ -1,1 +1,1 @@
-add_library("exec" OBJECT "prefix.cpp" "relop.cpp" "exec.cpp" "data-mov.cpp" "special.cpp" "control.cpp" "system.cpp" "cc.cpp" "arith.cpp" "logic.cpp")
+add_library("exec" OBJECT "system.cpp" "cc.cpp" "logic.cpp" "special.cpp" "control.cpp" "data-mov.cpp" "exec.cpp" "relop.cpp" "prefix.cpp" "arith.cpp")
