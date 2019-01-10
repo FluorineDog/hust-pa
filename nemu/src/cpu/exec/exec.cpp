@@ -322,6 +322,7 @@ int exec_wrapper(bool print_flag) {
 #endif
 	update_eip();
 	if (cpu.irq_time && EFLAGS::get_IF(cpu.eflags)) {
+		g_decoding.seq_eip = 0; // designed to be true
 		raise_intr(32, cpu.eip);
 		update_eip();
 		cpu.irq_time = 0;
