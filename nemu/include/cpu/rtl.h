@@ -24,13 +24,13 @@ static inline void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1) {
 }
 
 #define make_rtl_arith_logic(name)                                                  \
-    static inline void concat3(RTL_PREFIX, _rtl_, name)(                                \
+    static inline void name_concat3(RTL_PREFIX, _rtl_, name)(                                \
         rtlreg_t * dest, const rtlreg_t *src1, const rtlreg_t *src2) {              \
-        *dest = concat(c_, name)(*src1, *src2);                                     \
+        *dest = name_concat(c_, name)(*src1, *src2);                                     \
     }                                                                               \
     /* Actually those of imm version are pseudo rtl instructions,
    * but we define them here in the same macro */                   \
-    static inline void concat(rtl_, name##i)(rtlreg_t * dest, const rtlreg_t *src1, \
+    static inline void name_concat(rtl_, name##i)(rtlreg_t * dest, const rtlreg_t *src1, \
                                              int imm) {                             \
         rtlreg_t imm_at;                                                            \
         rtl_li(&imm_at, imm);                                                       \
@@ -250,7 +250,7 @@ static inline void rtl_msb(rtlreg_t *dest, const rtlreg_t *src1, int width) {
 }
 
 #define make_rtl_setget_eflags(f)                                            \
-    static inline void concat(rtl_update_bit_, f)(const rtlreg_t *src_bit) { \
+    static inline void name_concat(rtl_update_bit_, f)(const rtlreg_t *src_bit) { \
         using namespace EFLAGS;                                              \
         g_ignore_eflags &= ~MASK_##f;                                        \
         rtlreg_t bitmask;                                                    \
@@ -261,7 +261,7 @@ static inline void rtl_msb(rtlreg_t *dest, const rtlreg_t *src1, int width) {
         rtl_or(&cpu.eflags, &cpu.eflags, &bitmask);                          \
         /*TODO();*/                                                          \
     }                                                                        \
-    static inline void concat(rtl_get_, f)(rtlreg_t * dest) {                \
+    static inline void name_concat(rtl_get_, f)(rtlreg_t * dest) {                \
         using namespace EFLAGS;                                              \
         auto OFFSET = OFFSET_##f;                                            \
         auto LOWMASK = LOWMASK_##f;                                          \
@@ -269,13 +269,13 @@ static inline void rtl_msb(rtlreg_t *dest, const rtlreg_t *src1, int width) {
         rtl_andi(dest, dest, LOWMASK);                                       \
         /*TODO();*/                                                          \
     }                                                                        \
-    static inline void concat(rtl_set_, f)() {                               \
+    static inline void name_concat(rtl_set_, f)() {                               \
         using namespace EFLAGS;                                              \
         g_ignore_eflags &= ~MASK_##f;                                        \
         rtl_ori(&cpu.eflags, &cpu.eflags, MASK_##f);                         \
         /*TODO();*/                                                          \
     }                                                                        \
-    static inline void concat(rtl_clear_, f)() {                             \
+    static inline void name_concat(rtl_clear_, f)() {                             \
         using namespace EFLAGS;                                              \
         rtl_andi(&cpu.eflags, &cpu.eflags, ~MASK_##f);                       \
         /*TODO();*/                                                          \
@@ -326,3 +326,4 @@ static inline void rtl_testbit(rtlreg_t *dest, const rtlreg_t *src, int bit_offs
 	rtl_shri(dest, src, bit_offset);
 	rtl_andi(dest, dest, 0x1);
 }
+

@@ -89,3 +89,4 @@ static inline const char *reg_name(int index, int width) {
 			panic("wtf");
 	}
 }
+

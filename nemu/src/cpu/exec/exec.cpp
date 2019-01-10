@@ -8,9 +8,9 @@ typedef struct {
 	int width;
 } opcode_entry;
 
-#define IDEXW(id, ex, w)   {concat(decode_, id), concat(exec_, ex), w}
+#define IDEXW(id, ex, w)   {name_concat(decode_, id), name_concat(exec_, ex), w}
 #define IDEX(id, ex)       IDEXW(id, ex, 0)
-#define EXW(ex, w)         {NULL, concat(exec_, ex), w}
+#define EXW(ex, w)         {NULL, name_concat(exec_, ex), w}
 #define EX(ex)             EXW(ex, 0)
 #define EMPTY              EX(inv)
 int &rtl_width = id_dest->width;
@@ -34,12 +34,12 @@ static inline void idex(vaddr_t *eip, opcode_entry *e) {
 static make_EHelper(2byte_esc);
 
 #define make_group(name, item0, item1, item2, item3, item4, item5, item6, item7) \
-  static opcode_entry concat(opcode_table_, name) [8] = { \
+  static opcode_entry name_concat(opcode_table_, name) [8] = { \
     /* 0x00 */    item0, item1, item2, item3, \
     /* 0x04 */    item4, item5, item6, item7  \
   }; \
 static make_EHelper(name) { \
-  idex(eip, &concat(opcode_table_, name)[g_decoding.ext_opcode]); \
+  idex(eip, &name_concat(opcode_table_, name)[g_decoding.ext_opcode]); \
 }
 
 /* 0x80, 0x81, 0x83 */
@@ -272,6 +272,10 @@ static make_EHelper(2byte_esc) {
 }
 //   DOG: TODO: need to be careful
 make_EHelper(real) {
+	// bool suc = jit_exec(eip);
+	// if(suc){
+	// 	return;
+	// }
 	uint32_t opcode = instr_fetch(eip, 1);
 	g_decoding.opcode = opcode;
 	set_width(opcode_table[opcode].width);
@@ -294,7 +298,7 @@ int exec_wrapper(bool print_flag) {
 	// served as an anchor
 	cpu.eip = 0;
 
-#ifdef DEBUG
+#if 0
 	g_decoding.p = g_decoding.asm_buf;
 	g_decoding.p += sprintf(g_decoding.p, "%8x:   ", ori_eip);
 #endif
@@ -302,7 +306,7 @@ int exec_wrapper(bool print_flag) {
 	g_decoding.seq_eip = ori_eip;
 	exec_real(&g_decoding.seq_eip);
 
-#ifdef DEBUG
+#if 0
 	int instr_len = g_decoding.seq_eip - ori_eip;
 	sprintf(g_decoding.p, "%*.s", 50 - (12 + 3 * instr_len), "");
 	// TODO: FUCK THE OVERLAP WARNING OFF
@@ -321,12 +325,12 @@ int exec_wrapper(bool print_flag) {
 	}
 #endif
 	update_eip();
-	if (cpu.irq_time && EFLAGS::get_IF(cpu.eflags)) {
-		g_decoding.seq_eip = 0; // designed to be true
-		raise_intr(32, cpu.eip);
-		update_eip();
-		cpu.irq_time = 0;
-	}
+//	if (cpu.irq_time && EFLAGS::get_IF(cpu.eflags)) {
+//		g_decoding.seq_eip = 0; // designed to be true
+//		raise_intr(32, cpu.eip);
+//		update_eip();
+//		cpu.irq_time = 0;
+//	}
 
 #if defined(DIFF_TEST)
 	void difftest_step(uint32_t);

@@ -1,6 +1,4 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
-
+#pragma once
 //#define DEBUG
 
 #ifdef DEBUG
@@ -38,9 +36,7 @@ inline constexpr uint32_t maskify(int bit) {
 }
 
 #include "debug.h"
-#include "macro.h"
 #include <optional>
 #include <string_view>
 #include <tuple>
 
-#endif

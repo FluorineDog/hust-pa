@@ -1,6 +1,7 @@
 #include "device/port-io.h"
 #include "monitor/monitor.h"
 #include <SDL2/SDL.h>
+#include "macro.h"
 
 #define I8042_DATA_PORT 0x60
 #define KEYBOARD_IRQ 1
@@ -25,13 +26,13 @@ enum {
 };
 
 
-// #define XX(k) [concat(SDL_SCANCODE_, k)] = concat(_KEY_, k),
+// #define XX(k) [name_concat(SDL_SCANCODE_, k)] = name_concat(_KEY_, k),
 static uint32_t keymap[256] = {};
 // static uint32_t keymap[256] = {
 //   _KEYS(XX)
 // };
 static void init_keymap(){
-    #define XX(k) keymap[concat(SDL_SCANCODE_, k)] = concat(_KEY_, k);
+    #define XX(k) keymap[name_concat(SDL_SCANCODE_, k)] = name_concat(_KEY_, k);
     _KEYS(XX)
 }
 

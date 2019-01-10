@@ -9,7 +9,7 @@ void decoding_set_jmp(bool is_jmp) {
   g_decoding.is_jmp = is_jmp;
 }
 
-#define make_DopHelper(name) void concat(decode_op_, name) (vaddr_t *eip, Operand *op, bool load_val)
+#define make_DopHelper(name) void name_concat(decode_op_, name) (vaddr_t *eip, Operand *op, bool load_val)
 
 /* Refer to Appendix A in i386 manual for the explanations of these abbreviations */
 

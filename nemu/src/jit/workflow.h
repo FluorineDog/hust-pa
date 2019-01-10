@@ -1,4 +1,5 @@
 #pragma once
+
 #include <optional>
 #include "kjit.h"
 #include <map>
@@ -17,8 +18,9 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Constant.h>
 
-#include "cpu/reg.h"
 
+
+#include "cpu/reg.h"
 
 namespace llvm {
 
@@ -29,7 +31,8 @@ private:
 
 public:
 	CodeExecutor() : builder_(ctx_) {
-	};
+	
+	}
 	
 	void init() {
 		this->jit_ = cantFail(orc::KaleidoscopeJIT::Create());
@@ -103,7 +106,7 @@ public:
 	}
 	
 	void finish_block() {
-		for (int id = 0; id < s_.reg_cache.size(); ++id) {
+		for (size_t id = 0; id < s_.reg_cache.size(); ++id) {
 			auto[value, dirty] = s_.reg_cache[id];
 			if (dirty) {
 				auto reg_ptr = get_cpu_reg_ptr(id);

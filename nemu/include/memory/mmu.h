@@ -93,6 +93,7 @@ inline paddr_t blend_paddr(uint32_t base_addr, int offset){
 	return (base_addr & ~maskify(12)) + offset;
 }
 
+extern char* pmem;
 template<typename Type>
 inline Type& fetch_pmem(uint32_t base_addr, int index){
 	auto paddr = blend_paddr(base_addr, index * sizeof(Type));

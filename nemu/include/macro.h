@@ -2,8 +2,8 @@
 #define str_temp(x) #x
 #define str(x) str_temp(x)
 
-#define concat_temp(x, y) x##y
-#define concat(x, y) concat_temp(x, y)
-#define concat3(x, y, z) concat(concat(x, y), z)
-#define concat4(x, y, z, w) concat3(concat(x, y), z, w)
-#define concat5(x, y, z, v, w) concat4(concat(x, y), z, v, w)
+#define name_concat_temp(x, y) x##y
+#define name_concat(x, y) name_concat_temp(x, y)
+#define name_concat3(x, y, z) name_concat(name_concat(x, y), z)
+#define name_concat4(x, y, z, w) name_concat3(name_concat(x, y), z, w)
+#define name_concat5(x, y, z, v, w) name_concat4(name_concat(x, y), z, v, w)
