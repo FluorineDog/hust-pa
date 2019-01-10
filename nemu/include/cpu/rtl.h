@@ -15,21 +15,17 @@ bool internal_relop(uint32_t relop, const rtlreg_t src1, const rtlreg_t src2, in
 
 /* RTL basic instructions */
 
-static inline void jit_rtl_li(rtlreg_t *dest, uint32_t imm) {
-	*dest = imm;
-}
+void jit_rtl_li(rtlreg_t *dest, uint32_t imm);
 
-static inline void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1) {
-	*dest = *src1;
-}
+
+void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1);
+
 
 #define make_rtl_arith_logic(name)                                                  \
-    static inline void name_concat3(RTL_PREFIX, _rtl_, name)(                                \
+    static inline void name_concat3(RTL_PREFIX, _rtl_, name)(                       \
         rtlreg_t * dest, const rtlreg_t *src1, const rtlreg_t *src2) {              \
-        *dest = name_concat(c_, name)(*src1, *src2);                                     \
+        *dest = name_concat(c_, name)(*src1, *src2);                                \
     }                                                                               \
-    /* Actually those of imm version are pseudo rtl instructions,
-   * but we define them here in the same macro */                   \
     static inline void name_concat(rtl_, name##i)(rtlreg_t * dest, const rtlreg_t *src1, \
                                              int imm) {                             \
         rtlreg_t imm_at;                                                            \

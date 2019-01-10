@@ -304,6 +304,7 @@ int exec_wrapper(bool print_flag) {
 #endif
 	
 	g_decoding.seq_eip = ori_eip;
+	
 	exec_real(&g_decoding.seq_eip);
 
 #if 0

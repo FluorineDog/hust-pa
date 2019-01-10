@@ -83,11 +83,6 @@ void cpu_exec(uint64_t n) {
                 return;
             }
         }
-        static time_t last_time = time(NULL);
-        if(time(NULL) > last_time + 30){
-        	last_time = time(NULL);
-            break;
-        }
 #endif
 
     }

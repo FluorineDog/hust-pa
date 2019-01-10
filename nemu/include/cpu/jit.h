@@ -1,6 +1,10 @@
 #pragma once
 
 #include <common.h>
+#include <optional>
 
-bool jit_exec_exec_or_open(vaddr_t cr3, vaddr_t eip);
-void jit_exec_close();
+namespace jit {
+std::optional<int> exec_exec_or_open(vaddr_t cr3, vaddr_t eip);
+void inst_barrier();
+void exec_close();
+}

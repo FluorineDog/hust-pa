@@ -31,7 +31,8 @@ private:
 
 public:
 	CodeExecutor() : builder_(ctx_) {
-	
+		InitEnvironment();
+		init();
 	}
 	
 	void init() {
