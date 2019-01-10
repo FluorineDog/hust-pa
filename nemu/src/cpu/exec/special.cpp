@@ -1,7 +1,7 @@
 #include "cpu/exec.h"
 #include "monitor/monitor.h"
 
-void interpret_rtl_exit(int state) {
+void jit_rtl_exit(int state) {
   nemu_state = state;
 }
 

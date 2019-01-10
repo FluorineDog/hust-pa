@@ -1,6 +1,6 @@
 #include "cpu/relop.h"
 #include "common.h"
-bool interpret_relop(uint32_t relop, const rtlreg_t src1_raw, const rtlreg_t src2_raw, int width) {
+bool internal_relop(uint32_t relop, const rtlreg_t src1_raw, const rtlreg_t src2_raw, int width) {
     int offset = (4 - width) * 8;
     uint32_t src1 = src1_raw << offset;
     uint32_t src2 = src2_raw << offset;

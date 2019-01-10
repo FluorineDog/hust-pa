@@ -1,7 +1,7 @@
 #pragma once
 #include "macro.h"
 
-#define RTL_PREFIX interpret
+#define RTL_PREFIX jit
 
 #define rtl_li concat(RTL_PREFIX, _rtl_li)
 #define rtl_mv concat(RTL_PREFIX, _rtl_mv)
