@@ -619,19 +619,36 @@ void jit_rtl_active(rtlreg_t *dest){
 
 #include "device/port-io.h"
 void jit_rtl_io_in(rtlreg_t* dest, const rtlreg_t* ioaddr, int width){
-	JIT_TODO;
+	using namespace llvm;
+	JIT_DONE;
 	*dest = pio_read_common(*ioaddr, width);
 	
 	JIT_COMPILE_BARRIER;
+	auto FT = FunctionType::get(eng.getRegTy(), {eng.getRegTy(), eng.getIntTy()}, false);
+	auto FAddr = eng().getInt64((uint64_t)pio_read_common);
+	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
 	
+	auto vioaddr = eng.get_value(ioaddr);
+	auto vwidth = eng().getInt32(width);
+	auto vdata = eng().CreateCall(F, {vioaddr, vwidth});
+	eng.set_value(dest, vdata);
 }
 
 void jit_rtl_io_out(const rtlreg_t* ioaddr, const rtlreg_t* src, int width){
-	JIT_TODO;
+	using namespace llvm;
+	JIT_DONE;
 	pio_write_common(*ioaddr, *src,  width);
 	
-	JIT_COMPILE_BARRIER;
 	
+	JIT_COMPILE_BARRIER;
+	auto FT = FunctionType::get(eng().getVoidTy(), {eng.getRegTy(), eng.getRegTy(), eng.getIntTy()}, false);
+	auto FAddr = eng().getInt64((uint64_t)pio_write_common);
+	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
+	
+	auto vioaddr = eng.get_value(ioaddr);
+	auto vsrc = eng.get_value(src);
+	auto vwidth = eng().getInt32(width);
+	eng().CreateCall(F, {vioaddr, vsrc, vwidth});
 	
 }
 
