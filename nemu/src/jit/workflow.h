@@ -141,6 +141,10 @@ public:
 		return Type::getInt32Ty(ctx_);
 	}
 	
+	Type *getIntTy() {
+		return Type::getInt32Ty(ctx_);
+	}
+	
 	
 	FunctionType *getFunctorTy() {
 		static FunctionType *functor_type = nullptr;

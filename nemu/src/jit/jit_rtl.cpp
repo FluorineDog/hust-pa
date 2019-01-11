@@ -256,14 +256,38 @@ void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi, const rtlreg_t *s
 	*dest = (uint32_t) (dividend % divisor);
 }
 
-void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *addr, int len) {
-	JIT_TODO;
-	*dest = vaddr_read(*addr, len);
+void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *vaddr, int len) {
+	JIT_DONE;
+	*dest = vaddr_read(*vaddr, len);
+	
+	JIT_COMPILE_BARRIER;
+	using namespace llvm;
+	
+	auto FT = FunctionType::get(eng.getRegTy(), {eng.getRegTy(), eng.getIntTy()}, false);
+	auto FAddr = eng().getInt64((uint64_t)vaddr_read);
+	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
+	
+	auto val_vaddr = eng.get_value(vaddr);
+	auto val_len = eng().getInt32(len);
+	auto val_ret = eng().CreateCall(F, {val_vaddr, val_len});
+	eng.set_value(dest, val_ret);
+	
 }
 
-void jit_rtl_sm(const rtlreg_t *addr, const rtlreg_t *src1, int len) {
-	JIT_TODO;
-	vaddr_write(*addr, *src1, len);
+void jit_rtl_sm(const rtlreg_t *vaddr, const rtlreg_t *src1, int len) {
+	JIT_DONE;
+	vaddr_write(*vaddr, *src1, len);
+	
+	JIT_COMPILE_BARRIER;
+	using namespace llvm;
+	auto FT = FunctionType::get(eng().getVoidTy(), {eng.getRegTy(), eng.getRegTy(), eng.getIntTy()}, false);
+	auto FAddr = eng().getInt64((uint64_t)vaddr_write);
+	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
+	
+	auto val_vaddr = eng.get_value(vaddr);
+	auto val_src = eng.get_value(src1);
+	auto val_len = eng().getInt32(len);
+	eng().CreateCall(F, {val_vaddr, val_src, val_len});
 }
 
 // void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len) {
