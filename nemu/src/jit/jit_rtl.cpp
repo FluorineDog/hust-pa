@@ -19,6 +19,7 @@
 
 #define JIT_DONE JIT_HEADER
 
+void info_register();
 llvm::CodeExecutor eng;
 namespace jit {
 
@@ -41,6 +42,9 @@ std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
 	switch (state_) {
 		case JITState::Init: {
 			if (auto query = eng.fetchFunction(cr3, eip)) {
+                assert(cr3 == 0);
+                Log("[before functor %08x at inst %ld]\n", eip, g_nr_guest_instr);
+                info_register();
 				auto[func, expected_inst] = query.value();
 				auto real_inst = func((uint32_t *) &cpu, nullptr);
 				assert(expected_inst == real_inst);
