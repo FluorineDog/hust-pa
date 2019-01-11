@@ -24,6 +24,7 @@ std::optional<int> exec_exec_or_open(vaddr_t cr3, vaddr_t eip) {
 				auto[func, expected_inst]  = query.value();
 				auto real_inst = func((uint32_t *) &cpu, nullptr);
 				assert(expected_inst == real_inst);
+                (void)real_inst;
 				return expected_inst;
 			}
 			eng.begin_block(cr3, eip);
@@ -63,3 +64,26 @@ void jit_rtl_li(rtlreg_t *dest, uint32_t imm) {
 void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1) {
 	*dest = *src1;
 }
+
+
+#define make_rtl_arith_logic_dog(name)                          \
+void name_concat3(RTL_PREFIX, _rtl_, name)(rtlreg_t * dest, const rtlreg_t *src1, const rtlreg_t *src2) {              \
+    *dest = name_concat(c_, name)(*src1, *src2);                                \
+}                                                                               \
+
+make_rtl_arith_logic_dog(add)
+make_rtl_arith_logic_dog(sub)
+make_rtl_arith_logic_dog(and)
+make_rtl_arith_logic_dog(or)
+make_rtl_arith_logic_dog(xor)
+make_rtl_arith_logic_dog(shl)
+make_rtl_arith_logic_dog(shr)
+make_rtl_arith_logic_dog(sar)
+make_rtl_arith_logic_dog(mul_lo)
+make_rtl_arith_logic_dog(mul_hi)
+make_rtl_arith_logic_dog(imul_lo)
+make_rtl_arith_logic_dog(imul_hi)
+make_rtl_arith_logic_dog(div_q)
+make_rtl_arith_logic_dog(div_r)
+make_rtl_arith_logic_dog(idiv_q)
+make_rtl_arith_logic_dog(idiv_r)

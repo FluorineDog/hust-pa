@@ -19,51 +19,7 @@ void jit_rtl_li(rtlreg_t *dest, uint32_t imm);
 
 
 void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1);
-
-
-#define make_rtl_arith_logic(name)                                                  \
-    static inline void name_concat3(RTL_PREFIX, _rtl_, name)(                       \
-        rtlreg_t * dest, const rtlreg_t *src1, const rtlreg_t *src2) {              \
-        *dest = name_concat(c_, name)(*src1, *src2);                                \
-    }                                                                               \
-    static inline void name_concat(rtl_, name##i)(rtlreg_t * dest, const rtlreg_t *src1, \
-                                             int imm) {                             \
-        rtlreg_t imm_at;                                                            \
-        rtl_li(&imm_at, imm);                                                       \
-        rtl_##name(dest, src1, &imm_at);                                            \
-    }
-
-make_rtl_arith_logic(add)
-
-make_rtl_arith_logic(sub)
-
-make_rtl_arith_logic(and)
-
-make_rtl_arith_logic(or)
-
-make_rtl_arith_logic(xor)
-
-make_rtl_arith_logic(shl)
-
-make_rtl_arith_logic(shr)
-
-make_rtl_arith_logic(sar)
-
-make_rtl_arith_logic(mul_lo)
-
-make_rtl_arith_logic(mul_hi)
-
-make_rtl_arith_logic(imul_lo)
-
-make_rtl_arith_logic(imul_hi)
-
-make_rtl_arith_logic(div_q)
-
-make_rtl_arith_logic(div_r)
-
-make_rtl_arith_logic(idiv_q)
-
-make_rtl_arith_logic(idiv_r)
+#include "arith.h"
 
 static inline void jit_rtl_div64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
 		const rtlreg_t *src1_lo, const rtlreg_t *src2) {
