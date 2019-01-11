@@ -49,6 +49,7 @@ void jit_rtl_jr(rtlreg_t *target);
 
 void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target);
 
+void jit_rtl_active(rtlreg_t *dest);
 
 void jit_rtl_exit(int state);
 
@@ -76,11 +77,13 @@ static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
             const auto reg = &cpu.gpr[r & 0x3]._32;
             rtlreg_t val;
             rtl_shri(&val, reg, (r & 0x4) ? 8:0);
+			rtl_active(dest);
 			rtl_blend(dest, &val, dest, 0xFF);
 			return;
         }
 		case 2: {
             const auto reg = &cpu.gpr[r]._32;
+			rtl_active(dest);
 			rtl_blend(dest, reg, dest, 0xFFFF);
 			return;
         }

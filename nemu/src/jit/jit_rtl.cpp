@@ -608,4 +608,12 @@ void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {
 	eng.set_value(&cpu.eip, vjmp);
 }
 
+void jit_rtl_active(rtlreg_t *dest){
+	JIT_DONE;
+	// active uinit variable,
+	
+	JIT_COMPILE_BARRIER;
+	eng.active_value(dest);
+}
+
 void jit_rtl_exit(int state);

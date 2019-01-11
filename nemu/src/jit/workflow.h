@@ -86,6 +86,18 @@ public:
 		return builder_.CreateConstGEP1_32(s_.memory, paddr);
 	}
 	
+	void active_value(const rtlreg_t *reg) {
+		
+		if (auto reg_id = is_cpu(reg)) {
+			return;
+		}
+		if(s_.value_cache.count(reg)){
+			return;
+		}
+		s_.value_cache[reg] = builder_.getInt32(0xCCCCCCCC);
+		
+	}
+	
 	Value *get_value(const rtlreg_t *reg) {
 		if (auto reg_id = is_cpu(reg)) {
 			int id = reg_id.value();
@@ -222,5 +234,7 @@ private:
 	
 	IRBuilder<> builder_;
 };
-	
+
+
+
 }
