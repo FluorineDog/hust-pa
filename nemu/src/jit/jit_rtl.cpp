@@ -2,7 +2,7 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_COMPILE_FLAG 1
+#define JIT_COMPILE_FLAG 0
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
@@ -201,28 +201,98 @@ void jit_rtl_sar(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	eng.set_value(dest, vres);
 }
 
-#define make_rtl_arith_logic_dog(name)                                                \
-    void name_concat3(RTL_PREFIX, _rtl_, name)(rtlreg_t * dest, const rtlreg_t *src1, \
-                                               const rtlreg_t *src2) {                \
-        JIT_TODO;                                                                \
-        *dest = name_concat(c_, name)(*src1, *src2);                                  \
-    }
+//make_rtl_arith_logic_dog(mul_lo);
 
-make_rtl_arith_logic_dog(mul_lo);
+void jit_rtl_mul_lo(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	uint64_t x = *src1;
+	uint64_t y = *src2;
+	uint64_t res = (x * y) >> 0;
+	*dest = (uint32_t)res;
+	
+	JIT_COMPILE_BARRIER;
+}
 
-make_rtl_arith_logic_dog(mul_hi);
+//make_rtl_arith_logic_dog(mul_hi);
+void jit_rtl_mul_hi(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	uint64_t x = *src1;
+	uint64_t y = *src2;
+	uint64_t res = (x * y) >> 32;
+	*dest = (uint32_t)res;
+	
+	JIT_COMPILE_BARRIER;
+}
 
-make_rtl_arith_logic_dog(imul_lo);
+//make_rtl_arith_logic_dog(imul_lo);
+void jit_rtl_imul_lo(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	int64_t x = *src1;
+	int64_t y = *src2;
+	int64_t res = (x * y) >> 0;
+	*dest = (uint32_t)res;
+	
+	JIT_COMPILE_BARRIER;
+}
 
-make_rtl_arith_logic_dog(imul_hi);
+//make_rtl_arith_logic_dog(imul_hi);
+void jit_rtl_imul_hi(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	int64_t x = *src1;
+	int64_t y = *src2;
+	int64_t res = (x * y) >> 32;
+	*dest = (uint32_t)res;
+	
+	JIT_COMPILE_BARRIER;
+}
 
-make_rtl_arith_logic_dog(div_q);
+//make_rtl_arith_logic_dog(div_q);
+void jit_rtl_div_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	uint64_t x = *src1;
+	uint64_t y = *src2;
+	uint64_t quot = x / y;
+//	uint64_t rem  = x % y;
+	*dest = (uint32_t)quot;
+	
+	JIT_COMPILE_BARRIER;
+}
 
-make_rtl_arith_logic_dog(div_r);
+//make_rtl_arith_logic_dog(div_r);
+void jit_rtl_div_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	uint64_t x = *src1;
+	uint64_t y = *src2;
+//	uint64_t quot = x / y;
+	uint64_t rem  = x % y;
+	*dest = (uint32_t)rem;
+	
+	JIT_COMPILE_BARRIER;
+}
 
-make_rtl_arith_logic_dog(idiv_q);
+//make_rtl_arith_logic_dog(idiv_q);
+void jit_rtl_idiv_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	int64_t x = *src1;
+	int64_t y = *src2;
+	int64_t quot = x / y;
+//	int64_t rem  = x % y;
+	*dest = (uint32_t)quot;
+	
+	JIT_COMPILE_BARRIER;
+}
 
-make_rtl_arith_logic_dog(idiv_r);
+//make_rtl_arith_logic_dog(idiv_r);
+void jit_rtl_idiv_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
+	JIT_TODO;
+	int64_t x = *src1;
+	int64_t y = *src2;
+//	int64_t quot = x / y;
+	int64_t rem  = x % y;
+	*dest = (uint32_t)rem;
+	
+	JIT_COMPILE_BARRIER;
+}
 
 void jit_rtl_div64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
 		const rtlreg_t *src1_lo, const rtlreg_t *src2) {
