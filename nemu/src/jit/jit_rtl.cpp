@@ -2,7 +2,7 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_COMPILE_FLAG 0
+#define JIT_COMPILE_FLAG 1
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
@@ -67,7 +67,7 @@ using namespace jit;
 
 void exec_close() {
 	if (state_ == JITState::Terminate) {
-#if JIT_COMPILE_BARRIER
+#if JIT_COMPILE_FLAG
 		printf("-------------\n");
 #endif
 		state_ = JITState::Init;
