@@ -3,6 +3,7 @@
 #include "cpu/intr.h"
 #include "cpu/jit.h"
 
+void difftest_step(uint32_t, int n);
 typedef struct {
 	DHelper decode;
 	EHelper execute;
@@ -299,17 +300,21 @@ int exec_wrapper(bool print_flag) {
 	// served as an anchor
 	cpu.eip = 0;
 
-#if 0
+#ifdef DEBUG
 	g_decoding.p = g_decoding.asm_buf;
 	g_decoding.p += sprintf(g_decoding.p, "%8x:   ", ori_eip);
 #endif
 	
 	g_decoding.seq_eip = ori_eip;
     if(auto inst_exec = jit::exec_or_open(cpu.cr3.val, ori_eip)){
-        return inst_exec.value();
+    	int n = inst_exec.value();
+#ifdef DIFF_TEST
+	    difftest_step(ori_eip, n);
+#endif
+        return n;
     }
 	exec_real(&g_decoding.seq_eip);
-#if 0
+#ifdef DEBUG
 	int instr_len = g_decoding.seq_eip - ori_eip;
 	sprintf(g_decoding.p, "%*.s", 50 - (12 + 3 * instr_len), "");
 	// TODO: FUCK THE OVERLAP WARNING OFF
@@ -338,8 +343,7 @@ int exec_wrapper(bool print_flag) {
 //	}
 
 #if defined(DIFF_TEST)
-	void difftest_step(uint32_t);
-	difftest_step(ori_eip);
+	difftest_step(ori_eip, 1);
 #endif
 	return 1;
 }

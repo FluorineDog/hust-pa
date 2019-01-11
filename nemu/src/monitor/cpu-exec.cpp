@@ -37,11 +37,12 @@ void cpu_exec(uint64_t n) {
 
     bool print_flag = n <= MAX_INSTR_TO_PRINT;
 
-    for (; n > 0; n--) {
+    for (; n > 0; ){
         
         /* Execute one instruction, including instruction fetch,
          * instruction decode, and the actual execution. */
         int n_inst = exec_wrapper(print_flag);
+        n -= n_inst;
 //        printf("[%08x]", cpu.esp);
         nr_guest_instr_add(n_inst);
 
@@ -62,6 +63,7 @@ void cpu_exec(uint64_t n) {
                 return;
             }
         }
+        
 #ifdef DEBUG
         {
 

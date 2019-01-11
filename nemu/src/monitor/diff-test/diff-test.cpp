@@ -71,7 +71,7 @@ void init_difftest(const char *ref_so_file, long img_size) {
     ref_difftest_setregs(&cpu);
 }
 
-void difftest_step(uint32_t eip) {
+void difftest_step(uint32_t eip, int n) {
     if(!g_diff_test_enabled) {
         return;
     }
@@ -89,7 +89,7 @@ void difftest_step(uint32_t eip) {
         return;
     }
 
-    ref_difftest_exec(1);
+    ref_difftest_exec(n);
     ref_difftest_getregs(&ref_cpu);
 
     // TODO: Check the registers state with the reference design.
