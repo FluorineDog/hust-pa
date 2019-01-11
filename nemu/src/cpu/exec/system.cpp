@@ -1,6 +1,5 @@
 #include <nemu.h>
 #include "cpu/exec.h"
-#include "device/port-io.h"
 #include "cpu/intr.h"
 
 void difftest_skip_ref();
@@ -62,7 +61,8 @@ make_EHelper(iret) {
 make_EHelper(in) {
 	// JIT_TODO WITH IO
 	rtlreg_t dat;
-	dat = pio_read_common((ioaddr_t) id_src->val, rtl_width);
+//	dat = pio_read_common((ioaddr_t) id_src->val, rtl_width);
+	rtl_io_in(&dat, &id_src->val, rtl_width);
 	operand_write(id_dest, &dat);
 	print_asm_template2(in);
 
@@ -73,7 +73,8 @@ make_EHelper(in) {
 
 make_EHelper(out) {
 	// JIT_TODO WITH IO
-	pio_write_common((ioaddr_t) id_dest->val, id_src->val, rtl_width);
+//	pio_write_common((ioaddr_t) id_dest->val, id_src->val, rtl_width);
+	rtl_io_out(&id_dest->val, &id_src->val, rtl_width);
 	print_asm_template2(out);
 
 #if defined(DIFF_TEST)

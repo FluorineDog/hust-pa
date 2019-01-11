@@ -2,7 +2,7 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_COMPILE_FLAG 1
+#define JIT_COMPILE_FLAG 0
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
@@ -610,10 +610,29 @@ void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {
 
 void jit_rtl_active(rtlreg_t *dest){
 	JIT_DONE;
-	// active uinit variable,
+	// active uninitilized variable, suppress reg check assert
 	
 	JIT_COMPILE_BARRIER;
 	eng.active_value(dest);
+}
+
+
+#include "device/port-io.h"
+void jit_rtl_io_in(rtlreg_t* dest, const rtlreg_t* ioaddr, int width){
+	JIT_TODO;
+	*dest = pio_read_common(*ioaddr, width);
+	
+	JIT_COMPILE_BARRIER;
+	
+}
+
+void jit_rtl_io_out(const rtlreg_t* ioaddr, const rtlreg_t* src, int width){
+	JIT_TODO;
+	pio_write_common(*ioaddr, *src,  width);
+	
+	JIT_COMPILE_BARRIER;
+	
+	
 }
 
 void jit_rtl_exit(int state);

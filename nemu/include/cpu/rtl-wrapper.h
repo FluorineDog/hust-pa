@@ -34,5 +34,8 @@
 #define rtl_jr name_concat(RTL_PREFIX, _rtl_jr)
 #define rtl_jcond name_concat(RTL_PREFIX, _rtl_jcond)
 
+#define rtl_io_in name_concat(RTL_PREFIX, _rtl_io_in)
+#define rtl_io_out name_concat(RTL_PREFIX, _rtl_io_out)
+
 #define rtl_active name_concat(RTL_PREFIX, _rtl_active)
 #define rtl_exit name_concat(RTL_PREFIX, _rtl_exit)

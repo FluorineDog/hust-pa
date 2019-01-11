@@ -51,6 +51,12 @@ void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target);
 
 void jit_rtl_active(rtlreg_t *dest);
 
+
+
+void jit_rtl_io_in(rtlreg_t* dest, const rtlreg_t* ioaddr, int width);
+
+void jit_rtl_io_out(const rtlreg_t* ioaddr, const rtlreg_t* src, int width);
+
 void jit_rtl_exit(int state);
 
 /// jit finish
