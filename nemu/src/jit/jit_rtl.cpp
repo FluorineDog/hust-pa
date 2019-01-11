@@ -12,11 +12,19 @@ enum class JITState {
 	Compiling,
 	Terminate,
 };
-
 static llvm::CodeExecutor eng;
 static JITState state_ = JITState::Init;
 
-std::optional<int> exec_exec_or_open(vaddr_t cr3, vaddr_t eip) {
+inline void decoding_set_jmp(bool is_jmp) {
+    assert(is_jmp == true);
+    assert(state_ == JITState::Compiling);
+    state_ = JITState::Terminate;
+    g_decoding.is_jmp = is_jmp;
+}
+
+
+
+std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
 	switch (state_) {
 		case JITState::Init: {
 			if (auto query = eng.fetchFunction(cr3, eip)) {
@@ -26,7 +34,7 @@ std::optional<int> exec_exec_or_open(vaddr_t cr3, vaddr_t eip) {
 				(void) real_inst;
 				return expected_inst;
 			}
-			eng.begin_block(cr3, eip);
+//			eng.begin_block(cr3, eip);
 			state_ = JITState::Compiling;
 			break;
 		}
@@ -43,15 +51,18 @@ std::optional<int> exec_exec_or_open(vaddr_t cr3, vaddr_t eip) {
 }
 
 void exec_close() {
-	eng.finish_inst();
-	
 	if (state_ == JITState::Terminate) {
+		printf("-------------\n");
 		state_ = JITState::Init;
-		eng.finish_block();
+//		eng.finish_block();
 	}
 }
 
-void inst_barrier() {}
+void inst_barrier() {
+//	eng.finish_inst();
+}
+
+
 }    //namespace jit
 
 void jit_rtl_li(rtlreg_t *dest, uint32_t imm) {
@@ -220,14 +231,14 @@ void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1,
 void jit_rtl_j(vaddr_t target) {
 	JIT_TODO;
 	cpu.eip = target;
-	decoding_set_jmp(true);
+	jit::decoding_set_jmp(true);
 }
 
 void jit_rtl_jr(rtlreg_t *target) {
 	JIT_TODO;
 	// very hard to use
 	cpu.eip = *target;
-	decoding_set_jmp(true);
+	jit::decoding_set_jmp(true);
 }
 
 void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {
@@ -237,7 +248,7 @@ void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {
 		cpu.eip = target;
 	else
 		cpu.eip = g_decoding.seq_eip;
-	decoding_set_jmp(true);
+	jit::decoding_set_jmp(true);
 }
 
 void jit_rtl_exit(int state);

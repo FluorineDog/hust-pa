@@ -5,9 +5,6 @@
 DecodeInfo g_decoding;
 rtlreg_t t0, t1, t2, t3;
 
-void decoding_set_jmp(bool is_jmp) {
-  g_decoding.is_jmp = is_jmp;
-}
 
 #define make_DopHelper(name) void name_concat(decode_op_, name) (vaddr_t *eip, Operand *op, bool load_val)
 

@@ -1,6 +1,7 @@
 #include "cpu/exec.h"
 #include "all-instr.h"
 #include "cpu/intr.h"
+#include "cpu/jit.h"
 
 typedef struct {
 	DHelper decode;
@@ -304,9 +305,10 @@ int exec_wrapper(bool print_flag) {
 #endif
 	
 	g_decoding.seq_eip = ori_eip;
-	
+    if(auto inst_exec = jit::exec_or_open(cpu.cr3.val, ori_eip)){
+        return inst_exec.value();
+    }
 	exec_real(&g_decoding.seq_eip);
-
 #if 0
 	int instr_len = g_decoding.seq_eip - ori_eip;
 	sprintf(g_decoding.p, "%*.s", 50 - (12 + 3 * instr_len), "");
@@ -326,6 +328,8 @@ int exec_wrapper(bool print_flag) {
 	}
 #endif
 	update_eip();
+    jit::inst_barrier();
+    jit::exec_close();
 //	if (cpu.irq_time && EFLAGS::get_IF(cpu.eflags)) {
 //		g_decoding.seq_eip = 0; // designed to be true
 //		raise_intr(32, cpu.eip);
