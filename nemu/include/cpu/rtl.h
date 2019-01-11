@@ -36,8 +36,8 @@ void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi,
 
 void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *addr, int len);
 void jit_rtl_sm(const rtlreg_t *addr, const rtlreg_t *src1, int len);
-void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len);
-void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len);
+// void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len);
+// void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len);
 
 
 void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest,
@@ -54,7 +54,12 @@ void jit_rtl_exit(int state);
 /// jit finish
 
 
-
+static inline void rtl_blend(rtlreg_t *dest, const rtlreg_t* lo, const rtlreg_t* hi, uint32_t lo_mask){
+    rtlreg_t and_lo, and_hi;
+    rtl_andi(&and_lo, lo, lo_mask);
+    rtl_andi(&and_hi, hi, ~lo_mask);
+    rtl_or(dest, &and_lo, &and_hi);
+}
 
 
 
@@ -63,13 +68,13 @@ void jit_rtl_exit(int state);
 static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
 	switch (width) {
 		case 4:
-			rtl_mv(dest, &reg_l(r));
+			rtl_mv(dest, &cpu.gpr[r]._32);
 			return;
 		case 1:
-			rtl_host_lm(dest, &reg_b(r), 1);
+            rtl_blend(dest, &cpu.gpr[r]._32, dest, 0xFF);
 			return;
 		case 2:
-			rtl_host_lm(dest, &reg_w(r), 2);
+            rtl_blend(dest, &cpu.gpr[r]._32, dest, 0xFFFF);
 			return;
 		default:
 			panic("wtf");
@@ -79,13 +84,13 @@ static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
 static inline void rtl_sr(int r, const rtlreg_t *src1, int width) {
 	switch (width) {
 		case 4:
-			rtl_mv(&reg_l(r), src1);
+			rtl_mv(&cpu.gpr[r]._32, src1);
 			return;
 		case 1:
-			rtl_host_sm(&reg_b(r), src1, 1);
+            rtl_blend(&cpu.gpr[r]._32, src1, &cpu.gpr[r]._32, 0xFF);
 			return;
 		case 2:
-			rtl_host_sm(&reg_w(r), src1, 2);
+            rtl_blend(&cpu.gpr[r]._32, src1, &cpu.gpr[r]._32, 0xFFFF);
 			return;
 		default:
 			panic("wtf");

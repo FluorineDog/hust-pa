@@ -103,6 +103,7 @@ public:
 	}
 	
 	void finish_inst() {
+		s_.value_cache.clear();
 		s_.inst_count++;
 	}
 	

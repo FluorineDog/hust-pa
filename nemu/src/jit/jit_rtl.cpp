@@ -2,15 +2,19 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_HEADER do{ printf("%s\n", __FUNCTION__); }while(0)
-#define JIT_TODO do{printf("todo: ");JIT_HEADER; assert(0 + 1);}while(0)
-#define JIT_DONE JIT_HEADER
-#define JIT_COMPILE_FLAG 1
+#define JIT_COMPILE_FLAG 0
+
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
-#elif
+#define JIT_HEADER do{ printf("%s\n", __FUNCTION__); }while(0)
+#define JIT_TODO do{printf("todo: ");JIT_HEADER; assert(0 + 0);}while(0)
+#else
 #define JIT_COMPILE_BARRIER return
+#define JIT_HEADER do{  }while(0)
+#define JIT_TODO do{ assert(0 + 1);}while(0)
 #endif
+
+#define JIT_DONE JIT_HEADER
 
 llvm::CodeExecutor eng;
 namespace jit {
@@ -260,44 +264,44 @@ void jit_rtl_sm(const rtlreg_t *addr, const rtlreg_t *src1, int len) {
 	vaddr_write(*addr, *src1, len);
 }
 
-void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len) {
-	JIT_TODO;
-	switch (len) {
-		case 4:
-			*dest = *(uint32_t *) addr;
-			return;
-		case 1:
-			*dest = *(uint8_t *) addr;
-			return;
-		case 2:
-			*dest = *(uint16_t *) addr;
-			return;
-		default:
-			panic("wtf");
-	}
-}
+// void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len) {
+// 	JIT_TODO;
+// 	switch (len) {
+// 		case 4:
+// 			*dest = *(uint32_t *) addr;
+// 			return;
+// 		case 1:
+// 			*dest = *(uint8_t *) addr;
+// 			return;
+// 		case 2:
+// 			*dest = *(uint16_t *) addr;
+// 			return;
+// 		default:
+// 			panic("wtf");
+// 	}
+// }
 
-void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
-	JIT_TODO;
-	switch (len) {
-		case 4:
-			*(uint32_t *) addr = *src1;
-			return;
-		case 1:
-			*(uint8_t *) addr = (uint8_t)*src1;
-			return;
-		case 2:
-			*(uint16_t *) addr = (uint16_t) *src1;
-			return;
-		default:
-			panic("wtf");
-	}
-}
+// void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
+// 	JIT_TODO;
+// 	switch (len) {
+// 		case 4:
+// 			*(uint32_t *) addr = *src1;
+// 			return;
+// 		case 1:
+// 			*(uint8_t *) addr = (uint8_t)*src1;
+// 			return;
+// 		case 2:
+// 			*(uint16_t *) addr = (uint16_t) *src1;
+// 			return;
+// 		default:
+// 			panic("wtf");
+// 	}
+// }
 
 void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 		const rtlreg_t *src2_raw) {
 	JIT_DONE;
-	uint32_t offset = (4 - rtl_width) * 8;
+	uint32_t offset = (4 - rtl_width) * 8U;
 	uint32_t src1 = *src1_raw << offset;
 	uint32_t src2 = *src2_raw << offset;
 	
@@ -307,6 +311,9 @@ void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 	auto voffset = eng().getInt32(offset);
 	auto va = eng().CreateShl(va_raw, voffset);
 	auto vb = eng().CreateShl(vb_raw, voffset);
+#else
+	llvm::Value* va;
+	llvm::Value* vb;
 #endif
 	
 	llvm::Value* vres;
@@ -391,17 +398,24 @@ void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 }
 
 void jit_rtl_j(vaddr_t target) {
-	JIT_TODO;
+	JIT_DONE;
 	cpu.eip = target;
 	jit::decoding_set_jmp(true);
+	
+	JIT_COMPILE_BARRIER;
+	auto vtarget = eng().getInt32(target);
+	eng.set_value(&cpu.eip, vtarget);
 }
 
 void jit_rtl_jr(rtlreg_t *target) {
-	JIT_TODO;
+	JIT_DONE;
 	// very hard to use
 	cpu.eip = *target;
-	
 	jit::decoding_set_jmp(true);
+	
+	JIT_COMPILE_BARRIER;
+	auto vtar = eng.get_value(target);
+	eng.set_value(&cpu.eip, vtar);
 }
 
 void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {
