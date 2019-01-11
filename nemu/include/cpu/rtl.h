@@ -21,98 +21,42 @@ void jit_rtl_li(rtlreg_t *dest, uint32_t imm);
 void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1);
 #include "arith.h"
 
-static inline void jit_rtl_div64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
-		const rtlreg_t *src1_lo, const rtlreg_t *src2) {
-	uint64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
-	uint32_t divisor = (*src2);
-	*dest = dividend / divisor;
-}
 
-static inline void jit_rtl_div64_r(rtlreg_t *dest, const rtlreg_t *src1_hi,
-		const rtlreg_t *src1_lo, const rtlreg_t *src2) {
-	uint64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
-	uint32_t divisor = (*src2);
-	*dest = dividend % divisor;
-}
+void jit_rtl_div64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
+		const rtlreg_t *src1_lo, const rtlreg_t *src2);
 
-static inline void jit_rtl_idiv64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
-		const rtlreg_t *src1_lo, const rtlreg_t *src2) {
-	int64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
-	int32_t divisor = (*src2);
-	*dest = dividend / divisor;
-}
+void jit_rtl_div64_r(rtlreg_t *dest, const rtlreg_t *src1_hi,
+		const rtlreg_t *src1_lo, const rtlreg_t *src2);
 
-static inline void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi,
-		const rtlreg_t *src1_lo, const rtlreg_t *src2) {
-	int64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
-	int32_t divisor = (*src2);
-	*dest = dividend % divisor;
-}
+void jit_rtl_idiv64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
+		const rtlreg_t *src1_lo, const rtlreg_t *src2);
 
-static inline void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *addr, int len) {
-	*dest = vaddr_read(*addr, len);
-}
+void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi,
+		const rtlreg_t *src1_lo, const rtlreg_t *src2);
 
-static inline void jit_rtl_sm(const rtlreg_t *addr, const rtlreg_t *src1, int len) {
-	vaddr_write(*addr, *src1, len);
-}
+void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *addr, int len);
+void jit_rtl_sm(const rtlreg_t *addr, const rtlreg_t *src1, int len);
+void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len);
+void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len);
 
-static inline void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len) {
-	switch (len) {
-		case 4:
-			*dest = *(uint32_t *) addr;
-			return;
-		case 1:
-			*dest = *(uint8_t *) addr;
-			return;
-		case 2:
-			*dest = *(uint16_t *) addr;
-			return;
-		default:
-			panic("wtf");
-	}
-}
 
-static inline void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
-	switch (len) {
-		case 4:
-			*(uint32_t *) addr = *src1;
-			return;
-		case 1:
-			*(uint8_t *) addr = *src1;
-			return;
-		case 2:
-			*(uint16_t *) addr = *src1;
-			return;
-		default:
-			panic("wtf");
-	}
-}
+void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest,
+		const rtlreg_t *src1, const rtlreg_t *src2);
 
-static inline void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest,
-		const rtlreg_t *src1, const rtlreg_t *src2) {
-	*dest = internal_relop(relop, *src1, *src2, rtl_width);
-}
+void jit_rtl_j(vaddr_t target);
+void jit_rtl_jr(rtlreg_t *target);
 
-static inline void jit_rtl_j(vaddr_t target) {
-	cpu.eip = target;
-	decoding_set_jmp(true);
-}
+void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target);
 
-static inline void jit_rtl_jr(rtlreg_t *target) {
-	// very hard to use
-	cpu.eip = *target;
-	decoding_set_jmp(true);
-}
-
-static inline void jit_rtl_jrelop(uint32_t relop, const rtlreg_t *src1,
-		const rtlreg_t *src2, vaddr_t target) {
-	bool is_jmp = internal_relop(relop, *src1, *src2, rtl_width);
-	if (is_jmp) cpu.eip = target;
-	decoding_set_jmp(is_jmp);
-}
 
 void jit_rtl_exit(int state);
+
+/// jit finish
+
+
+
+
+
 
 /* RTL pseudo instructions */
 
