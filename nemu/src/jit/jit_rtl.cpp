@@ -2,15 +2,19 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_HEADER do{ printf("%s\n", __FUNCTION__); }while(0)
-#define JIT_TODO do{printf("todo: ");JIT_HEADER; assert(0 + 1);}while(0)
-#define JIT_DONE JIT_HEADER
-#define JIT_COMPILE_FLAG 1
+#define JIT_COMPILE_FLAG 0
+
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
-#elif
+#define JIT_HEADER do{ printf("%s\n", __FUNCTION__); }while(0)
+#define JIT_TODO do{printf("todo: ");JIT_HEADER; assert(0 + 0);}while(0)
+#else
 #define JIT_COMPILE_BARRIER return
+#define JIT_HEADER do{  }while(0)
+#define JIT_TODO do{ assert(0 + 1);}while(0)
 #endif
+
+#define JIT_DONE JIT_HEADER
 
 llvm::CodeExecutor eng;
 namespace jit {
@@ -63,7 +67,9 @@ using namespace jit;
 
 void exec_close() {
 	if (state_ == JITState::Terminate) {
+#if JIT_COMPILE_BARRIER
 		printf("-------------\n");
+#endif
 		state_ = JITState::Init;
 #if JIT_COMPILE_FLAG
 		eng.finish_block();
@@ -307,6 +313,9 @@ void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 	auto voffset = eng().getInt32(offset);
 	auto va = eng().CreateShl(va_raw, voffset);
 	auto vb = eng().CreateShl(vb_raw, voffset);
+#else
+	llvm::Value* va;
+	llvm::Value* vb;
 #endif
 	
 	llvm::Value* vres;
@@ -391,17 +400,24 @@ void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 }
 
 void jit_rtl_j(vaddr_t target) {
-	JIT_TODO;
+	JIT_DONE;
 	cpu.eip = target;
 	jit::decoding_set_jmp(true);
+	
+	JIT_COMPILE_BARRIER;
+	auto vtarget = eng().getInt32(target);
+	eng.set_value(&cpu.eip, vtarget);
 }
 
 void jit_rtl_jr(rtlreg_t *target) {
-	JIT_TODO;
+	JIT_DONE;
 	// very hard to use
 	cpu.eip = *target;
-	
 	jit::decoding_set_jmp(true);
+
+	JIT_COMPILE_BARRIER;
+	auto vtar = eng.get_value(target);
+	eng.set_value(&cpu.eip, vtar);
 }
 
 void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {

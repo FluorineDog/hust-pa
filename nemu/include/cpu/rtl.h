@@ -20,6 +20,7 @@ void jit_rtl_li(rtlreg_t *dest, uint32_t imm);
 
 void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1);
 #include "arith.h"
+#include "reg.h"
 
 
 void jit_rtl_div64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
@@ -54,7 +55,12 @@ void jit_rtl_exit(int state);
 /// jit finish
 
 
-
+static inline void rtl_blend(rtlreg_t *dest, const rtlreg_t* lo, const rtlreg_t* hi, uint32_t lo_mask){
+    rtlreg_t and_lo, and_hi;
+    rtl_andi(&and_lo, lo, lo_mask);
+    rtl_andi(&and_hi, hi, ~lo_mask);
+    rtl_or(dest, &and_lo, &and_hi);
+}
 
 
 
