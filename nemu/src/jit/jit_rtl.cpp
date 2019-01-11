@@ -2,7 +2,7 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_COMPILE_FLAG 0
+#define JIT_COMPILE_FLAG 1
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
@@ -203,52 +203,79 @@ void jit_rtl_sar(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 
 //make_rtl_arith_logic_dog(mul_lo);
 
+inline std::pair<llvm::Value*, llvm::Value*> get_integer_pair(const rtlreg_t *src1, const rtlreg_t *src2, bool is_sign){
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto va64 = eng().CreateIntCast(va, eng().getInt64Ty(), is_sign);
+	auto vb64 = eng().CreateIntCast(vb, eng().getInt64Ty(), is_sign);
+	return std::make_pair(va64, vb64);
+}
+
+inline void set_value64(rtlreg_t *dest, llvm::Value* v64){
+	auto v32 = eng().CreateIntCast(v64, eng().getInt32Ty(), false);
+	eng.set_value(dest, v32);
+}
+
 void jit_rtl_mul_lo(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	uint64_t x = *src1;
 	uint64_t y = *src2;
 	uint64_t res = (x * y) >> 0;
 	*dest = (uint32_t)res;
 	
 	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_integer_pair(src1, src2, false);
+	auto vres64 = eng().CreateMul(va64, vb64);
+	set_value64(dest, vres64);
 }
 
 //make_rtl_arith_logic_dog(mul_hi);
 void jit_rtl_mul_hi(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	uint64_t x = *src1;
 	uint64_t y = *src2;
 	uint64_t res = (x * y) >> 32;
 	*dest = (uint32_t)res;
 	
 	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_integer_pair(src1, src2, false);
+	auto vmul64 = eng().CreateMul(va64, vb64);
+	auto vres64 = eng().CreateLShr(vmul64, 32);
+	set_value64(dest, vres64);
 }
 
 //make_rtl_arith_logic_dog(imul_lo);
 void jit_rtl_imul_lo(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	int64_t x = *src1;
 	int64_t y = *src2;
 	int64_t res = (x * y) >> 0;
 	*dest = (uint32_t)res;
 	
 	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_integer_pair(src1, src2, true);
+	auto vres64 = eng().CreateMul(va64, vb64);
+	set_value64(dest, vres64);
 }
 
 //make_rtl_arith_logic_dog(imul_hi);
 void jit_rtl_imul_hi(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	int64_t x = *src1;
 	int64_t y = *src2;
 	int64_t res = (x * y) >> 32;
 	*dest = (uint32_t)res;
 	
 	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_integer_pair(src1, src2, true);
+	auto vmul64 = eng().CreateMul(va64, vb64);
+	auto vres64 = eng().CreateAShr(vmul64, 32);
+	set_value64(dest, vres64);
 }
 
 //make_rtl_arith_logic_dog(div_q);
 void jit_rtl_div_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	uint64_t x = *src1;
 	uint64_t y = *src2;
 	uint64_t quot = x / y;
@@ -256,11 +283,14 @@ void jit_rtl_div_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	*dest = (uint32_t)quot;
 	
 	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_integer_pair(src1, src2, false);
+	auto vdiv64 = eng().CreateUDiv(va64, vb64);
+	set_value64(dest, vdiv64);
 }
 
 //make_rtl_arith_logic_dog(div_r);
 void jit_rtl_div_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	uint64_t x = *src1;
 	uint64_t y = *src2;
 //	uint64_t quot = x / y;
@@ -268,11 +298,14 @@ void jit_rtl_div_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	*dest = (uint32_t)rem;
 	
 	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_integer_pair(src1, src2, false);
+	auto vrem64 = eng().CreateURem(va64, vb64);
+	set_value64(dest, vrem64);
 }
 
 //make_rtl_arith_logic_dog(idiv_q);
 void jit_rtl_idiv_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	int64_t x = *src1;
 	int64_t y = *src2;
 	int64_t quot = x / y;
@@ -280,11 +313,15 @@ void jit_rtl_idiv_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) 
 	*dest = (uint32_t)quot;
 	
 	JIT_COMPILE_BARRIER;
+	
+	auto [va64, vb64] = get_integer_pair(src1, src2, true);
+	auto vdiv64 = eng().CreateSDiv(va64, vb64);
+	set_value64(dest, vdiv64);
 }
 
 //make_rtl_arith_logic_dog(idiv_r);
 void jit_rtl_idiv_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	int64_t x = *src1;
 	int64_t y = *src2;
 //	int64_t quot = x / y;
@@ -292,6 +329,9 @@ void jit_rtl_idiv_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) 
 	*dest = (uint32_t)rem;
 	
 	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_integer_pair(src1, src2, true);
+	auto vrem64 = eng().CreateSRem(va64, vb64);
+	set_value64(dest, vrem64);
 }
 
 void jit_rtl_div64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
@@ -404,9 +444,8 @@ void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 #if JIT_COMPILE_FLAG
 	auto va_raw = eng.get_value(src1_raw);
 	auto vb_raw = eng.get_value(src2_raw);
-	auto voffset = eng().getInt32(offset);
-	auto va = eng().CreateShl(va_raw, voffset);
-	auto vb = eng().CreateShl(vb_raw, voffset);
+	auto va = eng().CreateShl(va_raw, offset);
+	auto vb = eng().CreateShl(vb_raw, offset);
 #else
 	llvm::Value* va;
 	llvm::Value* vb;
