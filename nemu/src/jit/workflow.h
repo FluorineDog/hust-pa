@@ -86,7 +86,7 @@ public:
 		return builder_.CreateConstGEP1_32(s_.memory, paddr);
 	}
 	
-	Value *get_value(rtlreg_t *reg) {
+	Value *get_value(const rtlreg_t *reg) {
 		if (auto reg_id = is_cpu(reg)) {
 			int id = reg_id.value();
 			if (s_.reg_cache[id].first == nullptr) {
@@ -175,9 +175,9 @@ private:
 	LLVMContext ctx_;
 	std::unordered_map<uint64_t, std::pair<RawFT, int>> icache;
 	
-	static std::optional<int> is_cpu(rtlreg_t *reg) {
-		if ((rtlreg_t *) &cpu <= reg && reg < (rtlreg_t *) (&cpu + 1)) {
-			return reg - (rtlreg_t *) &cpu;
+	static std::optional<int> is_cpu(const rtlreg_t *reg) {
+		if ((const rtlreg_t *) &cpu <= reg && reg < (const rtlreg_t *) (&cpu + 1)) {
+			return reg - (const rtlreg_t *) &cpu;
 		} else {
 			return std::nullopt;
 		}
@@ -196,7 +196,7 @@ private:
 		int inst_count;
 		uint64_t uid;
 		std::unique_ptr<Module> mod;
-		std::unordered_map<rtlreg_t *, Value *> value_cache;
+		std::unordered_map<const rtlreg_t *, Value *> value_cache;
 		std::array<std::pair<Value *, bool>, sizeof(CPU_state) / sizeof(rtlreg_t)> reg_cache;
 		BasicBlock *bb;
 		Function *func;

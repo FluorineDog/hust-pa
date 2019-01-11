@@ -4,7 +4,10 @@
 
 #define JIT_HEADER do{ printf("%s\n", __FUNCTION__); }while(0)
 #define JIT_TODO do{printf("todo: ");JIT_HEADER; assert(0 + 1);}while(0)
+#define JIT_DONE JIT_HEADER
+#define JIT_COMPILE return
 
+llvm::CodeExecutor eng;
 namespace jit {
 
 enum class JITState {
@@ -12,16 +15,14 @@ enum class JITState {
 	Compiling,
 	Terminate,
 };
-static llvm::CodeExecutor eng;
-static JITState state_ = JITState::Init;
+JITState state_ = JITState::Init;
 
 inline void decoding_set_jmp(bool is_jmp) {
-    assert(is_jmp == true);
-    assert(state_ == JITState::Compiling);
-    state_ = JITState::Terminate;
-    g_decoding.is_jmp = is_jmp;
+	assert(is_jmp == true);
+	assert(state_ == JITState::Compiling);
+	state_ = JITState::Terminate;
+	g_decoding.is_jmp = is_jmp;
 }
-
 
 
 std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
@@ -50,6 +51,8 @@ std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
 	return std::nullopt;
 }
 
+using namespace jit;
+
 void exec_close() {
 	if (state_ == JITState::Terminate) {
 		printf("-------------\n");
@@ -59,6 +62,7 @@ void exec_close() {
 }
 
 void inst_barrier() {
+	JIT_COMPILE;
 //	eng.finish_inst();
 }
 
@@ -66,61 +70,117 @@ void inst_barrier() {
 }    //namespace jit
 
 void jit_rtl_li(rtlreg_t *dest, uint32_t imm) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = imm;
+	
+	JIT_COMPILE;
+	auto vimm = eng().getInt32(imm);
+	eng.set_value(dest, vimm);
 }
 
 void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1;
+	
+	JIT_COMPILE;
+	auto val = eng.get_value(src1);
+	eng.set_value(dest, val);
 }
 
 //make_rtl_arith_logic_dog(add)
 void jit_rtl_add(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1 + *src2;
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateAdd(va, vb);
+	eng.set_value(dest, vres);
 }
 
 //make_rtl_arith_logic_dog(sub)
 void jit_rtl_sub(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1 - *src2;
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateSub(va, vb);
+	eng.set_value(dest, vres);
 }
 
 //make_rtl_arith_logic_dog(and)
 void jit_rtl_and(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1 & *src2;
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateAnd(va, vb);
+	eng.set_value(dest, vres);
 }
 
 //make_rtl_arith_logic_dog(or)
 void jit_rtl_or(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1 | *src2;
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateOr(va, vb);
+	eng.set_value(dest, vres);
 }
 
 //make_rtl_arith_logic_dog(xor)
 void jit_rtl_xor(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1 ^ *src2;
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateXor(va, vb);
+	eng.set_value(dest, vres);
 }
 
 //make_rtl_arith_logic_dog(shl)
 void jit_rtl_shl(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1 << *src2;
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateShl(va, vb);
+	eng.set_value(dest, vres);
 }
 
 //make_rtl_arith_logic_dog(shr)
 void jit_rtl_shr(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = *src1 >> *src2;
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateLShr(va, vb);
+	eng.set_value(dest, vres);
 }
 
 //make_rtl_arith_logic_dog(sar)
 void jit_rtl_sar(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	*dest = (uint32_t) ((int32_t) *src1 >> *src2);
+	
+	JIT_COMPILE;
+	auto va = eng.get_value(src1);
+	auto vb = eng.get_value(src2);
+	auto vres = eng().CreateAShr(va, vb);
+	eng.set_value(dest, vres);
 }
 
 #define make_rtl_arith_logic_dog(name)                                                \
@@ -222,10 +282,65 @@ void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
 	}
 }
 
-void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1,
-		const rtlreg_t *src2) {
+void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
+		const rtlreg_t *src2_raw) {
 	JIT_TODO;
-	*dest = internal_relop(relop, *src1, *src2, rtl_width);
+	int offset = (4 - rtl_width) * 8;
+	uint32_t src1 = *src1_raw << offset;
+	uint32_t src2 = *src2_raw << offset;
+	switch (relop) {
+		case RELOP_FALSE: {
+			*dest = false;
+			break;
+		}
+		case RELOP_TRUE: {
+			*dest = true;
+			break;
+		}
+		case RELOP_EQ: {
+			*dest = src1 == src2;
+			break;
+		}
+		case RELOP_NE: {
+			*dest = src1 != src2;
+			break;
+		}
+		case RELOP_LT: {
+			*dest = (int32_t) src1 < (int32_t) src2;
+			break;
+		}
+		case RELOP_LE: {
+			*dest = (int32_t) src1 <= (int32_t) src2;
+			break;
+		}
+		case RELOP_GT: {
+			*dest = (int32_t) src1 > (int32_t) src2;
+			break;
+		}
+		case RELOP_GE: {
+			*dest = (int32_t) src1 >= (int32_t) src2;
+			break;
+		}
+		case RELOP_LTU: {
+			*dest = src1 < src2;
+			break;
+		}
+		case RELOP_LEU: {
+			*dest = src1 <= src2;
+			break;
+		}
+		case RELOP_GTU: {
+			*dest = src1 > src2;
+			break;
+		}
+		case RELOP_GEU: {
+			*dest = src1 >= src2;
+			break;
+		}
+		default:
+			panic("unsupport relop = %d", relop);
+	}
+//	*dest = internal_relop(relop, *src1, *src2, rtl_width);
 }
 
 void jit_rtl_j(vaddr_t target) {
@@ -238,17 +353,25 @@ void jit_rtl_jr(rtlreg_t *target) {
 	JIT_TODO;
 	// very hard to use
 	cpu.eip = *target;
+	
 	jit::decoding_set_jmp(true);
 }
 
 void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {
-	JIT_TODO;
-	bool is_jmp = *cond;
+	JIT_DONE;
+	auto is_jmp = *cond;
 	if (is_jmp)
 		cpu.eip = target;
 	else
 		cpu.eip = g_decoding.seq_eip;
 	jit::decoding_set_jmp(true);
+	
+	JIT_COMPILE;
+	auto vtarget = eng().getInt32(target);
+	auto vseq = eng().getInt32(g_decoding.seq_eip);
+	auto vcond = eng.get_value(cond);
+	auto vjmp = eng().CreateSelect(vcond, vtarget, vseq);
+	eng.set_value(&cpu.eip, vjmp);
 }
 
 void jit_rtl_exit(int state);
