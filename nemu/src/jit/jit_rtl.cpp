@@ -334,36 +334,72 @@ void jit_rtl_idiv_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) 
 	set_value64(dest, vrem64);
 }
 
+inline std::pair<llvm::Value*, llvm::Value*> get_i64_pair(
+		const rtlreg_t *src1_lo, const rtlreg_t *src1_hi, const rtlreg_t *src2, bool is_sign){
+	auto va_lo = eng.get_value(src1_lo);
+	auto va_hi = eng.get_value(src1_hi);
+	auto vb = eng.get_value(src2);
+	auto va64_lo = eng().CreateIntCast(va_lo, eng().getInt64Ty(), false);
+	auto va64_hi_raw = eng().CreateIntCast(va_hi, eng().getInt64Ty(), false);
+	auto va64_hi = eng().CreateShl(va64_hi_raw, 32);
+	auto va64_u = eng().CreateOr(va64_lo, va64_hi);
+	
+	auto va64 = eng().CreateIntCast(va64_u, eng().getInt64Ty(), is_sign);
+	auto vb64 = eng().CreateIntCast(vb, eng().getInt64Ty(), is_sign);
+	return std::make_pair(va64, vb64);
+}
+
 void jit_rtl_div64_q(rtlreg_t *dest, const rtlreg_t *src1_hi,
 		const rtlreg_t *src1_lo, const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	uint64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
 	uint32_t divisor = (*src2);
 	*dest = (uint32_t) (dividend / divisor);
+	
+	
+	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_i64_pair(src1_lo, src1_hi, src2, false);
+	auto vres64 = eng().CreateUDiv(va64, vb64);
+	set_value64(dest, vres64);
 }
 
 void jit_rtl_div64_r(rtlreg_t *dest, const rtlreg_t *src1_hi, const rtlreg_t *src1_lo,
 		const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	uint64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
 	uint32_t divisor = (*src2);
 	*dest = (uint32_t) (dividend % divisor);
+	
+	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_i64_pair(src1_lo, src1_hi, src2, false);
+	auto vres64 = eng().CreateURem(va64, vb64);
+	set_value64(dest, vres64);
 }
 
 void jit_rtl_idiv64_q(rtlreg_t *dest, const rtlreg_t *src1_hi, const rtlreg_t *src1_lo,
 		const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	int64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
 	int32_t divisor = (*src2);
 	*dest = (uint32_t) (dividend / divisor);
+	
+	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_i64_pair(src1_lo, src1_hi, src2, true);
+	auto vres64 = eng().CreateSDiv(va64, vb64);
+	set_value64(dest, vres64);
 }
 
 void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi, const rtlreg_t *src1_lo,
 		const rtlreg_t *src2) {
-	JIT_TODO;
+	JIT_DONE;
 	int64_t dividend = ((uint64_t) (*src1_hi) << 32) | (*src1_lo);
 	int32_t divisor = (*src2);
 	*dest = (uint32_t) (dividend % divisor);
+	
+	JIT_COMPILE_BARRIER;
+	auto [va64, vb64] = get_i64_pair(src1_lo, src1_hi, src2, true);
+	auto vres64 = eng().CreateSRem(va64, vb64);
+	set_value64(dest, vres64);
 }
 
 void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *vaddr, int len) {
