@@ -3,7 +3,7 @@
 #include "cpu/exec.h"
 
 #define JIT_HEADER do{ printf("%s\n", __FUNCTION__); }while(0)
-#define JIT_TODO do{JIT_HEADER; assert(0 + 1);}while(0)
+#define JIT_TODO do{printf("todo: ");JIT_HEADER; assert(0 + 1);}while(0)
 
 namespace jit {
 
