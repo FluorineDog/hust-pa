@@ -266,39 +266,39 @@ void jit_rtl_sm(const rtlreg_t *addr, const rtlreg_t *src1, int len) {
 	vaddr_write(*addr, *src1, len);
 }
 
-void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len) {
-	JIT_TODO;
-	switch (len) {
-		case 4:
-			*dest = *(uint32_t *) addr;
-			return;
-		case 1:
-			*dest = *(uint8_t *) addr;
-			return;
-		case 2:
-			*dest = *(uint16_t *) addr;
-			return;
-		default:
-			panic("wtf");
-	}
-}
+// void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len) {
+// 	JIT_TODO;
+// 	switch (len) {
+// 		case 4:
+// 			*dest = *(uint32_t *) addr;
+// 			return;
+// 		case 1:
+// 			*dest = *(uint8_t *) addr;
+// 			return;
+// 		case 2:
+// 			*dest = *(uint16_t *) addr;
+// 			return;
+// 		default:
+// 			panic("wtf");
+// 	}
+// }
 
-void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
-	JIT_TODO;
-	switch (len) {
-		case 4:
-			*(uint32_t *) addr = *src1;
-			return;
-		case 1:
-			*(uint8_t *) addr = (uint8_t)*src1;
-			return;
-		case 2:
-			*(uint16_t *) addr = (uint16_t) *src1;
-			return;
-		default:
-			panic("wtf");
-	}
-}
+// void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
+// 	JIT_TODO;
+// 	switch (len) {
+// 		case 4:
+// 			*(uint32_t *) addr = *src1;
+// 			return;
+// 		case 1:
+// 			*(uint8_t *) addr = (uint8_t)*src1;
+// 			return;
+// 		case 2:
+// 			*(uint16_t *) addr = (uint16_t) *src1;
+// 			return;
+// 		default:
+// 			panic("wtf");
+// 	}
+// }
 
 void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 		const rtlreg_t *src2_raw) {

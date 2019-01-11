@@ -37,8 +37,8 @@ void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi,
 
 void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *addr, int len);
 void jit_rtl_sm(const rtlreg_t *addr, const rtlreg_t *src1, int len);
-void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len);
-void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len);
+// void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len);
+// void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len);
 
 
 void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest,
