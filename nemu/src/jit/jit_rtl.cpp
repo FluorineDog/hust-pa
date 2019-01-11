@@ -5,7 +5,12 @@
 #define JIT_HEADER do{ printf("%s\n", __FUNCTION__); }while(0)
 #define JIT_TODO do{printf("todo: ");JIT_HEADER; assert(0 + 1);}while(0)
 #define JIT_DONE JIT_HEADER
-#define JIT_COMPILE return
+#define JIT_COMPILE_FLAG 1
+#if JIT_COMPILE_FLAG
+#define JIT_COMPILE_BARRIER
+#elif
+#define JIT_COMPILE_BARRIER return
+#endif
 
 llvm::CodeExecutor eng;
 namespace jit {
@@ -35,7 +40,10 @@ std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
 				(void) real_inst;
 				return expected_inst;
 			}
-//			eng.begin_block(cr3, eip);
+#if JIT_COMPILE_FLAG
+			eng.begin_block(cr3, eip);
+#endif
+			
 			state_ = JITState::Compiling;
 			break;
 		}
@@ -57,13 +65,17 @@ void exec_close() {
 	if (state_ == JITState::Terminate) {
 		printf("-------------\n");
 		state_ = JITState::Init;
-//		eng.finish_block();
+#if JIT_COMPILE_FLAG
+		eng.finish_block();
+#endif
 	}
 }
 
 void inst_barrier() {
-	JIT_COMPILE;
-//	eng.finish_inst();
+	JIT_COMPILE_BARRIER;
+#if JIT_COMPILE_FLAG
+	eng.finish_inst();
+#endif
 }
 
 
@@ -73,7 +85,7 @@ void jit_rtl_li(rtlreg_t *dest, uint32_t imm) {
 	JIT_DONE;
 	*dest = imm;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto vimm = eng().getInt32(imm);
 	eng.set_value(dest, vimm);
 }
@@ -82,7 +94,7 @@ void jit_rtl_mv(rtlreg_t *dest, const rtlreg_t *src1) {
 	JIT_DONE;
 	*dest = *src1;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto val = eng.get_value(src1);
 	eng.set_value(dest, val);
 }
@@ -92,7 +104,7 @@ void jit_rtl_add(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = *src1 + *src2;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateAdd(va, vb);
@@ -104,7 +116,7 @@ void jit_rtl_sub(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = *src1 - *src2;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateSub(va, vb);
@@ -116,7 +128,7 @@ void jit_rtl_and(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = *src1 & *src2;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateAnd(va, vb);
@@ -128,7 +140,7 @@ void jit_rtl_or(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = *src1 | *src2;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateOr(va, vb);
@@ -140,7 +152,7 @@ void jit_rtl_xor(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = *src1 ^ *src2;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateXor(va, vb);
@@ -152,7 +164,7 @@ void jit_rtl_shl(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = *src1 << *src2;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateShl(va, vb);
@@ -164,7 +176,7 @@ void jit_rtl_shr(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = *src1 >> *src2;
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateLShr(va, vb);
@@ -176,7 +188,7 @@ void jit_rtl_sar(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
 	*dest = (uint32_t) ((int32_t) *src1 >> *src2);
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto va = eng.get_value(src1);
 	auto vb = eng.get_value(src2);
 	auto vres = eng().CreateAShr(va, vb);
@@ -272,10 +284,10 @@ void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
 			*(uint32_t *) addr = *src1;
 			return;
 		case 1:
-			*(uint8_t *) addr = *src1;
+			*(uint8_t *) addr = (uint8_t)*src1;
 			return;
 		case 2:
-			*(uint16_t *) addr = *src1;
+			*(uint16_t *) addr = (uint16_t) *src1;
 			return;
 		default:
 			panic("wtf");
@@ -284,63 +296,98 @@ void jit_rtl_host_sm(void *addr, const rtlreg_t *src1, int len) {
 
 void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
 		const rtlreg_t *src2_raw) {
-	JIT_TODO;
-	int offset = (4 - rtl_width) * 8;
+	JIT_DONE;
+	uint32_t offset = (4 - rtl_width) * 8;
 	uint32_t src1 = *src1_raw << offset;
 	uint32_t src2 = *src2_raw << offset;
+	
+#if JIT_COMPILE_FLAG
+	auto va_raw = eng.get_value(src1_raw);
+	auto vb_raw = eng.get_value(src2_raw);
+	auto voffset = eng().getInt32(offset);
+	auto va = eng().CreateShl(va_raw, voffset);
+	auto vb = eng().CreateShl(vb_raw, voffset);
+#endif
+	
+	llvm::Value* vres;
 	switch (relop) {
 		case RELOP_FALSE: {
-			*dest = false;
+			*dest = (uint32_t)(false);
+			JIT_COMPILE_BARRIER;
+			vres = eng().getInt1(false);
 			break;
 		}
 		case RELOP_TRUE: {
-			*dest = true;
+			*dest = (uint32_t)(true);
+			JIT_COMPILE_BARRIER;
+			vres = eng().getInt1(true);
 			break;
 		}
 		case RELOP_EQ: {
-			*dest = src1 == src2;
+			*dest = (uint32_t)(src1 == src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpEQ(va, vb);
 			break;
 		}
 		case RELOP_NE: {
-			*dest = src1 != src2;
+			*dest = (uint32_t)(src1 != src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpNE(va, vb);
 			break;
 		}
 		case RELOP_LT: {
-			*dest = (int32_t) src1 < (int32_t) src2;
+			*dest = (uint32_t)((int32_t) src1 < (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSLT(va, vb);
 			break;
 		}
 		case RELOP_LE: {
-			*dest = (int32_t) src1 <= (int32_t) src2;
+			*dest = (uint32_t)((int32_t) src1 <= (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSLE(va, vb);
 			break;
 		}
 		case RELOP_GT: {
-			*dest = (int32_t) src1 > (int32_t) src2;
+			*dest = (uint32_t)((int32_t) src1 > (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSGT(va, vb);
 			break;
 		}
 		case RELOP_GE: {
-			*dest = (int32_t) src1 >= (int32_t) src2;
+			*dest = (uint32_t)((int32_t) src1 >= (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSGE(va, vb);
 			break;
 		}
 		case RELOP_LTU: {
-			*dest = src1 < src2;
+			*dest = (uint32_t)(src1 < src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpULT(va, vb);
 			break;
 		}
 		case RELOP_LEU: {
-			*dest = src1 <= src2;
+			*dest = (uint32_t)(src1 <= src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpULE(va, vb);
 			break;
 		}
 		case RELOP_GTU: {
-			*dest = src1 > src2;
+			*dest = (uint32_t)(src1 > src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpUGT(va, vb);
 			break;
 		}
 		case RELOP_GEU: {
-			*dest = src1 >= src2;
+			*dest = (uint32_t)(src1 >= src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpUGE(va, vb);
 			break;
 		}
 		default:
 			panic("unsupport relop = %d", relop);
 	}
-//	*dest = internal_relop(relop, *src1, *src2, rtl_width);
+	auto vres_int = eng().CreateIntCast(vres, eng.getRegTy(), false);
+	eng.set_value(dest, vres_int);
 }
 
 void jit_rtl_j(vaddr_t target) {
@@ -366,10 +413,12 @@ void jit_rtl_jcond(const rtlreg_t *cond, vaddr_t target) {
 		cpu.eip = g_decoding.seq_eip;
 	jit::decoding_set_jmp(true);
 	
-	JIT_COMPILE;
+	JIT_COMPILE_BARRIER;
 	auto vtarget = eng().getInt32(target);
 	auto vseq = eng().getInt32(g_decoding.seq_eip);
-	auto vcond = eng.get_value(cond);
+	auto vcond_int = eng.get_value(cond);
+	auto v0 = eng().getInt32(0);
+	auto vcond = eng().CreateICmpNE(vcond_int, v0);
 	auto vjmp = eng().CreateSelect(vcond, vtarget, vseq);
 	eng.set_value(&cpu.eip, vjmp);
 }
