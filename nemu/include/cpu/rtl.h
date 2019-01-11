@@ -67,16 +67,23 @@ static inline void rtl_blend(rtlreg_t *dest, const rtlreg_t* lo, const rtlreg_t*
 /* RTL pseudo instructions */
 
 static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
+    assert(0 <= r && r < 8);
 	switch (width) {
 		case 4:
 			rtl_mv(dest, &reg_l(r));
 			return;
-		case 1:
-			rtl_host_lm(dest, &reg_b(r), 1);
+		case 1:{
+            const auto reg = &cpu.gpr[r & 0x3]._32;
+            rtlreg_t val;
+            rtl_shri(&val, reg, (r & 0x4) ? 8:0);
+			rtl_blend(dest, &val, dest, 0xFF);
 			return;
-		case 2:
-			rtl_host_lm(dest, &reg_w(r), 2);
+        }
+		case 2: {
+            const auto reg = &cpu.gpr[r]._32;
+			rtl_blend(dest, reg, dest, 0xFFFF);
 			return;
+        }
 		default:
 			panic("wtf");
 	}
@@ -87,12 +94,18 @@ static inline void rtl_sr(int r, const rtlreg_t *src1, int width) {
 		case 4:
 			rtl_mv(&reg_l(r), src1);
 			return;
-		case 1:
-			rtl_host_sm(&reg_b(r), src1, 1);
+		case 1:{
+            auto reg = &cpu.gpr[r & 0x3]._32;
+            rtlreg_t val;
+            rtl_shli(&val, src1, (r & 0x4) ? 8:0);
+			rtl_blend(reg, &val, reg, (r & 0x4) ? 0xFF00 : 0xFF);
 			return;
-		case 2:
-			rtl_host_sm(&reg_w(r), src1, 2);
+        }
+		case 2:{
+            auto reg = &cpu.gpr[r]._32;
+			rtl_blend(reg, src1, reg, 0xFFFF);
 			return;
+        }
 		default:
 			panic("wtf");
 	}
