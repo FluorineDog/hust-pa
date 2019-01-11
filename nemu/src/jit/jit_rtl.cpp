@@ -6,8 +6,11 @@
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
-#define JIT_HEADER do{ fprintf(stderr, "%s\n", __FUNCTION__); }while(0)
-#define JIT_TODO do{fprintf(stderr, "todo: ");JIT_HEADER; assert(0 + 0);}while(0)
+//#define JIT_HEADER do{ fprintf(stderr, "%s\n", __FUNCTION__); }while(0)
+//#define JIT_TODO do{fprintf(stderr, "todo: ");JIT_HEADER; assert(0 + 0);}while(0)
+
+#define JIT_HEADER do{  }while(0)
+#define JIT_TODO do{ assert(0 + 0);}while(0)
 #else
 #define JIT_COMPILE_BARRIER return
 #define JIT_HEADER do{  }while(0)
@@ -68,7 +71,7 @@ using namespace jit;
 void exec_close() {
 	if (state_ == JITState::Terminate) {
 #if JIT_COMPILE_FLAG
-		printf("-------------\n");
+//		printf("-------------\n");
 #endif
 		state_ = JITState::Init;
 #if JIT_COMPILE_FLAG

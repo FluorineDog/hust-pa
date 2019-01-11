@@ -128,7 +128,7 @@ public:
 			}
 		}
 		builder_.CreateRet(builder_.getInt32(s_.inst_count));
-		outs() << *s_.mod;
+//		outs() << *s_.mod;
 		auto err = jit_->addModule(std::move(s_.mod));
 		assert(!err);
 		auto uid = s_.uid;
