@@ -2,7 +2,7 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_COMPILE_FLAG 1
+#define JIT_COMPILE_FLAG 0
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
