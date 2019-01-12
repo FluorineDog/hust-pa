@@ -53,9 +53,6 @@ uint32_t pio_read_common(ioaddr32_t addr, int len) {
     case 1: ret = *(uint8_t *)(pio_space + addr); break;
     default: panic("wtf");
   }
-  if(ret != 0){
-      printf("[get key %x{%d}]", ret, len);
-  }
   return ret;
 }
 

@@ -19,7 +19,6 @@
 
 #define JIT_DONE JIT_HEADER
 
-void info_register();
 llvm::CodeExecutor eng;
 namespace jit {
 

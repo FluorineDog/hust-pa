@@ -81,10 +81,10 @@ static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
 			return;
 		case 1:{
             const auto reg = &cpu.gpr[r & 0x3]._32;
-            // rtlreg_t val;
-            // rtl_shri(&val, reg, (r & 0x4) ? 8:0);
+            rtlreg_t val;
+            rtl_shri(&val, reg, (r & 0x4) ? 8:0);
 			// rtl_active(dest);
-			rtl_sext(dest, reg, 1);
+			rtl_sext(dest, &val, 1);
 			return;
         }
 		case 2: {
