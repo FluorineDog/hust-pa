@@ -42,7 +42,7 @@ uint32_t vaddr_read(vaddr_t vaddr, int len) {
 	if (!cpu.cr0.paging) {
 		// no paging
 		auto data =  paddr_read(vaddr, len);
-        //  fprintf(stderr, "[read %08x from %08x]", data, vaddr);
+         fprintf(stderr, "[read %08x from %08x]", data, vaddr);
         return data;
 	}
 	if (((vaddr + len - 1) ^ vaddr) >= PAGE_SIZE){

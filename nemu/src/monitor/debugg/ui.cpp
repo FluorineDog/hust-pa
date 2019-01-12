@@ -21,7 +21,7 @@ char *rl_gets() {
 		free(line_read);
 		line_read = nullptr;
 	}
-	
+	printf("[%ld]", g_nr_guest_instr);
 	line_read = readline("(nemu) ");
 	
 	if (line_read && *line_read) {
