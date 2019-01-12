@@ -41,7 +41,9 @@ void paddr_write(paddr_t addr, uint32_t data, int len) {
 uint32_t vaddr_read(vaddr_t vaddr, int len) {
 	if (!cpu.cr0.paging) {
 		// no paging
-		return paddr_read(vaddr, len);
+		auto data =  paddr_read(vaddr, len);
+        // fprintf(stderr, "[read %08x from %08x]", data, vaddr);
+        return data;
 	}
 	if (((vaddr + len - 1) ^ vaddr) >= PAGE_SIZE){
 		vaddr_t cross_base = (vaddr + len) & ~(PAGE_SIZE - 1);
@@ -55,7 +57,8 @@ uint32_t vaddr_read(vaddr_t vaddr, int len) {
 //		panic("[cross boundary %08x]", vaddr);
 	}
 	auto paddr = extract_paddr(cpu.cr3, vaddr, false);
-	return paddr_read(paddr, len);
+	auto final_data = paddr_read(paddr, len);
+    return final_data;
 }
 
 void vaddr_write(vaddr_t vaddr, uint32_t data, int len) {
