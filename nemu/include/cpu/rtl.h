@@ -70,7 +70,13 @@ static inline void rtl_blend(rtlreg_t *dest, const rtlreg_t* lo, const rtlreg_t*
 }
 
 
-
+static inline void rtl_sext(rtlreg_t *dest, const rtlreg_t *src1, int width) {
+	// dest <- signext(src1[(width * 8 - 1) .. 0])
+	int offset = (4 - width) * 8;
+	rtl_shli(dest, src1, offset);
+	rtl_sari(dest, dest, offset);
+	// TODO();
+}
 /* RTL pseudo instructions */
 
 static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
@@ -81,16 +87,17 @@ static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
 			return;
 		case 1:{
             const auto reg = &cpu.gpr[r & 0x3]._32;
-            rtlreg_t val;
-            rtl_shri(&val, reg, (r & 0x4) ? 8:0);
-			rtl_active(dest);
-			rtl_blend(dest, &val, dest, 0xFF);
+            // rtlreg_t val;
+            // rtl_shri(&val, reg, (r & 0x4) ? 8:0);
+			// rtl_active(dest);
+			rtl_sext(dest, reg, 1);
 			return;
         }
 		case 2: {
             const auto reg = &cpu.gpr[r]._32;
-			rtl_active(dest);
-			rtl_blend(dest, reg, dest, 0xFFFF);
+			// rtl_active(dest);
+			// rtl_blend(dest, reg, dest, 0xFFFF);
+			rtl_sext(dest, reg, 2);
 			return;
         }
 		default:
@@ -127,13 +134,7 @@ static inline void rtl_not(rtlreg_t *dest, const rtlreg_t *src1) {
 	// TODO();
 }
 
-static inline void rtl_sext(rtlreg_t *dest, const rtlreg_t *src1, int width) {
-	// dest <- signext(src1[(width * 8 - 1) .. 0])
-	int offset = (4 - width) * 8;
-	rtl_shli(dest, src1, offset);
-	rtl_sari(dest, dest, offset);
-	// TODO();
-}
+
 
 static inline void rtl_push(const rtlreg_t *src1) {
 	// esp <- esp - 4
