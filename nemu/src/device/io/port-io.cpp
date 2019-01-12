@@ -42,15 +42,21 @@ void* add_pio_map(ioaddr_t addr, int len, pio_callback_t callback) {
 }
 
 uint32_t pio_read_common(ioaddr32_t addr, int len) {
+//   printf("[in from %x of len=%d]", addr, len);
   assert(addr + len - 1 < PORT_IO_SPACE_MAX);
   // prepare data to read
   pio_callback(addr, len, false);
+  uint32_t ret;
   switch (len) {
-    case 4: return *(uint32_t *)(pio_space + addr);
-    case 2: return *(uint16_t *)(pio_space + addr);
-    case 1: return *(uint8_t *)(pio_space + addr);
+    case 4: ret = *(uint32_t *)(pio_space + addr); break;
+    case 2: ret = *(uint16_t *)(pio_space + addr); break;
+    case 1: ret = *(uint8_t *)(pio_space + addr); break;
     default: panic("wtf");
   }
+  if(ret != 0){
+      printf("[get key %x{%d}]", ret, len);
+  }
+  return ret;
 }
 
 void pio_write_common(ioaddr32_t addr, uint32_t data, int len) {

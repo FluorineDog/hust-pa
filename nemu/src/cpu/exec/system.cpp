@@ -66,7 +66,13 @@ make_EHelper(in) {
 	rtlreg_t ioaddr;
 	rtl_mv(&ioaddr, &id_src->val);
 	rtl_io_in(&dat, &ioaddr, rtl_width);
+
 	operand_write(id_dest, &dat);
+    if(dat != 0){
+        printf("<<%x>>\n", dat);
+        void info_register(); 
+        info_register(); 
+    }
 	print_asm_template2(in);
 
 #if defined(DIFF_TEST)

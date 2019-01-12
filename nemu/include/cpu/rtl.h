@@ -62,12 +62,6 @@ void jit_rtl_exit(int state);
 /// jit finish
 
 
-static inline void rtl_blend(rtlreg_t *dest, const rtlreg_t* lo, const rtlreg_t* hi, uint32_t lo_mask){
-    rtlreg_t and_lo, and_hi;
-    rtl_andi(&and_lo, lo, lo_mask);
-    rtl_andi(&and_hi, hi, ~lo_mask);
-    rtl_or(dest, &and_lo, &and_hi);
-}
 
 
 static inline void rtl_sext(rtlreg_t *dest, const rtlreg_t *src1, int width) {
@@ -103,6 +97,13 @@ static inline void rtl_lr(rtlreg_t *dest, int r, int width) {
 		default:
 			panic("wtf");
 	}
+}
+
+static inline void rtl_blend(rtlreg_t *dest, const rtlreg_t* lo, const rtlreg_t* hi, uint32_t lo_mask){
+    rtlreg_t and_lo, and_hi;
+    rtl_andi(&and_lo, lo, lo_mask);
+    rtl_andi(&and_hi, hi, ~lo_mask);
+    rtl_or(dest, &and_lo, &and_hi);
 }
 
 static inline void rtl_sr(int r, const rtlreg_t *src1, int width) {
