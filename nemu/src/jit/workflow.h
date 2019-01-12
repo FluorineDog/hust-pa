@@ -128,7 +128,7 @@ public:
 			}
 		}
 		builder_.CreateRet(builder_.getInt32(s_.inst_count));
-//		outs() << *s_.mod;
+		outs() << *s_.mod;
 		auto err = jit_->addModule(std::move(s_.mod));
 		assert(!err);
 		auto uid = s_.uid;
@@ -179,7 +179,9 @@ private:
 	}
 	
 	static inline std::string get_name(uint64_t uid) {
-		return "functor_" + std::to_string(uid);
+        char buf[20];
+        sprintf(buf, "%lx", uid);
+		return "functor_" + std::string(buf);
 	}
 	
 	static inline std::string get_name(uint32_t cr3, uint32_t vaddr) {
