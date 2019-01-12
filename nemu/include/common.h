@@ -1,5 +1,5 @@
 #pragma once
-// #define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define DIFF_TEST

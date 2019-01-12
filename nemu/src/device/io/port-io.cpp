@@ -41,7 +41,8 @@ void* add_pio_map(ioaddr_t addr, int len, pio_callback_t callback) {
   return pio_space + addr;
 }
 
-uint32_t pio_read_common(ioaddr32_t addr, int len) {
+uint32_t pio_read_common(ioaddr32_t addr_raw, int len) {
+  ioaddr_t addr = (ioaddr_t)addr_raw;
   assert(addr + len - 1 < PORT_IO_SPACE_MAX);
   // prepare data to read
   pio_callback(addr, len, false);
@@ -53,7 +54,8 @@ uint32_t pio_read_common(ioaddr32_t addr, int len) {
   }
 }
 
-void pio_write_common(ioaddr32_t addr, uint32_t data, int len) {
+void pio_write_common(ioaddr32_t addr_raw, uint32_t data, int len) {
+  ioaddr_t addr = (ioaddr_t)addr_raw;
   assert(addr + len - 1 < PORT_IO_SPACE_MAX);
   switch (len) {
     case 4: *(uint32_t *)(pio_space + addr) = data; break;

@@ -64,7 +64,7 @@ make_EHelper(in) {
 //	dat = pio_read_common((ioaddr_t) id_src->val, rtl_width);
 	
 	rtlreg_t ioaddr;
-	rtl_andi(&ioaddr, &id_src->val, 0xFFFF);
+	rtl_mv(&ioaddr, &id_src->val);
 	rtl_io_in(&dat, &ioaddr, rtl_width);
 	operand_write(id_dest, &dat);
 	print_asm_template2(in);
@@ -78,7 +78,7 @@ make_EHelper(out) {
 	// JIT_TODO WITH IO
 //	pio_write_common((ioaddr_t) id_dest->val, id_src->val, rtl_width);
 	rtlreg_t ioaddr;
-	rtl_andi(&ioaddr, &id_dest->val, 0xFFFF);
+	rtl_mv(&ioaddr, &id_dest->val);
 	rtl_io_out(&ioaddr, &id_src->val, rtl_width);
 	print_asm_template2(out);
 

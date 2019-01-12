@@ -6,7 +6,7 @@
 #include "nemu.h"
 
 uint32_t g_ignore_eflags = 0;
-bool g_diff_test_enabled = false;
+bool g_diff_test_enabled = true;
 
 static void (*ref_difftest_memcpy_from_dut)(paddr_t dest, void *src, size_t n);
 
