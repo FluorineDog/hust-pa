@@ -1,5 +1,5 @@
 #pragma once
-// #define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define DIFF_TEST
@@ -33,6 +33,10 @@ inline void BITCAST(To& dst, const void* src) {
 }
 
 inline constexpr uint32_t maskify(int bit) {
+    if(bit == 32){
+        return 0xFFFFFFFF;
+    }
+    
     return (1U << bit) - 1;
 }
 

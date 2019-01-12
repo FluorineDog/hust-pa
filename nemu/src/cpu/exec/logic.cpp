@@ -1,6 +1,7 @@
 #include "cpu/exec.h"
 #include "cpu/cc.h"
 
+
 void logical_update_XF(const rtlreg_t* res) {
   rtl_update_ZFSF(res);
   rtl_clear_OF();
@@ -45,7 +46,7 @@ make_EHelper(or) {
   print_asm_template2(or);
 }
 
-inline void shift_issue(const rtlreg_t& res){
+inline void shift_issue(const rtlreg_t& res, const rtlreg_t& offset){
   // unnecessary to update CF and OF in NEMU
   using namespace EFLAGS;
   g_ignore_eflags = MASK_CF | MASK_OF;
@@ -57,7 +58,7 @@ inline void shift_issue(const rtlreg_t& res){
   rtl_xor(&fake, &fake, &ZF);
   rtl_xori(&fake, &fake, 1);
   // if 0, no update
-  rtl_cond(&updater, &id_src->val, &res, &fake);
+  rtl_cond(&updater, &offset, &res, &fake);
   rtl_update_ZFSF(&updater);
 }
 
@@ -91,30 +92,34 @@ make_EHelper(rol) {
 }
 
 make_EHelper(sar) {
-  rtlreg_t res;
-  rtl_andi(&id_src->val, &id_src->val, rtl_width * 8 - 1);
-  rtl_sar(&res, &id_dest->val, &id_src->val);
-  shift_issue(res);
+  
+  rtlreg_t res, val, offset;
+  rtl_sext(&val, &id_dest->val, rtl_width);
+  rtl_andi(&offset, &id_src->val, rtl_width * 8 - 1);
+  rtl_sar(&res, &val, &offset);
+  shift_issue(res, offset);
   operand_write(id_dest, &res);
 
   print_asm_template2(sar);
 }
 
 make_EHelper(shl) {
-  rtlreg_t res;
-  rtl_andi(&id_src->val, &id_src->val, rtl_width * 8 - 1);
-  rtl_shl(&res, &id_dest->val, &id_src->val);
-  shift_issue(res);
+  rtlreg_t res, val, offset;
+  rtl_andi(&val, &id_dest->val, maskify(8 * rtl_width));
+  rtl_andi(&offset, &id_src->val, rtl_width * 8 - 1);
+  rtl_shl(&res, &val, &offset);
+  shift_issue(res, offset);
   operand_write(id_dest, &res);
 
   print_asm_template2(shl);
 }
 
 make_EHelper(shr) {
-  rtlreg_t res;
-  rtl_andi(&id_src->val, &id_src->val, rtl_width * 8 - 1);
-  rtl_shr(&res, &id_dest->val, &id_src->val);
-  shift_issue(res);
+  rtlreg_t res, val, offset;
+  rtl_andi(&val, &id_dest->val, maskify(8 * rtl_width));
+  rtl_andi(&offset, &id_src->val, rtl_width * 8 - 1);
+  rtl_shr(&res, &val, &offset);
+  shift_issue(res, offset);
   operand_write(id_dest, &res);
 
 
