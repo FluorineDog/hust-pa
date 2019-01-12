@@ -44,7 +44,9 @@ std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
 			if (auto query = eng.fetchFunction(cr3, eip)) {
                 assert(cr3 == 0);
 				auto[func, expected_inst] = query.value();
+#ifdef DEBUG                
                 fprintf(stderr, "exec block %x with %d insts\n", eip, expected_inst);
+#endif                
 				auto real_inst = func((uint32_t *) &cpu, nullptr);
 				assert(expected_inst == real_inst);
 				(void) real_inst;
