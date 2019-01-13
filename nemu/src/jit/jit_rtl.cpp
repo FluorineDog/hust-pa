@@ -254,8 +254,8 @@ void jit_rtl_mul_hi(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) 
 //make_rtl_arith_logic_dog(imul_lo);
 void jit_rtl_imul_lo(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
-	int64_t x = *src1;
-	int64_t y = *src2;
+	int64_t x = (int32_t)*src1;
+	int64_t y = (int32_t)*src2;
 	int64_t res = (x * y) >> 0;
 	*dest = (uint32_t)res;
 	
@@ -268,8 +268,8 @@ void jit_rtl_imul_lo(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2)
 //make_rtl_arith_logic_dog(imul_hi);
 void jit_rtl_imul_hi(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
-	int64_t x = *src1;
-	int64_t y = *src2;
+	int64_t x = (int32_t)*src1;
+	int64_t y = (int32_t)*src2;
 	int64_t res = (x * y) >> 32;
 	*dest = (uint32_t)res;
 	
@@ -313,8 +313,8 @@ void jit_rtl_div_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 //make_rtl_arith_logic_dog(idiv_q);
 void jit_rtl_idiv_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
-	int64_t x = *src1;
-	int64_t y = *src2;
+	int64_t x = (int32_t)*src1;
+	int64_t y = (int32_t)*src2;
 	int64_t quot = x / y;
 //	int64_t rem  = x % y;
 	*dest = (uint32_t)quot;
@@ -329,8 +329,8 @@ void jit_rtl_idiv_q(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) 
 //make_rtl_arith_logic_dog(idiv_r);
 void jit_rtl_idiv_r(rtlreg_t *dest, const rtlreg_t *src1, const rtlreg_t *src2) {
 	JIT_DONE;
-	int64_t x = *src1;
-	int64_t y = *src2;
+	int64_t x = (int32_t)*src1;
+	int64_t y = (int32_t)*src2;
 //	int64_t quot = x / y;
 	int64_t rem  = x % y;
 	*dest = (uint32_t)rem;
