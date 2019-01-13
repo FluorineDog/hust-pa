@@ -108,7 +108,9 @@ void image_save(const char* filename){
 
 void image_load(const char* filename) {
 	Log("image loading");
+#ifdef HAS_IOE
 	sdl_clear_event_queue();
+#endif
     ifstream fin(filename, std::ios::binary| std::ios::in);
     uint64_t magic;
     fin.read((char*)&magic, sizeof(magic));
@@ -117,8 +119,10 @@ void image_load(const char* filename) {
     }
     fin.read((char*)&cpu, sizeof(cpu));
     fin.read((char*)pmem, PMEM_SIZE);
+#ifdef HAS_IOE
 	load_mmio(fin);
     device_update(true);
+#endif
     if(g_diff_test_enabled){
         difftest_recover();
     }

@@ -92,7 +92,7 @@ static inline long load_img() {
   return size;
 }
 
-static inline void restart() {
+void restart() {
   /* Set the initial instruction pointer. */
   cpu.eip = ENTRY_START;
   cpu.cs = 8;
@@ -101,6 +101,8 @@ static inline void restart() {
   cpu.ebx = -5;
   cpu.ctlreg[0] = 0x6000'0011;
   cpu.irq_time = 0;
+  nemu_state = NEMU_STOP;
+	
 }
 
 static inline void parse_args(int argc, char *argv[]) {
