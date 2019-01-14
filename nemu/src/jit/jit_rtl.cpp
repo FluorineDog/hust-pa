@@ -2,7 +2,7 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_COMPILE_FLAG 1
+#define JIT_COMPILE_FLAG 0
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
@@ -629,8 +629,14 @@ void jit_rtl_io_out(const rtlreg_t* ioaddr, const rtlreg_t* src, int width){
 
 void jit_rtl_exit(int state);
 
+template<int n>
+bool is_align(uint32_t addr){
+    return ((n - 1) & (uint32_t)addr) == 0;
+}
+
+
 #include "device/mmio.h"
-void jit_rtl_memory_read(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
+void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 	JIT_TODO;
 	int NO = is_mmio(*mem_addr);
 	if(NO >= 0){
@@ -652,15 +658,16 @@ void jit_rtl_memory_read(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 #if JIT_COMPILE_FLAG
 #endif
 	}
+    void* ptr = pmem + addr;
 	switch (width){
-		case 4: *dest = (uint32_t)pmem[addr]; break;
-		case 2: *dest = (uint16_t)pmem[addr]; break;
-		case 1: *dest = (uint8_t)pmem[addr]; break;
+		case 4: *dest = *(uint32_t*)ptr; assert(is_align<4>(addr)); break;
+		case 2: *dest = *(uint16_t*)ptr; assert(is_align<2>(addr)); break;
+		case 1: *dest = *(uint8_t*)ptr; break;
 	}
 	JIT_COMPILE_BARRIER;
 }
 
-void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *vaddr, int len) {
+void jit_rtl_lm_back(rtlreg_t *dest, const rtlreg_t *vaddr, int len) {
 	JIT_DONE;
 	*dest = vaddr_read(*vaddr, len);
 	
