@@ -83,6 +83,9 @@ public:
 	}
 	
 	Value *get_mem_ptr(uint32_t paddr) {
+		if(paddr == 0){
+			return s_.memory;
+		}
 		return builder_.CreateConstGEP1_32(s_.memory, paddr);
 	}
 	

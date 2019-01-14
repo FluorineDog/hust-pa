@@ -2,7 +2,7 @@
 #include "workflow.h"
 #include "cpu/exec.h"
 
-#define JIT_COMPILE_FLAG 0
+#define JIT_COMPILE_FLAG 1
 
 #if JIT_COMPILE_FLAG
 #define JIT_COMPILE_BARRIER
@@ -634,6 +634,34 @@ bool is_align(uint32_t addr){
     return ((n - 1) & (uint32_t)addr) == 0;
 }
 
+llvm::Value* blender(llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint32_t off_mask) {
+	auto vbase_offset = eng().CreateAnd(vbase, ~maskify(12));
+	auto vjam_offset = eng().CreateLShr(val_vaddr, shift);
+	auto vreal_offset = eng().CreateAnd(vjam_offset, off_mask);
+	return eng().CreateAdd(vbase_offset, vreal_offset);
+}
+
+llvm::Value* extract_vptr(int len, llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint32_t off_mask) {
+	auto val_addr = blender(vbase, val_vaddr, shift, off_mask);
+	auto vpmem = eng.get_mem_ptr(0);
+	auto vptr_raw = eng().CreateGEP(vpmem, val_addr);
+	llvm::Type* type;
+	switch(len){
+		case 4: type = eng().getInt32Ty(); break;
+		case 2: type = eng().getInt16Ty(); break;
+		case 1: type = eng().getInt8Ty(); break;
+		default:
+			assert(0);
+	}
+	auto vptr = eng().CreateBitOrPointerCast(vptr_raw, type->getPointerTo());
+	return vptr;
+}
+
+llvm::Value* extract_data(int len, llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint32_t off_mask){
+	using namespace llvm;
+	auto vptr = extract_vptr(len, vbase, val_vaddr, shift, off_mask);
+	return eng().CreateLoad(vptr);
+}
 
 #include "device/mmio.h"
 void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
@@ -641,12 +669,28 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 	int NO = is_mmio(*mem_addr);
 	if(NO >= 0){
 		*dest = mmio_read(*mem_addr, width, NO);
+#if JIT_COMPILE_FLAG
+		using namespace llvm;
+		auto FT = FunctionType::get(eng.getRegTy(), {eng.getIntTy(), eng.getIntTy(), eng.getIntTy()}, false);
+		auto FAddr = eng().getInt64((uint64_t)mmio_read);
+		auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
+		
+		auto vmem_addr = eng.get_value(mem_addr);
+		auto vwidth = eng().getInt32(width);
+		auto vno = eng().getInt32(NO);
+		auto vres = eng().CreateCall(F, {vmem_addr, vwidth, vno});
+		eng.set_value(dest, vres);
+#endif
 		return;
 	}
 	uint32_t addr;
+	
+	llvm::Value* val_addr = nullptr;
 	if(!cpu.cr0.paging){
 		addr = *mem_addr;
 #if JIT_COMPILE_FLAG
+		val_addr = eng.get_value(mem_addr);
+		
 #endif
 	} else {
 		// 0 12 22 32
@@ -656,6 +700,8 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 		addr = (pte & ~maskify(12)) + (vaddr & maskify(12));
 		// keep it functional
 #if JIT_COMPILE_FLAG
+		auto val_vaddr = eng.get_value(mem_addr);
+		auto vpde = ;
 #endif
 	}
     void* ptr = pmem + addr;
