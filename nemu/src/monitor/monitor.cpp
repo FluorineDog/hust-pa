@@ -53,7 +53,6 @@ static inline int load_default_img() {
 //    0xd6,                                // 100026:  nemu_trap
 //  };
   const uint8_t img []  = {
-     0x80, 0xe4, 0x7f, // and $0x7f,%ah
      0x83, 0xC0, 0x02, // add eax, 2
      0x83, 0xC3, 0x01,  // add ebx, 1
      0x75, 0xF8, // jne _main
@@ -97,8 +96,8 @@ void restart() {
   cpu.eip = ENTRY_START;
   cpu.cs = 8;
   cpu.eflags = 0;
-  cpu.eax = 0x12345678;
-  cpu.ebx = -5;
+  cpu.eax = (uint32_t)-10;
+  cpu.ebx = (uint32_t)-5;
   cpu.ctlreg[0] = 0x6000'0011;
   cpu.irq_time = 0;
   nemu_state = NEMU_STOP;
