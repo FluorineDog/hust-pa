@@ -43,9 +43,9 @@ std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
 			if (auto query = eng.fetchFunction(cr3, eip)) {
                 // assert(cr3 == 0);
 				auto[func, expected_inst] = query.value();
-#ifdef DEBUG                
+#ifdef DEBUG
                 fprintf(stderr, "exec block %x with %d insts\n", eip, expected_inst);
-#endif                
+#endif
 				auto real_inst = func((uint32_t *) &cpu, nullptr);
 				assert(expected_inst == real_inst);
 				(void) real_inst;
@@ -409,39 +409,7 @@ void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi, const rtlreg_t *s
 	set_value64(dest, vres64);
 }
 
-void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *vaddr, int len) {
-	JIT_DONE;
-	*dest = vaddr_read(*vaddr, len);
-	
-	JIT_COMPILE_BARRIER;
-	using namespace llvm;
-	
-	auto FT = FunctionType::get(eng.getRegTy(), {eng.getRegTy(), eng.getIntTy()}, false);
-	auto FAddr = eng().getInt64((uint64_t)vaddr_read);
-	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
-	
-	auto val_vaddr = eng.get_value(vaddr);
-	auto val_len = eng().getInt32(len);
-	auto val_ret = eng().CreateCall(F, {val_vaddr, val_len});
-	eng.set_value(dest, val_ret);
-	
-}
 
-void jit_rtl_sm(const rtlreg_t *vaddr, const rtlreg_t *src1, int len) {
-	JIT_DONE;
-	vaddr_write(*vaddr, *src1, len);
-	
-	JIT_COMPILE_BARRIER;
-	using namespace llvm;
-	auto FT = FunctionType::get(eng().getVoidTy(), {eng.getRegTy(), eng.getRegTy(), eng.getIntTy()}, false);
-	auto FAddr = eng().getInt64((uint64_t)vaddr_write);
-	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
-	
-	auto val_vaddr = eng.get_value(vaddr);
-	auto val_src = eng.get_value(src1);
-	auto val_len = eng().getInt32(len);
-	eng().CreateCall(F, {val_vaddr, val_src, val_len});
-}
 
 // void jit_rtl_host_lm(rtlreg_t *dest, const void *addr, int len) {
 // 	JIT_TODO;
@@ -660,3 +628,68 @@ void jit_rtl_io_out(const rtlreg_t* ioaddr, const rtlreg_t* src, int width){
 }
 
 void jit_rtl_exit(int state);
+
+#include "device/mmio.h"
+void jit_rtl_memory_read(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
+	JIT_TODO;
+	int NO = is_mmio(*mem_addr);
+	if(NO >= 0){
+		*dest = mmio_read(*mem_addr, width, NO);
+		return;
+	}
+	uint32_t addr;
+	if(!cpu.cr0.paging){
+		addr = *mem_addr;
+#if JIT_COMPILE_FLAG
+#endif
+	} else {
+		// 0 12 22 32
+		uint32_t vaddr = *mem_addr;
+		uint32_t pde = ((uint32_t*)(pmem + (cpu.cr3.val & ~maskify(12))))[vaddr >> 22];
+		uint32_t pte = ((uint32_t*)(pmem + (pde & ~maskify(12)))) [(vaddr >> 12) & maskify(10)];
+		addr = (pte & ~maskify(12)) + (vaddr & maskify(12));
+		// keep it functional
+#if JIT_COMPILE_FLAG
+#endif
+	}
+	switch (width){
+		case 4: *dest = (uint32_t)pmem[addr]; break;
+		case 2: *dest = (uint16_t)pmem[addr]; break;
+		case 1: *dest = (uint8_t)pmem[addr]; break;
+	}
+	JIT_COMPILE_BARRIER;
+}
+
+void jit_rtl_lm(rtlreg_t *dest, const rtlreg_t *vaddr, int len) {
+	JIT_DONE;
+	*dest = vaddr_read(*vaddr, len);
+	
+	JIT_COMPILE_BARRIER;
+	using namespace llvm;
+	
+	auto FT = FunctionType::get(eng.getRegTy(), {eng.getRegTy(), eng.getIntTy()}, false);
+	auto FAddr = eng().getInt64((uint64_t)vaddr_read);
+	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
+	
+	auto val_vaddr = eng.get_value(vaddr);
+	auto val_len = eng().getInt32(len);
+	auto val_ret = eng().CreateCall(F, {val_vaddr, val_len});
+	eng.set_value(dest, val_ret);
+	
+}
+
+void jit_rtl_sm(const rtlreg_t *vaddr, const rtlreg_t *src1, int len) {
+	JIT_DONE;
+	vaddr_write(*vaddr, *src1, len);
+	
+	JIT_COMPILE_BARRIER;
+	using namespace llvm;
+	auto FT = FunctionType::get(eng().getVoidTy(), {eng.getRegTy(), eng.getRegTy(), eng.getIntTy()}, false);
+	auto FAddr = eng().getInt64((uint64_t)vaddr_write);
+	auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
+	
+	auto val_vaddr = eng.get_value(vaddr);
+	auto val_src = eng.get_value(src1);
+	auto val_len = eng().getInt32(len);
+	eng().CreateCall(F, {val_vaddr, val_src, val_len});
+}
