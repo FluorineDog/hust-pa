@@ -655,7 +655,7 @@ llvm::Value* ptr_trans(int len, llvm::Value* vptr_raw){
 }
 
 llvm::Value* mem_gep(int len, llvm::Value* vpaddr){
-	auto vpmem = eng().CreateIntToPtr(eng().getInt64((uint64_t)pmem), eng().getInt8Ty());
+	auto vpmem = eng().CreateIntToPtr(eng().getInt64((uint64_t)pmem), eng().getInt8Ty()->getPointerTo());
 	auto vptr_raw = eng().CreateGEP(vpmem, vpaddr);
 	auto vptr = ptr_trans(len, vptr_raw);
 	return vptr;
