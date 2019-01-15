@@ -641,27 +641,33 @@ llvm::Value* blender(llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint
 	return eng().CreateAdd(vbase_offset, vreal_offset);
 }
 
-llvm::Value* extract_vptr(int len, llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint32_t off_mask) {
-	auto val_addr = blender(vbase, val_vaddr, shift, off_mask);
-	auto vpmem = eng.get_mem_ptr(0);
-	auto vptr_raw = eng().CreateGEP(vpmem, val_addr);
+llvm::Value* ptr_trans(int len, llvm::Value* vptr_raw){
 	llvm::Type* type;
 	switch(len){
 		case 4: type = eng().getInt32Ty(); break;
 		case 2: type = eng().getInt16Ty(); break;
 		case 1: type = eng().getInt8Ty(); break;
 		default:
-			assert(0);
+			panic("wtf");
 	}
 	auto vptr = eng().CreateBitOrPointerCast(vptr_raw, type->getPointerTo());
 	return vptr;
 }
 
-llvm::Value* extract_data(int len, llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint32_t off_mask){
+llvm::Value* extract_vptr(int len, llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint32_t off_mask) {
+	auto val_addr = blender(vbase, val_vaddr, shift, off_mask);
+	auto vpmem = eng.get_mem_ptr(0);
+	auto vptr_raw = eng().CreateGEP(vpmem, val_addr);
+	auto vptr = ptr_trans(len, vptr_raw);
+	return vptr;
+}
+
+llvm::Value* fetch_data(int len, llvm::Value* vbase, llvm::Value* val_vaddr, int shift, uint32_t off_mask){
 	using namespace llvm;
 	auto vptr = extract_vptr(len, vbase, val_vaddr, shift, off_mask);
 	return eng().CreateLoad(vptr);
 }
+
 
 #include "device/mmio.h"
 void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
@@ -685,14 +691,15 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 	}
 	uint32_t addr;
 	
-	llvm::Value* val_addr = nullptr;
+	llvm::Value* vpaddr = nullptr;
 	if(!cpu.cr0.paging){
 		addr = *mem_addr;
 #if JIT_COMPILE_FLAG
-		val_addr = eng.get_value(mem_addr);
-		
+		auto vpaddr_int = eng.get_value(mem_addr);
+		vpaddr = ptr_trans(width, vpaddr_int);
 #endif
 	} else {
+		JIT_TODO;
 		// 0 12 22 32
 		uint32_t vaddr = *mem_addr;
 		uint32_t pde = ((uint32_t*)(pmem + (cpu.cr3.val & ~maskify(12))))[vaddr >> 22];
@@ -700,8 +707,7 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 		addr = (pte & ~maskify(12)) + (vaddr & maskify(12));
 		// keep it functional
 #if JIT_COMPILE_FLAG
-		auto val_vaddr = eng.get_value(mem_addr);
-		auto vpde = ;
+		// the hardest part
 #endif
 	}
     void* ptr = pmem + addr;
@@ -711,6 +717,8 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 		case 1: *dest = *(uint8_t*)ptr; break;
 	}
 	JIT_COMPILE_BARRIER;
+	auto vdata = eng().CreateLoad(vpaddr);
+	eng.set_value(dest, vdata);
 }
 
 void jit_rtl_lm_back(rtlreg_t *dest, const rtlreg_t *vaddr, int len) {
