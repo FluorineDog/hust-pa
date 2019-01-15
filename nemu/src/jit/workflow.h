@@ -29,7 +29,7 @@ namespace llvm {
 class CodeExecutor {
 private:
 	// cpu and memory
-	using RawFT = int (*)(uint32_t *, char *);
+	using RawFT = int (*)();
 
 public:
 	CodeExecutor() : builder_(ctx_) {
@@ -171,7 +171,7 @@ public:
 		if (!functor_type) {
 //			auto&& params_type = ;
 			functor_type = FunctionType::get(Type::getInt32Ty(ctx_),
-					{getRegTy()->getPointerTo(), Type::getInt8PtrTy(ctx_)}, false);
+					false);
 		}
 		return functor_type;
 	}

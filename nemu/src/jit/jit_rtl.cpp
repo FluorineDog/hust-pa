@@ -24,7 +24,7 @@ std::optional<int> exec_or_open(vaddr_t cr3, vaddr_t eip) {
 #ifdef DEBUG
                 fprintf(stderr, "exec block %x with %d insts\n", eip, expected_inst);
 #endif
-				auto real_inst = func((uint32_t *) &cpu, nullptr);
+				auto real_inst = func();
 				assert(expected_inst == real_inst);
 				(void) real_inst;
 				return expected_inst;
