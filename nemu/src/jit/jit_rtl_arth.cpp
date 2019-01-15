@@ -314,3 +314,102 @@ void jit_rtl_idiv64_r(rtlreg_t *dest, const rtlreg_t *src1_hi, const rtlreg_t *s
 	auto vres64 = eng().CreateSRem(va64, vb64);
 	set_value64(dest, vres64);
 }
+
+
+void jit_rtl_setrelop(uint32_t relop, rtlreg_t *dest, const rtlreg_t *src1_raw,
+		const rtlreg_t *src2_raw) {
+	JIT_DONE;
+	uint32_t offset = (4 - rtl_width) * 8;
+	uint32_t src1 = *src1_raw << offset;
+	uint32_t src2 = *src2_raw << offset;
+	
+#if JIT_COMPILE_FLAG
+	auto va_raw = eng.get_value(src1_raw);
+	auto vb_raw = eng.get_value(src2_raw);
+	auto va = eng().CreateShl(va_raw, offset);
+	auto vb = eng().CreateShl(vb_raw, offset);
+#else
+	llvm::Value* va;
+	llvm::Value* vb;
+#endif
+	
+	llvm::Value* vres;
+	switch (relop) {
+		case RELOP_FALSE: {
+			*dest = (uint32_t)(false);
+			JIT_COMPILE_BARRIER;
+			vres = eng().getInt1(false);
+			break;
+		}
+		case RELOP_TRUE: {
+			*dest = (uint32_t)(true);
+			JIT_COMPILE_BARRIER;
+			vres = eng().getInt1(true);
+			break;
+		}
+		case RELOP_EQ: {
+			*dest = (uint32_t)(src1 == src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpEQ(va, vb);
+			break;
+		}
+		case RELOP_NE: {
+			*dest = (uint32_t)(src1 != src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpNE(va, vb);
+			break;
+		}
+		case RELOP_LT: {
+			*dest = (uint32_t)((int32_t) src1 < (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSLT(va, vb);
+			break;
+		}
+		case RELOP_LE: {
+			*dest = (uint32_t)((int32_t) src1 <= (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSLE(va, vb);
+			break;
+		}
+		case RELOP_GT: {
+			*dest = (uint32_t)((int32_t) src1 > (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSGT(va, vb);
+			break;
+		}
+		case RELOP_GE: {
+			*dest = (uint32_t)((int32_t) src1 >= (int32_t) src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpSGE(va, vb);
+			break;
+		}
+		case RELOP_LTU: {
+			*dest = (uint32_t)(src1 < src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpULT(va, vb);
+			break;
+		}
+		case RELOP_LEU: {
+			*dest = (uint32_t)(src1 <= src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpULE(va, vb);
+			break;
+		}
+		case RELOP_GTU: {
+			*dest = (uint32_t)(src1 > src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpUGT(va, vb);
+			break;
+		}
+		case RELOP_GEU: {
+			*dest = (uint32_t)(src1 >= src2);
+			JIT_COMPILE_BARRIER;
+			vres = eng().CreateICmpUGE(va, vb);
+			break;
+		}
+		default:
+			panic("unsupport relop = %d", relop);
+	}
+	auto vres_int = eng().CreateIntCast(vres, eng.getRegTy(), false);
+	eng.set_value(dest, vres_int);
+}
