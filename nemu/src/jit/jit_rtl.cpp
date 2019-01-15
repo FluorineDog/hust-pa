@@ -655,7 +655,7 @@ llvm::Value* ptr_trans(int len, llvm::Value* vptr_raw){
 }
 
 llvm::Value* mem_gep(int len, llvm::Value* vpaddr){
-	static auto vpmem = eng().CreateIntToPtr(eng().getInt64((uint64_t)pmem), eng().getInt8Ty());
+	auto vpmem = eng().CreateIntToPtr(eng().getInt64((uint64_t)pmem), eng().getInt8Ty());
 	auto vptr_raw = eng().CreateGEP(vpmem, vpaddr);
 	auto vptr = ptr_trans(len, vptr_raw);
 	return vptr;
@@ -714,6 +714,7 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 		// the hardest part
 #endif
 	}
+	
     void* ptr = pmem + paddr;
 	switch (width){
 		case 4: *dest = *(uint32_t*)ptr; assert(is_align<4>(paddr)); break;
@@ -721,7 +722,8 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 		case 1: *dest = *(uint8_t*)ptr; break;
 	}
 	JIT_COMPILE_BARRIER;
-	auto vdata_raw = mem_gep(width, vpaddr);
+	auto vptr = mem_gep(width, vpaddr);
+	auto vdata_raw = eng().CreateLoad(vptr);
 	auto vdata = eng().CreateIntCast(vdata_raw, eng.getRegTy(), false);
 	eng.set_value(dest, vdata);
 }
