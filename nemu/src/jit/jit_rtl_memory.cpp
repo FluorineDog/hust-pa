@@ -66,7 +66,11 @@ std::pair<uint32_t, llvm::Value*> get_paddr_pair(const rtlreg_t *mem_addr){
 		paddr = (pte & ~maskify(12)) + (vaddr & maskify(12));
 		// keep it functional
 #if JIT_COMPILE_FLAG
-		// the hardest part
+		auto vcr3 = eng.get_value(&cpu.cr3.val);
+		auto val_vaddr = eng.get_value(mem_addr);
+		auto vpde = fetch_entry(vcr3, val_vaddr, 20, maskify(10) << 2);
+		auto vpte = fetch_entry(vpde, val_vaddr, 10, maskify(10) << 2);
+		vpaddr = blender(vpte, val_vaddr, 0, maskify(12));
 #endif
 	}
 	return std::make_pair(paddr, vpaddr);
