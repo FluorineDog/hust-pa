@@ -80,7 +80,7 @@ void jit_rtl_lm(rtlreg_t* dest, const rtlreg_t *mem_addr, int width){
 	if(NO >= 0){
 		*dest = mmio_read(*mem_addr, width, NO);
 #if JIT_COMPILE_FLAG
-		JIT_TODO;
+		JIT_DONE;
 		using namespace llvm;
 		auto FT = FunctionType::get(eng.getRegTy(), {eng.getIntTy(), eng.getIntTy(), eng.getIntTy()}, false);
 		auto FAddr = eng().getInt64((uint64_t)mmio_read);
@@ -115,7 +115,17 @@ void jit_rtl_sm(const rtlreg_t *mem_addr, const rtlreg_t* src,  int width){
 	if(NO >= 0){
 		mmio_write(*mem_addr, width, *src, NO);
 #if JIT_COMPILE_FLAG
-		JIT_TODO;
+		JIT_DONE;
+		using namespace llvm;
+		auto FT = FunctionType::get(eng().getVoidTy(), {eng.getIntTy(), eng.getIntTy(), eng.getRegTy(), eng.getIntTy()}, false);
+		auto FAddr = eng().getInt64((uint64_t)mmio_write);
+		auto F = eng().CreateIntToPtr(FAddr, FT->getPointerTo());
+		
+		auto vmem_addr = eng.get_value(mem_addr);
+		auto vwidth = eng().getInt32(width);
+		auto vsrc = eng.get_value(src);
+		auto vno = eng().getInt32(NO);
+		eng().CreateCall(F, {vmem_addr, vwidth, vsrc, vno});
 #endif
 		return;
 	}
