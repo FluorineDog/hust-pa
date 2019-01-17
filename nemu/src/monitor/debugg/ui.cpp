@@ -40,6 +40,14 @@ static int cmd_q(char *args) {
 	return -1;
 }
 
+static int cmd_restart(char *args) {
+	void restart();
+	restart();
+	cpu_exec(-1);
+	return 0;
+}
+
+
 static int cmd_help(char *args);
 
 static int cmd_step_into(char *args);
@@ -91,6 +99,7 @@ static struct {
 		{"detach", "detach difftest",                                   cmd_detach_difftest},
 		{"save",   "save image",                                        cmd_save_image},
 		{"load",   "load image",                                        cmd_load_image},
+		{"r",      "restart image",                                     cmd_restart},
 		/* TODO: Add more commands */
 };
 

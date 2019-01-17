@@ -149,9 +149,6 @@ static inline void rtl_pop(rtlreg_t *dest) {
 	// dest <- M[esp]
 	// esp <- esp + 4
 	rtl_lm(dest, &cpu.esp, 4);
-	rtlreg_t imm;
-	rtl_li(&imm, 0xcccccccc);
-	rtl_sm(&cpu.esp, &imm, 4);
 	rtl_addi(&cpu.esp, &cpu.esp, 4);
 	//   TODO();
 }

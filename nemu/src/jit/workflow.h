@@ -22,12 +22,14 @@
 
 #include "cpu/reg.h"
 
+#include "cpu/reg.h"
+
 namespace llvm {
 
 class CodeExecutor {
 private:
 	// cpu and memory
-	using RawFT = int (*)(uint32_t *, char *);
+	using RawFT = int (*)();
 
 public:
 	CodeExecutor() : builder_(ctx_) {
@@ -55,13 +57,14 @@ public:
 		s_.func = cast<Function>(s_.mod->getOrInsertFunction(name, getFunctorTy()));
 		s_.bb = BasicBlock::Create(ctx_, "entry", s_.func);
 		builder_.SetInsertPoint(s_.bb);
-		assert(s_.func->arg_size() == 2);
-		auto iter = s_.func->arg_begin();
-		s_.regfile = &*iter;
-		++iter;
-		s_.memory = &*iter;
-		++iter;
-		assert(iter == s_.func->arg_end());
+		s_.regfile = builder_.CreateIntToPtr(builder_.getInt64((uint64_t)&cpu), this->getRegTy()->getPointerTo());
+//		assert(s_.func->arg_size() == 2);
+//		auto iter = s_.func->arg_begin();
+//		s_.regfile = &*iter;
+//		++iter;
+//		s_.memory = &*iter;
+//		++iter;
+//		assert(iter == s_.func->arg_end());
 	}
 	
 	LLVMContext &get_ctx() {
@@ -82,9 +85,12 @@ public:
 		}
 	}
 	
-	Value *get_mem_ptr(uint32_t paddr) {
-		return builder_.CreateConstGEP1_32(s_.memory, paddr);
-	}
+//	Value *get_mem_ptr(uint32_t paddr) {
+//		if(paddr == 0){
+//			return s_.memory;
+//		}
+//		return builder_.CreateConstGEP1_32(s_.memory, paddr);
+//	}
 	
 	void active_value(const rtlreg_t *reg) {
 		
@@ -165,7 +171,7 @@ public:
 		if (!functor_type) {
 //			auto&& params_type = ;
 			functor_type = FunctionType::get(Type::getInt32Ty(ctx_),
-					{getRegTy()->getPointerTo(), Type::getInt8PtrTy(ctx_)}, false);
+					false);
 		}
 		return functor_type;
 	}
@@ -222,7 +228,7 @@ private:
 		BasicBlock *bb;
 		Function *func;
 		Value *regfile;
-		Value *memory;
+//		Value *memory;
 		
 		void clear() {
 			inst_count = 0;
@@ -232,7 +238,7 @@ private:
 			std::fill(reg_cache.begin(), reg_cache.end(), std::make_pair(nullptr, false));
 			bb = nullptr;
 			func = nullptr;
-			regfile = memory = nullptr;
+//			regfile = memory = nullptr;
 		}
 	} s_;
 	
