@@ -3,7 +3,7 @@
 
 ## Note: 
 
-We have transformed the original NEMU from C/Makefile to C++/CMake. 
+We have ported the original NEMU from C/Makefile to C++/CMake. 
 
 Free free to use [2018cpp](https://github.com/FluorineDog/hust-pa/tree/2018cpp/nemu) branch. 100% original (even original bugs are preserved)! 
 
